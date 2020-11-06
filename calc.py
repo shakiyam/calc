@@ -26,7 +26,7 @@ def calculate(expression, last_result):
 last_result = 0
 
 if len(sys.argv) > 1:
-    expression = " ".join(sys.argv[1:])
+    expression = ' '.join(sys.argv[1:])
     calculate(expression, last_result)
     sys.exit()
 
