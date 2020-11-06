@@ -13,7 +13,10 @@ def calculate(expression, last_result):
     expression = expression.replace('^', '**')
     try:
         result = eval(expression)
-        print(f'= {result:,}')
+        if type(result) in [int, float]:
+            print(f'= {result:,}')
+        else:
+            print(f'= {result}')
         return result
     except BaseException:
         print('Error')
