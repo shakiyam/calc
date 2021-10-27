@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eu -o pipefail
+
+docker container run \
+  --name calc$$ \
+  -it \
+  --rm \
+  -u "$(id -u):$(id -g)" \
+  shakiyam/calc "$@"
