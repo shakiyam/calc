@@ -24,7 +24,7 @@ $
 ### Command ###
 
 ```
-$ python3 calc.py 1 + 2 x 3,000
+$ python3 calc.py '1 + 2 x 3,000'
 = 6,001
 
 $
