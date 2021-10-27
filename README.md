@@ -47,7 +47,7 @@ Supported operators, functions, etc.
 
 ### History ###
 
-Previous results can be accessed with the ? symbol.
+Previous results can be accessed with the `?` symbol.
 
 Author
 ------
