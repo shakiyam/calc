@@ -21,7 +21,7 @@ build_dev: ## Build image 'shakiyam/calc_dev' from Dockerfile_dev
 
 flake8: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./flake8.sh --max-line-length 88
+	@./flake8.sh --max-line-length 100
 
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
