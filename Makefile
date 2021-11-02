@@ -17,7 +17,7 @@ build: ## Build an image from a Dockerfile
 
 flake8: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./flake8.sh
+	@./flake8.sh --max-line-length 88
 
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
