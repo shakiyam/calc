@@ -11,7 +11,7 @@ from prompt_toolkit import PromptSession
 
 def str2timedelta(s: str) -> timedelta:
     m = re.search(
-        r'(?:(\d+) +days?, +)?([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(.\d{6})?',
+        r'(?:(\d+) +days?, +)?([0-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(?:.(\d{1,6}))?',
         s)
     m = cast(Match, m)
     if m.group(1) is None:
@@ -22,7 +22,7 @@ def str2timedelta(s: str) -> timedelta:
     if m.group(5) is None:
         microseconds = 0
     else:
-        microseconds = int(m.group(5))
+        microseconds = int(m.group(5)) * 10 ** (6 - len(m.group(5)))
     return timedelta(days=days, seconds=seconds, microseconds=microseconds)
 
 
@@ -48,7 +48,7 @@ def calculate(expression, last_result):
         r'timedelta(seconds=\1)',
         expression)
     expression = re.sub(
-        r'((?:\d+ +days?, +)?(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:.\d{6})?)',
+        r'((?:\d+ +days?, +)?(?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:.\d{1,6})?)',
         r'str2timedelta("\1")', expression)
     expression = expression.replace(',', '')
     expression = expression.replace('@', ',')
