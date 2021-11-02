@@ -17,7 +17,6 @@ $ python3 calc.py
 1 + ? x 3,000
 = 6,001
 
-
 $
 ```
 
@@ -26,7 +25,6 @@ $
 ```
 $ python3 calc.py '1 + 2 x 3,000'
 = 6,001
-
 $
 ```
 
@@ -44,6 +42,10 @@ Supported operators, functions, etc.
 * `ceil(n)` return the ceiling of n, the smallest integer greater than or equal to n.
 * `floor(n)` return the floor of n, the largest integer less than or equal to n.
 * `round(n[@d])` return n rounded to d precision after the decimal point. If d is omitted, it returns the nearest integer to its input.
+
+### Units ###
+
+* `sec` or `s` convert seconds to [D day[s], ]HH:MM:SS[.UUUUUU].
 
 ### History ###
 
