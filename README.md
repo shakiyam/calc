@@ -16,7 +16,7 @@ $ python3 calc.py
 = 2
 1 + ? x 3,000
 = 6,001
-
+exit
 $
 ```
 
@@ -30,6 +30,10 @@ $
 
 Supported operators, functions, etc.
 ------------------------------------
+
+### Comment ###
+
+A comment starts with a hash character `+`, and ends at the end of the line.
 
 ### Operators ###
 
@@ -47,9 +51,13 @@ Supported operators, functions, etc.
 
 * `sec` or `s` convert seconds to [D day[s], ]HH:MM:SS[.UUUUUU].
 
-### History ###
+### History (shell mode) ###
 
 Previous results can be accessed with the `?` symbol.
+
+### Exit (shell mode) ###
+
+Exit with `exit`.
 
 Author
 ------

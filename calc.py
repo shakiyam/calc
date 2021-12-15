@@ -77,6 +77,10 @@ if len(sys.argv) > 1:
 session: PromptSession = PromptSession()
 while True:
     expression = session.prompt()
-    if len(expression) == 0:
+    if not expression:
+        continue
+    elif expression[0] == '#':
+        continue
+    elif expression == 'exit':
         break
     last_result = calculate(expression, last_result)
