@@ -1,19 +1,26 @@
 #!/bin/bash
 set -eu -o pipefail
 
-if [[ $# -ne 2 ]]; then
-  echo "Usage: build.sh image_name Dockerfile"
-  exit 1
-fi
-
-IMAGE_NAME="$1"
+case "$#" in
+  1)
+    IMAGE_NAME="$1"
+    DOCKERFILE=Dockerfile
+    ;;
+  2)
+    IMAGE_NAME="$1"
+    DOCKERFILE="$2"
+    ;;
+  *)
+    echo "Usage: build.sh image_name [Dockerfile]"
+    exit 1
+    ;;
+esac
 readonly IMAGE_NAME
+readonly DOCKERFILE
+
 CURRENT_IMAGE="$(docker image ls -q "$IMAGE_NAME":latest)"
 readonly CURRENT_IMAGE
-docker image build \
-  -f "$2" \
-  -t "$IMAGE_NAME" \
-  "$(dirname "$0")"
+docker image build -f "$DOCKERFILE" -t "$IMAGE_NAME" .
 LATEST_IMAGE="$(docker image ls -q "$IMAGE_NAME":latest)"
 readonly LATEST_IMAGE
 if [[ "$CURRENT_IMAGE" != "$LATEST_IMAGE" ]]; then
