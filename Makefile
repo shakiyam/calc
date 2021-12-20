@@ -29,7 +29,7 @@ hadolint: ## Lint Dockerfile
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/mypy.sh calc.py
+	@./tools/mypy.sh shakiyam/calc_dev calc.py
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
