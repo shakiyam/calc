@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via ptpython
 jedi==0.18.1
     # via ptpython
-mypy==0.910
+mypy==0.920
     # via -r requirements_dev.in
 mypy-extensions==0.4.3
     # via mypy
@@ -22,7 +22,7 @@ ptpython==3.0.20
     # via -r requirements_dev.in
 pygments==2.10.0
     # via ptpython
-toml==0.10.2
+tomli==2.0.0
     # via mypy
 typing-extensions==4.0.1
     # via mypy
