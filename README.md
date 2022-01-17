@@ -33,7 +33,7 @@ Supported operators, functions, etc.
 
 ### Comment ###
 
-A comment starts with a hash character `+`, and ends at the end of the line.
+A comment starts with a hash character `#`, and ends at the end of the line.
 
 ### Operators ###
 
