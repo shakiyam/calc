@@ -16,6 +16,8 @@ $ python3 calc.py
 = 2
 1 + ? x 3,000
 = 6,001
+00:01:00 + 123sec
+= 00:03:03
 exit
 $
 ```
@@ -67,4 +69,4 @@ Author
 License
 -------
 
-[MIT License](https://opensource.org/licenses/mit)
+[MIT License](https://opensource.org/licenses/MIT)
