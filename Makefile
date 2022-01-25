@@ -13,11 +13,11 @@ all: shellcheck shfmt hadolint flake8 update_requirements_dev build_dev mypy upd
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/build.sh shakiyam/calc Dockerfile
+	@./tools/build.sh docker.io/shakiyam/calc Dockerfile
 
 build_dev: ## Build image 'shakiyam/calc_dev' from Dockerfile_dev
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/build.sh shakiyam/calc_dev Dockerfile_dev
+	@./tools/build.sh docker.io/shakiyam/calc_dev Dockerfile_dev
 
 flake8: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
@@ -29,7 +29,7 @@ hadolint: ## Lint Dockerfile
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/mypy.sh shakiyam/calc_dev calc.py
+	@./tools/mypy.sh docker.io/shakiyam/calc_dev calc.py
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"

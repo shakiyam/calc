@@ -1,22 +1,22 @@
 #!/bin/bash
 set -eu -o pipefail
 
-if [[ $(command -v podman) ]]; then
-  podman container run \
-    --name calc_dubug$$ \
-    -it \
-    --rm \
-    --security-opt label=disable \
-    -v "$PWD"/calc.py:/calc.py:ro \
-    -v "$PWD"/.mypy_cache:/.mypy_cache \
-    shakiyam/calc_dev "$@"
-else
+if [[ $(command -v docker) ]]; then
   docker container run \
     --name calc_dubug$$ \
-    -it \
     --rm \
+    -it \
     -u "$(id -u):$(id -g)" \
-    -v "$PWD"/calc.py:/calc.py:ro \
     -v "$PWD"/.mypy_cache:/.mypy_cache \
-    shakiyam/calc_dev "$@"
+    -v "$PWD"/calc.py:/calc.py:ro \
+    docker.io/shakiyam/calc_dev "$@"
+else
+  podman container run \
+    --name calc_dubug$$ \
+    --rm \
+    --security-opt label=disable \
+    -it \
+    -v "$PWD"/.mypy_cache:/.mypy_cache \
+    -v "$PWD"/calc.py:/calc.py:ro \
+    docker.io/shakiyam/calc_dev "$@"
 fi

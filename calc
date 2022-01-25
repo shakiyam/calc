@@ -1,17 +1,17 @@
 #!/bin/bash
 set -eu -o pipefail
 
-if [[ $(command -v podman) ]]; then
-  podman container run \
-    --name calc$$ \
-    -it \
-    --rm \
-    shakiyam/calc "$@"
-else
+if [[ $(command -v docker) ]]; then
   docker container run \
     --name calc$$ \
-    -it \
     --rm \
+    -it \
     -u "$(id -u):$(id -g)" \
-    shakiyam/calc "$@"
+    docker.io/shakiyam/calc "$@"
+else
+  podman container run \
+    --name calc$$ \
+    --rm \
+    -it \
+    docker.io/shakiyam/calc "$@"
 fi
