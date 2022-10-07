@@ -24,7 +24,7 @@ pygments==2.13.0
     # via ptpython
 tomli==2.0.1
     # via mypy
-typing-extensions==4.3.0
+typing-extensions==4.4.0
     # via mypy
 wcwidth==0.2.5
     # via prompt-toolkit
