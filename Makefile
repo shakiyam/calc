@@ -15,9 +15,9 @@ build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/build.sh docker.io/shakiyam/calc Dockerfile
 
-build_dev: ## Build image 'shakiyam/calc_dev' from Dockerfile_dev
+build_dev: ## Build image 'shakiyam/calc_dev' from Dockerfile.dev
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/build.sh docker.io/shakiyam/calc_dev Dockerfile_dev
+	@./tools/build.sh docker.io/shakiyam/calc_dev Dockerfile.dev
 
 flake8: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
