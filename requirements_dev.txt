@@ -18,7 +18,7 @@ prompt-toolkit==3.0.33
     # via
     #   -r requirements_dev.in
     #   ptpython
-ptpython==3.0.20
+ptpython==3.0.21
     # via -r requirements_dev.in
 pygments==2.13.0
     # via ptpython
