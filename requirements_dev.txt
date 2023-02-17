@@ -22,7 +22,7 @@ ptpython==3.0.22
     # via -r requirements_dev.in
 pygments==2.14.0
     # via ptpython
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via mypy
 wcwidth==0.2.6
     # via prompt-toolkit
