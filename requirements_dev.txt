@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via ptpython
 jedi==0.18.2
     # via ptpython
-mypy==1.0.0
+mypy==1.0.1
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
