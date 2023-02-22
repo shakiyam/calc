@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-prompt-toolkit==3.0.36
+prompt-toolkit==3.0.37
     # via -r requirements.in
 wcwidth==0.2.6
     # via prompt-toolkit
