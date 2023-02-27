@@ -25,7 +25,7 @@ flake8: ## Lint Python code
 
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/hadolint.sh Dockerfile
+	@./tools/hadolint.sh Dockerfile Dockerfile.dev
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
