@@ -9,7 +9,6 @@ ALL_TARGETS := $(shell egrep -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://')
 .PHONY: $(ALL_TARGETS)
 
 all: shellcheck shfmt hadolint flake8 update_requirements_dev build_dev mypy update_requirements build ## Lint, update requirements.txt, and build
-	@:
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -26,6 +25,12 @@ flake8: ## Lint Python code
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/hadolint.sh Dockerfile Dockerfile.dev
+
+help: ## Print this help
+	@echo 'Usage: make [target]'
+	@echo ''
+	@echo 'Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
@@ -46,9 +51,3 @@ update_requirements: ## Update requirements.txt
 update_requirements_dev: ## Update requirements_dev.txt
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/pip-compile.sh requirements_dev.in --output-file requirements_dev.txt --upgrade
-
-help: ## Print this help
-	@echo 'Usage: make [target]'
-	@echo ''
-	@echo 'Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
