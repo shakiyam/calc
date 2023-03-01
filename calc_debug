@@ -9,7 +9,7 @@ if [[ $(command -v docker) ]]; then
     -u "$(id -u):$(id -g)" \
     -v "$PWD"/.mypy_cache:/.mypy_cache \
     -v "$PWD"/calc.py:/calc.py:ro \
-    docker.io/shakiyam/calc_dev "$@"
+    ghcr.io/shakiyam/calc_dev "$@"
 else
   podman container run \
     --name calc_dubug$$ \
@@ -18,5 +18,5 @@ else
     -it \
     -v "$PWD"/.mypy_cache:/.mypy_cache \
     -v "$PWD"/calc.py:/calc.py:ro \
-    docker.io/shakiyam/calc_dev "$@"
+    ghcr.io/shakiyam/calc_dev "$@"
 fi

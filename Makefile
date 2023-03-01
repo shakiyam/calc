@@ -12,11 +12,11 @@ all: lint update_requirements_dev build_dev mypy update_requirements build ## Li
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/build.sh docker.io/shakiyam/calc Dockerfile
+	@./tools/build.sh ghcr.io/shakiyam/calc Dockerfile
 
 build_dev: ## Build image 'shakiyam/calc_dev' from Dockerfile.dev
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/build.sh docker.io/shakiyam/calc_dev Dockerfile.dev
+	@./tools/build.sh ghcr.io/shakiyam/calc_dev Dockerfile.dev
 
 flake8: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
@@ -36,7 +36,7 @@ lint: flake8 hadolint shellcheck shfmt ## Lint for all dependencies
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/mypy.sh docker.io/shakiyam/calc_dev calc.py
+	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev calc.py
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"

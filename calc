@@ -7,11 +7,11 @@ if [[ $(command -v docker) ]]; then
     --rm \
     -it \
     -u "$(id -u):$(id -g)" \
-    docker.io/shakiyam/calc "$@"
+    ghcr.io/shakiyam/calc "$@"
 else
   podman container run \
     --name calc$$ \
     --rm \
     -it \
-    docker.io/shakiyam/calc "$@"
+    ghcr.io/shakiyam/calc "$@"
 fi
