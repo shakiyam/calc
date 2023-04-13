@@ -9,6 +9,7 @@ if [[ $(command -v docker) ]]; then
     -u "$(id -u):$(id -g)" \
     -v "$PWD"/.mypy_cache:/.mypy_cache \
     -v "$PWD"/calc.py:/calc.py:ro \
+    -v "$PWD"/test_calc.py:/test_calc.py:ro \
     ghcr.io/shakiyam/calc_dev "$@"
 else
   podman container run \
@@ -18,5 +19,6 @@ else
     -it \
     -v "$PWD"/.mypy_cache:/.mypy_cache \
     -v "$PWD"/calc.py:/calc.py:ro \
+    -v "$PWD"/test_calc.py:/test_calc.py:ro \
     ghcr.io/shakiyam/calc_dev "$@"
 fi

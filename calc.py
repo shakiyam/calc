@@ -67,20 +67,25 @@ def calculate(expression, last_result):
         return last_result
 
 
-last_result = 0
+def main():
+    last_result = 0
 
-if len(sys.argv) > 1:
-    expression = ' '.join(sys.argv[1:])
-    calculate(expression, last_result)
-    sys.exit()
+    if len(sys.argv) > 1:
+        expression = ' '.join(sys.argv[1:])
+        calculate(expression, last_result)
+        sys.exit()
 
-session: PromptSession = PromptSession()
-while True:
-    expression = session.prompt()
-    if not expression:
-        continue
-    elif expression[0] == '#':
-        continue
-    elif expression == 'exit':
-        break
-    last_result = calculate(expression, last_result)
+    session: PromptSession = PromptSession()
+    while True:
+        expression = session.prompt()
+        if not expression:
+            continue
+        elif expression[0] == '#':
+            continue
+        elif expression == 'exit':
+            break
+        last_result = calculate(expression, last_result)
+
+
+if __name__ == '__main__':
+    main()
