@@ -8,7 +8,7 @@ ALL_TARGETS := $(shell egrep -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://')
 
 .PHONY: $(ALL_TARGETS)
 
-all: lint update_requirements_dev build_dev mypy update_requirements build ## Lint, update requirements.txt, and build
+all: lint update_requirements_dev build_dev mypy test update_requirements build ## Lint, update requirements.txt, test, and build
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -45,6 +45,10 @@ shellcheck: ## Lint shell scripts
 shfmt: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc tools/*.sh
+
+test: ## Test Python code
+	@echo -e "\033[36m$@\033[0m"
+	@./calc_debug pytest test_calc.py
 
 update_requirements: ## Update requirements.txt
 	@echo -e "\033[36m$@\033[0m"
