@@ -48,7 +48,7 @@ shfmt: ## Lint shell scripts
 
 test: ## Test Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./calc_debug pytest test_calc.py
+	@./calc_debug pytest -p no:cacheprovider test_calc.py
 
 update_requirements: ## Update requirements.txt
 	@echo -e "\033[36m$@\033[0m"
