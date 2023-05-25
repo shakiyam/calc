@@ -3,8 +3,10 @@ FROM container-registry.oracle.com/os/oraclelinux:9-slim
 RUN microdnf -y install python3 pip \
   && microdnf clean all \
   && rm -rf /var/cache
-COPY requirements_dev.txt /requirements_dev.txt
+RUN mkdir -p /opt/calc
+WORKDIR /opt/calc
+COPY requirements_dev.txt .
 # hadolint ignore=DL3013
-RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip install --no-cache-dir -r /requirements_dev.txt
-COPY calc.py /calc.py
+RUN python3 -m pip install --no-cache-dir --upgrade pip && python3 -m pip install --no-cache-dir -r requirements_dev.txt
+COPY calc.py .
 CMD ["/bin/bash"]
