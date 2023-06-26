@@ -12,7 +12,7 @@ iniconfig==2.0.0
     # via pytest
 jedi==0.18.2
     # via ptpython
-mypy==1.4.0
+mypy==1.4.1
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
@@ -30,7 +30,7 @@ ptpython==3.0.23
     # via -r requirements_dev.in
 pygments==2.15.1
     # via ptpython
-pytest==7.3.2
+pytest==7.4.0
     # via -r requirements_dev.in
 tomli==2.0.1
     # via
