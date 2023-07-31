@@ -10,7 +10,7 @@ exceptiongroup==1.1.2
     # via pytest
 iniconfig==2.0.0
     # via pytest
-jedi==0.18.2
+jedi==0.19.0
     # via ptpython
 mypy==1.4.1
     # via -r requirements_dev.in
