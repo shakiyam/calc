@@ -6,5 +6,5 @@
 #
 prompt-toolkit==3.0.39
     # via -r requirements.in
-wcwidth==0.2.7
+wcwidth==0.2.8
     # via prompt-toolkit

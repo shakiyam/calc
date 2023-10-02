@@ -16,7 +16,7 @@ mypy==1.5.1
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
-packaging==23.1
+packaging==23.2
     # via pytest
 parso==0.8.3
     # via jedi
@@ -38,5 +38,5 @@ tomli==2.0.1
     #   pytest
 typing-extensions==4.8.0
     # via mypy
-wcwidth==0.2.7
+wcwidth==0.2.8
     # via prompt-toolkit
