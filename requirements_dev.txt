@@ -30,7 +30,7 @@ pygments==2.18.0
     # via ptpython
 pytest==8.2.1
     # via -r requirements_dev.in
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via mypy
 wcwidth==0.2.13
     # via prompt-toolkit
