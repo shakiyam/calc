@@ -20,7 +20,7 @@ parso==0.8.4
     # via jedi
 pluggy==1.5.0
     # via pytest
-prompt-toolkit==3.0.44
+prompt-toolkit==3.0.45
     # via
     #   -r requirements_dev.in
     #   ptpython
