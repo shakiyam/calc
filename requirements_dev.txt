@@ -14,7 +14,7 @@ mypy==1.10.0
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
-packaging==24.0
+packaging==24.1
     # via pytest
 parso==0.8.4
     # via jedi
@@ -30,7 +30,7 @@ pygments==2.18.0
     # via ptpython
 pytest==8.2.2
     # via -r requirements_dev.in
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via mypy
 wcwidth==0.2.13
     # via prompt-toolkit
