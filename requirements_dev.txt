@@ -10,7 +10,7 @@ iniconfig==2.0.0
     # via pytest
 jedi==0.19.1
     # via ptpython
-mypy==1.10.1
+mypy==1.11.0
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
@@ -24,11 +24,11 @@ prompt-toolkit==3.0.47
     # via
     #   -r requirements_dev.in
     #   ptpython
-ptpython==3.0.27
+ptpython==3.0.29
     # via -r requirements_dev.in
 pygments==2.18.0
     # via ptpython
-pytest==8.2.2
+pytest==8.3.2
     # via -r requirements_dev.in
 typing-extensions==4.12.2
     # via mypy
