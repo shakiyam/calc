@@ -10,7 +10,7 @@ iniconfig==2.0.0
     # via pytest
 jedi==0.19.1
     # via ptpython
-mypy==1.11.0
+mypy==1.11.1
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
