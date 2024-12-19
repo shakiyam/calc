@@ -8,13 +8,13 @@ appdirs==1.4.4
     # via ptpython
 iniconfig==2.0.0
     # via pytest
-jedi==0.19.1
+jedi==0.19.2
     # via ptpython
 mypy==1.13.0
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
-packaging==24.1
+packaging==24.2
     # via pytest
 parso==0.8.4
     # via jedi
@@ -28,7 +28,7 @@ ptpython==3.0.29
     # via -r requirements_dev.in
 pygments==2.18.0
     # via ptpython
-pytest==8.3.3
+pytest==8.3.4
     # via -r requirements_dev.in
 typing-extensions==4.12.2
     # via mypy
