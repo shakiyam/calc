@@ -28,7 +28,7 @@ ptpython==3.0.29
     # via -r requirements_dev.in
 pygments==2.19.1
     # via ptpython
-pytest==8.3.4
+pytest==8.3.5
     # via -r requirements_dev.in
 typing-extensions==4.12.2
     # via mypy
