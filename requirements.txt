@@ -4,7 +4,7 @@
 #
 #    pip-compile --strip-extras
 #
-prompt-toolkit==3.0.50
+prompt-toolkit==3.0.51
     # via -r requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
