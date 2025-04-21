@@ -14,7 +14,7 @@ mypy==1.15.0
     # via -r requirements_dev.in
 mypy-extensions==1.0.0
     # via mypy
-packaging==24.2
+packaging==25.0
     # via pytest
 parso==0.8.4
     # via jedi
