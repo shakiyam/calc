@@ -12,7 +12,7 @@ jedi==0.19.2
     # via ptpython
 mypy==1.15.0
     # via -r requirements_dev.in
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via mypy
 packaging==25.0
     # via pytest
