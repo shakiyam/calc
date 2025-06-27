@@ -51,8 +51,8 @@ def timedelta2str(td: timedelta) -> str:
     return s
 
 
-def calculate(expression, last_result):
-    expression = expression.replace('?', str(last_result))
+def calculate(expression: str, last_result: str) -> str:
+    expression = expression.replace('?', last_result)
     expression = re.sub(
         r'((\d+(?:\.\d+)? +days?, +)?\d+:[0-5][0-9]:[0-5][0-9](?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
         r'str2timedelta("\1")',
@@ -78,8 +78,8 @@ def calculate(expression, last_result):
         return last_result
 
 
-def main():
-    last_result = 0
+def main() -> None:
+    last_result = '0'
 
     if len(sys.argv) > 1:
         expression = ' '.join(sys.argv[1:])
