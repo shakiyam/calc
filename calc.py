@@ -10,19 +10,29 @@ from prompt_toolkit import PromptSession
 
 
 def str2timedelta(s: str) -> timedelta:
-    m = re.search(
-        r'(?:(\d+) +days?, +)?([0-9]|[01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(?:.(\d{1,6}))?',
-        s)
-    m = cast(Match, m)
-    if m.group(1) is None:
+    # Handle standalone days
+    day_only_match = re.match(r'^(\d+(?:\.\d+)?) +days?$', s)
+    if day_only_match:
+        days = float(day_only_match.group(1))
+        return timedelta(days=days)
+
+    # Handle time format with optional days
+    time_match = re.search(
+        r'((\d+(?:\.\d+)?) +days?, +)?(\d+):([0-5][0-9]):([0-5][0-9])(?:\.(\d{1,6}))?', s)
+    if not time_match:
+        raise ValueError(f'Invalid time format: {s}')
+    time_match = cast(Match, time_match)
+    if time_match.group(2) is None:
         days = 0
     else:
-        days = int(m.group(1))
-    seconds = int(m.group(2)) * 60 * 60 + int(m.group(3)) * 60 + int(m.group(4))
-    if m.group(5) is None:
+        days = float(time_match.group(2))
+    seconds = int(time_match.group(3)) * 60 * 60 + \
+        int(time_match.group(4)) * 60 + \
+        int(time_match.group(5))
+    if time_match.group(6) is None:
         microseconds = 0
     else:
-        microseconds = int(m.group(5)) * 10 ** (6 - len(m.group(5)))
+        microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
     return timedelta(days=days, seconds=seconds, microseconds=microseconds)
 
 
@@ -44,13 +54,14 @@ def timedelta2str(td: timedelta) -> str:
 def calculate(expression, last_result):
     expression = expression.replace('?', str(last_result))
     expression = re.sub(
+        r'((\d+(?:\.\d+)? +days?, +)?\d+:[0-5][0-9]:[0-5][0-9](?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
+        r'str2timedelta("\1")',
+        expression)
+    expression = re.sub(
         r'(\d+(?:\.\d+)?) *s(?:ec)?',
         r'timedelta(seconds=\1)',
         expression)
-    expression = re.sub(
-        r'((?:\d+ +days?, +)?(?:[0-9]|[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:.\d{1,6})?)',
-        r'str2timedelta("\1")', expression)
-    expression = expression.replace(',', '')
+    expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
     expression = expression.replace('@', ',')
     expression = expression.replace('x', '*').replace('X', '*')
     expression = expression.replace('^', '**')
