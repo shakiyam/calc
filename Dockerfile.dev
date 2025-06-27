@@ -9,4 +9,6 @@ COPY requirements_dev.txt .
 # hadolint ignore=DL3013
 RUN python3.12 -m pip install --no-cache-dir --upgrade pip && python3.12 -m pip install --no-cache-dir -r requirements_dev.txt
 COPY calc.py .
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT=$SOURCE_COMMIT
 CMD ["/bin/bash"]
