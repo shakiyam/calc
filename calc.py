@@ -65,9 +65,9 @@ def calculate(expression: str, last_result: str) -> str:
     expression = expression.replace('^', '**')
     try:
         result = eval(expression)
-        if type(result) in [int, float]:
+        if isinstance(result, (int, float)):
             result = f'{result:,}'
-        elif type(result) in [timedelta]:
+        elif isinstance(result, timedelta):
             result = timedelta2str(result)
         print(f'= {result}')
         return result
