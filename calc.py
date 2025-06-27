@@ -3,8 +3,7 @@ import sys
 from datetime import timedelta
 from math import ceil  # noqa: F401
 from math import floor  # noqa: F401
-from typing import Match
-from typing import cast
+from typing import Match, Optional
 
 from prompt_toolkit import PromptSession
 
@@ -17,11 +16,10 @@ def str2timedelta(s: str) -> timedelta:
         return timedelta(days=days)
 
     # Handle time format with optional days
-    time_match = re.search(
+    time_match: Optional[Match[str]] = re.search(
         r'((\d+(?:\.\d+)?) +days?, +)?(\d+):([0-5][0-9]):([0-5][0-9])(?:\.(\d{1,6}))?', s)
-    if not time_match:
+    if time_match is None:
         raise ValueError(f'Invalid time format: {s}')
-    time_match = cast(Match, time_match)
     if time_match.group(2) is None:
         days = 0
     else:
