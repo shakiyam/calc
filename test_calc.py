@@ -1,4 +1,6 @@
+import sys
 from datetime import timedelta
+from io import StringIO
 
 from calc import calculate, str2timedelta, timedelta2str
 
@@ -81,6 +83,40 @@ def test_error_handling():
     assert calculate('open("test.txt")', '999') == '999'
     assert calculate('import os', '999') == '999'
     assert calculate('__import__("os")', '999') == '999'
+
+
+def test_error_messages():
+    """Test specific error messages are displayed"""
+    # Capture stdout to check error messages
+    def capture_error_message(expression, last_result='999'):
+        old_stdout = sys.stdout
+        sys.stdout = captured_output = StringIO()
+        try:
+            result = calculate(expression, last_result)
+            output = captured_output.getvalue().strip()
+            return result, output
+        finally:
+            sys.stdout = old_stdout
+
+    # Test division by zero
+    result, output = capture_error_message('1 / 0')
+    assert result == '999'
+    assert 'Error: Division by zero' in output
+
+    # Test unsafe function call
+    result, output = capture_error_message('open("test.txt")')
+    assert result == '999'
+    assert 'Error: Unsafe function call' in output
+
+    # Test number overflow
+    result, output = capture_error_message('10.0 ** 400')
+    assert result == '999'
+    assert 'Error: Number too large' in output
+
+    # Test syntax error
+    result, output = capture_error_message('1 +')
+    assert result == '999'
+    assert 'Error: Invalid syntax' in output
 
 
 def test_str2timedelta():

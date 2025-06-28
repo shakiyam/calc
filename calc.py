@@ -96,13 +96,24 @@ def calculate(expression: str, last_result: str) -> str:
         print(f'= {result}')
         return result
     except ValueError as e:
-        if 'Unsafe' in str(e):
+        if 'Invalid time format' in str(e):
+            print('Error: Invalid time format (use HH:MM:SS with MM,SS as 00-59)')
+        elif 'Unsafe' in str(e):
             print(f'Error: {e}')
         else:
-            print('Error')
+            print(f'Error: Invalid expression - {e}')
         return last_result
-    except BaseException:
-        print('Error')
+    except ZeroDivisionError:
+        print('Error: Division by zero')
+        return last_result
+    except OverflowError:
+        print('Error: Number too large')
+        return last_result
+    except SyntaxError:
+        print('Error: Invalid syntax')
+        return last_result
+    except Exception as e:
+        print(f'Error: {type(e).__name__} - {e}')
         return last_result
 
 
