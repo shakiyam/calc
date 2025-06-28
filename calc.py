@@ -76,7 +76,7 @@ def safe_eval(expression: str) -> Any:
 def calculate(expression: str, last_result: str) -> str:
     expression = expression.replace('?', last_result)
     expression = re.sub(
-        r'((\d+(?:\.\d+)? +days?, +)?\d+:[0-5][0-9]:[0-5][0-9](?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
+        r'((\d+(?:\.\d+)? +days?, +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
         r'str2timedelta("\1")',
         expression)
     expression = re.sub(
@@ -85,7 +85,7 @@ def calculate(expression: str, last_result: str) -> str:
         expression)
     expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
     expression = expression.replace('@', ',')
-    expression = expression.replace('x', '*').replace('X', '*')
+    expression = re.sub(r'\b[xX]\b', '*', expression)
     expression = expression.replace('^', '**')
     try:
         result = safe_eval(expression)

@@ -22,10 +22,14 @@ def test_basic_operators():
 
 
 def test_mathematical_functions():
-    """Test built-in mathematical functions"""
+    """Test mathematical functions"""
     assert calculate('ceil(3.2)', '0') == '4'
     assert calculate('floor(3.8)', '0') == '3'
     assert calculate('round(3.7)', '0') == '4'
+
+    # Test exp function (verify it works and is not considered unsafe)
+    result = calculate('exp(1)', '0')
+    assert '2.71' in result  # exp(1) ≈ 2.718
 
 
 def test_time_calculations():
@@ -117,6 +121,11 @@ def test_error_messages():
     result, output = capture_error_message('1 +')
     assert result == '999'
     assert 'Error: Invalid syntax' in output
+
+    # Test invalid time format
+    result, output = capture_error_message('25:99:99')
+    assert result == '999'
+    assert 'Error: Invalid time format' in output
 
 
 def test_str2timedelta():
