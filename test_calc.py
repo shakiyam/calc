@@ -77,6 +77,11 @@ def test_error_handling():
     # Empty expressions
     assert calculate('', '999') == '999'
 
+    # Unsafe function calls (should be blocked by safe_eval)
+    assert calculate('open("test.txt")', '999') == '999'
+    assert calculate('import os', '999') == '999'
+    assert calculate('__import__("os")', '999') == '999'
+
 
 def test_str2timedelta():
     """Test time string parsing function"""

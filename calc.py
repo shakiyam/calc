@@ -1,9 +1,10 @@
+import math
 import re
 import sys
 from datetime import timedelta
 from math import ceil  # noqa: F401
 from math import floor  # noqa: F401
-from typing import Match, Optional
+from typing import Any, Match, Optional
 
 from prompt_toolkit import PromptSession
 
@@ -49,6 +50,29 @@ def timedelta2str(td: timedelta) -> str:
     return s
 
 
+SAFE_NAMES = {
+    '__builtins__': {},
+    'abs': abs, 'round': round, 'ceil': ceil, 'floor': floor,
+    'sqrt': math.sqrt, 'sin': math.sin, 'cos': math.cos, 'tan': math.tan,
+    'log': math.log, 'exp': math.exp, 'pi': math.pi, 'e': math.e,
+    'timedelta': timedelta, 'str2timedelta': str2timedelta,
+}
+
+
+def safe_eval(expression: str) -> Any:
+    """Safely evaluate expression with restricted namespace"""
+    if re.search(r'[a-zA-Z_][a-zA-Z0-9_]*\s*\(', expression):
+        allowed_funcs = {name for name, value in SAFE_NAMES.items()
+                         if name != '__builtins__' and callable(value)}
+        funcs_in_expr = re.findall(r'([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', expression)
+        if any(func not in allowed_funcs for func in funcs_in_expr):
+            raise ValueError('Unsafe function call')
+    dangerous = ['import', '__', 'exec', 'eval', 'open', 'file']
+    if any(word in expression for word in dangerous):
+        raise ValueError('Unsafe expression')
+    return eval(expression, SAFE_NAMES, {})
+
+
 def calculate(expression: str, last_result: str) -> str:
     expression = expression.replace('?', last_result)
     expression = re.sub(
@@ -64,13 +88,19 @@ def calculate(expression: str, last_result: str) -> str:
     expression = expression.replace('x', '*').replace('X', '*')
     expression = expression.replace('^', '**')
     try:
-        result = eval(expression)
+        result = safe_eval(expression)
         if isinstance(result, (int, float)):
             result = f'{result:,}'
         elif isinstance(result, timedelta):
             result = timedelta2str(result)
         print(f'= {result}')
         return result
+    except ValueError as e:
+        if 'Unsafe' in str(e):
+            print(f'Error: {e}')
+        else:
+            print('Error')
+        return last_result
     except BaseException:
         print('Error')
         return last_result
