@@ -2,40 +2,44 @@ import math
 import re
 import sys
 from datetime import timedelta
-from math import ceil  # noqa: F401
-from math import floor  # noqa: F401
-from typing import Any, Match, Optional
+from typing import Any
 
 from prompt_toolkit import PromptSession
 
 
-def str2timedelta(s: str) -> timedelta:
+def parse_time(time_str: str) -> str:
+    """Parse time string and return timedelta constructor call"""
     # Handle standalone days
-    day_only_match = re.match(r'^(\d+(?:\.\d+)?) +days?$', s)
+    day_only_match = re.match(r'^(\d+(?:\.\d+)?) +days?$', time_str)
     if day_only_match:
         days = float(day_only_match.group(1))
-        return timedelta(days=days)
-
-    # Handle time format with optional days
-    time_match: Optional[Match[str]] = re.search(
-        r'((\d+(?:\.\d+)?) +days?, +)?(\d+):([0-5][0-9]):([0-5][0-9])(?:\.(\d{1,6}))?', s)
-    if time_match is None:
-        raise ValueError(f'Invalid time format: {s}')
-    if time_match.group(2) is None:
-        days = 0
+        td = timedelta(days=days)
     else:
-        days = float(time_match.group(2))
-    seconds = int(time_match.group(3)) * 60 * 60 + \
-        int(time_match.group(4)) * 60 + \
-        int(time_match.group(5))
-    if time_match.group(6) is None:
-        microseconds = 0
-    else:
-        microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
-    return timedelta(days=days, seconds=seconds, microseconds=microseconds)
+        # Handle time format with optional days
+        time_match = re.search(
+            r'((\d+(?:\.\d+)?) +days?, +)?(\d+):([0-5][0-9]):([0-5][0-9])'
+            r'(?:\.(\d{1,6}))?', time_str)
+        if time_match is None:
+            raise ValueError(f'Invalid time format: {time_str}')
+        if time_match.group(2) is None:
+            days = 0
+        else:
+            days = float(time_match.group(2))
+        seconds = int(time_match.group(3)) * 60 * 60 + \
+            int(time_match.group(4)) * 60 + \
+            int(time_match.group(5))
+        if time_match.group(6) is None:
+            microseconds = 0
+        else:
+            microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
+        td = timedelta(days=days, seconds=seconds, microseconds=microseconds)
+
+    return (f'timedelta(days={td.days}, seconds={td.seconds}, '
+            f'microseconds={td.microseconds})')
 
 
-def timedelta2str(td: timedelta) -> str:
+def format_time(td: timedelta) -> str:
+    """Format timedelta to display string representation"""
     if td.days == 0:
         s = ''
     elif abs(td.days) == 1:
@@ -52,10 +56,10 @@ def timedelta2str(td: timedelta) -> str:
 
 SAFE_NAMES = {
     '__builtins__': {},
-    'abs': abs, 'round': round, 'ceil': ceil, 'floor': floor,
+    'abs': abs, 'round': round, 'ceil': math.ceil, 'floor': math.floor,
     'sqrt': math.sqrt, 'sin': math.sin, 'cos': math.cos, 'tan': math.tan,
     'log': math.log, 'exp': math.exp, 'pi': math.pi, 'e': math.e,
-    'timedelta': timedelta, 'str2timedelta': str2timedelta,
+    'timedelta': timedelta,
 }
 
 
@@ -74,25 +78,26 @@ def safe_eval(expression: str) -> Any:
 
 
 def calculate(expression: str, last_result: str) -> str:
-    expression = expression.replace('?', last_result)
-    expression = re.sub(
-        r'((\d+(?:\.\d+)? +days?, +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
-        r'str2timedelta("\1")',
-        expression)
-    expression = re.sub(
-        r'(\d+(?:\.\d+)?) *s(?:ec)?',
-        r'timedelta(seconds=\1)',
-        expression)
-    expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
-    expression = expression.replace('@', ',')
-    expression = re.sub(r'\b[xX]\b', '*', expression)
-    expression = expression.replace('^', '**')
+    """Calculate mathematical expression and return formatted result"""
     try:
+        expression = expression.replace('?', last_result)
+        expression = re.sub(
+            r'((\d+(?:\.\d+)? +days?, +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
+            lambda match: parse_time(match.group(1)),
+            expression)
+        expression = re.sub(
+            r'(\d+(?:\.\d+)?) *s(?:ec)?',
+            r'timedelta(seconds=\1)',
+            expression)
+        expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
+        expression = expression.replace('@', ',')
+        expression = re.sub(r'\b[xX]\b', '*', expression)
+        expression = expression.replace('^', '**')
         result = safe_eval(expression)
         if isinstance(result, (int, float)):
             result = f'{result:,}'
         elif isinstance(result, timedelta):
-            result = timedelta2str(result)
+            result = format_time(result)
         print(f'= {result}')
         return result
     except ValueError as e:

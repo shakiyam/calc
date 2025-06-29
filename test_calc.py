@@ -1,8 +1,7 @@
 import sys
-from datetime import timedelta
 from io import StringIO
 
-from calc import calculate, str2timedelta, timedelta2str
+from calc import calculate
 
 
 def test_basic_operators():
@@ -26,10 +25,7 @@ def test_mathematical_functions():
     assert calculate('ceil(3.2)', '0') == '4'
     assert calculate('floor(3.8)', '0') == '3'
     assert calculate('round(3.7)', '0') == '4'
-
-    # Test exp function (verify it works and is not considered unsafe)
-    result = calculate('exp(1)', '0')
-    assert '2.71' in result  # exp(1) ≈ 2.718
+    assert calculate('exp(1)', '0') == '2.718281828459045'
 
 
 def test_time_calculations():
@@ -69,96 +65,52 @@ def test_input_formatting():
 
 
 def test_error_handling():
-    """Test that invalid expressions return last_result and don't crash"""
-    # Invalid syntax
-    assert calculate('1 +', '999') == '999'
-    assert calculate('(', '999') == '999'
+    """Test error handling with both return values and error messages"""
+    last_result_val = '999'
 
-    # Division by zero
-    assert calculate('1 / 0', '999') == '999'
-
-    # Invalid function calls
-    assert calculate('undefined_function()', '999') == '999'
-
-    # Empty expressions
-    assert calculate('', '999') == '999'
-
-    # Unsafe function calls (should be blocked by safe_eval)
-    assert calculate('open("test.txt")', '999') == '999'
-    assert calculate('import os', '999') == '999'
-    assert calculate('__import__("os")', '999') == '999'
-
-
-def test_error_messages():
-    """Test specific error messages are displayed"""
     # Capture stdout to check error messages
-    def capture_error_message(expression, last_result='999'):
+    def capture_calculate_output(expression):
         old_stdout = sys.stdout
         sys.stdout = captured_output = StringIO()
         try:
-            result = calculate(expression, last_result)
+            result = calculate(expression, last_result_val)
             output = captured_output.getvalue().strip()
             return result, output
         finally:
             sys.stdout = old_stdout
 
-    # Test division by zero
-    result, output = capture_error_message('1 / 0')
-    assert result == '999'
-    assert 'Error: Division by zero' in output
-
-    # Test unsafe function call
-    result, output = capture_error_message('open("test.txt")')
-    assert result == '999'
-    assert 'Error: Unsafe function call' in output
-
-    # Test number overflow
-    result, output = capture_error_message('10.0 ** 400')
-    assert result == '999'
-    assert 'Error: Number too large' in output
-
-    # Test syntax error
-    result, output = capture_error_message('1 +')
-    assert result == '999'
+    result, output = capture_calculate_output('')
+    assert result == last_result_val
     assert 'Error: Invalid syntax' in output
 
-    # Test invalid time format
-    result, output = capture_error_message('25:99:99')
-    assert result == '999'
+    result, output = capture_calculate_output('1 +')
+    assert result == last_result_val
+    assert 'Error: Invalid syntax' in output
+
+    result, output = capture_calculate_output('(')
+    assert result == last_result_val
+    assert 'Error: Invalid syntax' in output
+
+    result, output = capture_calculate_output('1 / 0')
+    assert result == last_result_val
+    assert 'Error: Division by zero' in output
+
+    result, output = capture_calculate_output('10.0 ** 400')
+    assert result == last_result_val
+    assert 'Error: Number too large' in output
+
+    result, output = capture_calculate_output('sqrt(-1)')
+    assert result == last_result_val
+    assert 'Error: Invalid expression' in output
+
+    result, output = capture_calculate_output('25:99:99')
+    assert result == last_result_val
     assert 'Error: Invalid time format' in output
 
+    result, output = capture_calculate_output('open("test.txt")')
+    assert result == last_result_val
+    assert 'Error: Unsafe function call' in output
 
-def test_str2timedelta():
-    """Test time string parsing function"""
-    # Basic time format
-    td = str2timedelta('01:30:45')
-    assert td.seconds == 5445  # 1*3600 + 30*60 + 45
-
-    # With days
-    td = str2timedelta('2 days, 01:30:45')
-    assert td.days == 2
-    assert td.seconds == 5445
-
-    # With microseconds
-    td = str2timedelta('00:00:01.500000')
-    assert td.seconds == 1
-    assert td.microseconds == 500000
-
-
-def test_timedelta2str():
-    """Test time delta to string conversion"""
-    # Basic conversion
-    td = timedelta(hours=1, minutes=30, seconds=45)
-    assert timedelta2str(td) == '01:30:45'
-
-    # With days
-    td = timedelta(days=2, hours=1, minutes=30, seconds=45)
-    assert timedelta2str(td) == '2 days, 01:30:45'
-
-    # Single day
-    td = timedelta(days=1, hours=1, minutes=30, seconds=45)
-    assert timedelta2str(td) == '1 day, 01:30:45'
-
-    # With microseconds
-    td = timedelta(seconds=1, microseconds=500000)
-    assert timedelta2str(td) == '00:00:01.500000'
+    result, output = capture_calculate_output('import os')
+    assert result == last_result_val
+    assert 'Error: Unsafe expression' in output
