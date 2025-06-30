@@ -101,7 +101,7 @@ def test_error_handling():
 
     result, output = capture_calculate_output('sqrt(-1)')
     assert result == last_result_val
-    assert 'Error: Invalid expression' in output
+    assert 'Error: math domain error' in output
 
     result, output = capture_calculate_output('25:99:99')
     assert result == last_result_val
@@ -109,8 +109,8 @@ def test_error_handling():
 
     result, output = capture_calculate_output('open("test.txt")')
     assert result == last_result_val
-    assert 'Error: Unsafe function call' in output
+    assert 'Error: Unsupported function:' in output
 
     result, output = capture_calculate_output('import os')
     assert result == last_result_val
-    assert 'Error: Unsafe expression' in output
+    assert 'Error: Invalid syntax' in output

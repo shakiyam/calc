@@ -1,8 +1,8 @@
-import math
 import re
 import sys
 from datetime import timedelta
-from typing import Any
+
+from evaluator import safe_eval as ast_safe_eval
 
 from prompt_toolkit import PromptSession
 
@@ -54,29 +54,6 @@ def format_time(td: timedelta) -> str:
     return s
 
 
-SAFE_NAMES = {
-    '__builtins__': {},
-    'abs': abs, 'round': round, 'ceil': math.ceil, 'floor': math.floor,
-    'sqrt': math.sqrt, 'sin': math.sin, 'cos': math.cos, 'tan': math.tan,
-    'log': math.log, 'exp': math.exp, 'pi': math.pi, 'e': math.e,
-    'timedelta': timedelta,
-}
-
-
-def safe_eval(expression: str) -> Any:
-    """Safely evaluate expression with restricted namespace"""
-    if re.search(r'[a-zA-Z_][a-zA-Z0-9_]*\s*\(', expression):
-        allowed_funcs = {name for name, value in SAFE_NAMES.items()
-                         if name != '__builtins__' and callable(value)}
-        funcs_in_expr = re.findall(r'([a-zA-Z_][a-zA-Z0-9_]*)\s*\(', expression)
-        if any(func not in allowed_funcs for func in funcs_in_expr):
-            raise ValueError('Unsafe function call')
-    dangerous = ['import', '__', 'exec', 'eval', 'open', 'file']
-    if any(word in expression for word in dangerous):
-        raise ValueError('Unsafe expression')
-    return eval(expression, SAFE_NAMES, {})
-
-
 def calculate(expression: str, last_result: str) -> str:
     """Calculate mathematical expression and return formatted result"""
     try:
@@ -93,7 +70,7 @@ def calculate(expression: str, last_result: str) -> str:
         expression = expression.replace('@', ',')
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
-        result = safe_eval(expression)
+        result = ast_safe_eval(expression)
         if isinstance(result, (int, float)):
             result = f'{result:,}'
         elif isinstance(result, timedelta):
@@ -103,10 +80,11 @@ def calculate(expression: str, last_result: str) -> str:
     except ValueError as e:
         if 'Invalid time format' in str(e):
             print('Error: Invalid time format (use HH:MM:SS with MM,SS as 00-59)')
-        elif 'Unsafe' in str(e):
-            print(f'Error: {e}')
         else:
-            print(f'Error: Invalid expression - {e}')
+            print(f'Error: {e}')
+        return last_result
+    except TypeError as e:
+        print(f'Error: {e}')
         return last_result
     except ZeroDivisionError:
         print('Error: Division by zero')
