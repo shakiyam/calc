@@ -1,1 +1,1 @@
-pip3 install --upgrade prompt_toolkit
+py -m pip install --upgrade prompt_toolkit
