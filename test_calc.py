@@ -81,7 +81,7 @@ def test_error_handling():
 
     result, output = capture_calculate_output('')
     assert result == last_result_val
-    assert 'Error: Invalid syntax' in output
+    assert output == ''
 
     result, output = capture_calculate_output('1 +')
     assert result == last_result_val

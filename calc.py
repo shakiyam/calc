@@ -57,6 +57,9 @@ def format_time(td: timedelta) -> str:
 def calculate(expression: str, last_result: str) -> str:
     """Calculate mathematical expression and return formatted result"""
     try:
+        expression = expression.split('#', 1)[0].strip()
+        if not expression:
+            return last_result
         expression = expression.replace('?', last_result)
         expression = re.sub(
             r'((\d+(?:\.\d+)? +days?, +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
@@ -112,8 +115,6 @@ def main() -> None:
     while True:
         expression = session.prompt()
         if not expression:
-            continue
-        elif expression[0] == '#':
             continue
         elif expression == 'exit':
             break
