@@ -58,6 +58,8 @@ Comments start with `#` and extend to the end of the line.
 | `sqrt(n)`       | Square root of `n`                              |
 | `tan(n)`        | Tangent of `n` (in radians)                     |
 
+When using functions with multiple arguments (e.g., `round(n, d)`), ensure there is a space after the comma separating the arguments.
+
 ### Constants
 
 | Constant | Description      |
@@ -72,6 +74,10 @@ Comments start with `#` and extend to the end of the line.
 ### History
 
 When running in the interactive shell (as shown in the Quick Start), you can access the previous result with the `?` symbol.
+
+### Number Formatting
+
+Numbers are displayed with a comma as a thousands separator (e.g., `1,234,567`). Input also supports numbers with thousands separators.
 
 ### Exiting
 
