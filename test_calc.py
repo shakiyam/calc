@@ -23,9 +23,13 @@ def test_basic_operators():
 def test_mathematical_functions():
     """Test mathematical functions"""
     assert calculate('ceil(3.2)', '0') == '4'
-    assert calculate('floor(3.8)', '0') == '3'
-    assert calculate('round(3.7)', '0') == '4'
     assert calculate('exp(1)', '0') == '2.718281828459045'
+    assert calculate('floor(3.8)', '0') == '3'
+    assert calculate('max(1, 2, 3)', '0') == '3'
+    assert calculate('max(10)', '0') == '10'
+    assert calculate('min(1, 2, 3)', '0') == '1'
+    assert calculate('min(10)', '0') == '10'
+    assert calculate('round(3.7)', '0') == '4'
 
 
 def test_time_calculations():

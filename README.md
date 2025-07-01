@@ -53,12 +53,14 @@ Comments start with `#` and extend to the end of the line.
 | `exp(n)`        | Exponential of `n` (e**n)                       |
 | `floor(n)`      | Floor: largest integer <= n                     |
 | `log(n)`        | Natural logarithm of `n`                        |
+| `max(a, b, ...)`| Maximum of all arguments                        |
+| `min(a, b, ...)`| Minimum of all arguments                        |
 | `round(n[, d])` | Rounds `n` to `d` decimal places (default is 0) |
 | `sin(n)`        | Sine of `n` (in radians)                        |
 | `sqrt(n)`       | Square root of `n`                              |
 | `tan(n)`        | Tangent of `n` (in radians)                     |
 
-When using functions with multiple arguments (e.g., `round(n, d)`), ensure there is a space after the comma separating the arguments.
+When using functions with multiple arguments (e.g., `max(a, b, ...)`), ensure there is a space after the comma separating the arguments.
 
 ### Constants
 

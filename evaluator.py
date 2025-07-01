@@ -13,6 +13,19 @@ allowed_operators: Dict[type, Callable[[Any, Any], Any]] = {
     ast.Pow: op.pow,
 }
 
+
+def _min_wrapper(*args: Any) -> Any:
+    if len(args) == 1:
+        return min([args[0]])
+    return min(*args)
+
+
+def _max_wrapper(*args: Any) -> Any:
+    if len(args) == 1:
+        return max([args[0]])
+    return max(*args)
+
+
 allowed_functions: Dict[str, Callable[..., Any]] = {
     'abs': abs,
     'ceil': math.ceil,
@@ -20,6 +33,8 @@ allowed_functions: Dict[str, Callable[..., Any]] = {
     'exp': math.exp,
     'floor': math.floor,
     'log': math.log,
+    'max': _max_wrapper,
+    'min': _min_wrapper,
     'round': round,
     'sin': math.sin,
     'sqrt': math.sqrt,
