@@ -20,6 +20,12 @@ def test_basic_operators():
     assert calculate('-5 * -3', '0') == '15'
 
 
+def test_comments():
+    """Test that comments are ignored"""
+    assert calculate('1 + 1 # This is a comment', '0') == '2'
+    assert calculate('# Just a comment', '0') == '0'
+
+
 def test_mathematical_functions():
     """Test mathematical functions"""
     assert calculate('ceil(3.2)', '0') == '4'
@@ -30,6 +36,12 @@ def test_mathematical_functions():
     assert calculate('min(1, 2, 3)', '0') == '1'
     assert calculate('min(10)', '0') == '10'
     assert calculate('round(3.7)', '0') == '4'
+
+
+def test_mathematical_constants():
+    """Test mathematical constants pi and e"""
+    assert calculate('pi', '0') == '3.141592653589793'
+    assert calculate('e', '0') == '2.718281828459045'
 
 
 def test_time_calculations():
