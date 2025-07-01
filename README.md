@@ -1,72 +1,118 @@
-calc
-====
+# calc
 
 A simple command-line calculator
 
-Usage
------
+## Quick Start
 
-You can use calc in two ways: shell mode and command.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/shakiyam/calc.git
+    cd calc
+    ```
 
-### Shell mode ###
+2.  **Run it:**
+    Use the `./calc` script to start the interactive shell. It requires Docker or Podman and will pull the necessary image automatically.
 
-```
-$ python3 calc.py
-1 + 1
-= 2
-1 + ? x 3,000
-= 6,001
-00:01:00 + 123sec
-= 00:03:03
-exit
-$
-```
+    ```bash
+    $ ./calc
+    1 + 1
+    = 2
+    1 + ? x 3,000
+    = 6,001
+    00:01:00 + 123sec
+    = 00:03:03
+    exit
+    $
+    ```
 
-### Command ###
+## Features
 
-```
-$ python3 calc.py '1 + 2 x 3,000'
-= 6,001
-$
-```
+### Comments
 
-Supported operators, functions, etc.
-------------------------------------
+Comments start with `#` and extend to the end of the line.
+`1 + 1 # This is a comment`
 
-### Comment ###
+### Operators
 
-A comment starts with a hash character `#`, and ends at the end of the line.
+| Operator | Description      | Aliases    |
+| :------- | :--------------- | :--------- |
+| `+`      | Addition         |            |
+| `-`      | Subtraction      |            |
+| `*`      | Multiplication   | `x`, `X`   |
+| `/`      | Division         |            |
+| `%`      | Modulo           |            |
+| `**`     | Exponentiation   | `^`        |
 
-### Operators ###
+### Functions
 
-`+`, `-`, `*`, `x`, `X`, `/`, `%`, `^`, `**`
+| Function        | Description                                     |
+| :-------------- | :---------------------------------------------- |
+| `abs(n)`        | Absolute value of `n`                           |
+| `ceil(n)`       | Ceiling: smallest integer >= n                  |
+| `cos(n)`        | Cosine of `n` (in radians)                      |
+| `exp(n)`        | Exponential of `n` (e**n)                       |
+| `floor(n)`      | Floor: largest integer <= n                     |
+| `log(n)`        | Natural logarithm of `n`                        |
+| `round(n[, d])` | Rounds `n` to `d` decimal places (default is 0) |
+| `sin(n)`        | Sine of `n` (in radians)                        |
+| `sqrt(n)`       | Square root of `n`                              |
+| `tan(n)`        | Tangent of `n` (in radians)                     |
 
-`x` and `X` are aliases for `*` and `^` is an alias for `**`.
+### Constants
 
-### Functions ###
+| Constant | Description      |
+| :------- | :--------------- |
+| `pi`     | 3.1415926535...  |
+| `e`      | 2.7182818284...  |
 
-* `ceil(n)` return the ceiling of n, the smallest integer greater than or equal to n.
-* `floor(n)` return the floor of n, the largest integer less than or equal to n.
-* `round(n[@d])` return n rounded to d precision after the decimal point. If d is omitted, it returns the nearest integer to its input.
+### Time Calculations
 
-### Units ###
+`calc` supports time calculations. You can input time in `HH:MM:SS` format or as seconds with the `sec` or `s` unit. The output is formatted as `[D day[s], ]HH:MM:SS[.UUUUUU]`.
 
-* `sec` or `s` convert seconds to [D day[s], ]HH:MM:SS[.UUUUUU].
+### History
 
-### History (shell mode) ###
+When running in the interactive shell (as shown in the Quick Start), you can access the previous result with the `?` symbol.
 
-Previous results can be accessed with the `?` symbol.
+### Exiting
 
-### Exit (shell mode) ###
+Type `exit` to leave the interactive shell.
 
-Exit with `exit`.
+## Detailed Usage
 
-Author
-------
+### Containerized Execution (Recommended)
+
+The `./calc` script runs the calculator inside a container.
+
+-   **Interactive Shell Mode:**
+    ```bash
+    ./calc
+    ```
+-   **Direct Command Execution:**
+    Pass the expression as a single argument.
+    ```bash
+    ./calc '1 + 2 * 3,000'
+    ```
+
+### Local Python Execution
+
+This method is for users who prefer not to use containers.
+
+-   **Prerequisites:** Python 3.x and `pip`.
+-   **Setup:** Install dependencies with `python3 -m pip install -r requirements.txt`.
+
+-   **Interactive Shell Mode:**
+    ```bash
+    python3 calc.py
+    ```
+-   **Direct Command Execution:**
+    ```bash
+    python3 calc.py '<expression>'
+    ```
+
+## Author
 
 [Shinichi Akiyama](https://github.com/shakiyam)
 
-License
--------
+## License
 
 [MIT License](https://opensource.org/licenses/MIT)
