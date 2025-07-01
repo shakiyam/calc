@@ -95,19 +95,29 @@ The `./calc` script runs the calculator inside a container.
 
 ### Local Python Execution
 
-This method is for users who prefer not to use containers.
+This method is for users who prefer not to use containers. The setup and execution commands differ slightly based on your operating system.
 
--   **Prerequisites:** Python 3.x and `pip`.
--   **Setup:** Install dependencies with `python3 -m pip install -r requirements.txt`.
+#### On Windows
 
--   **Interactive Shell Mode:**
-    ```bash
-    python3 calc.py
+-   **Setup:** Run the provided batch script to install dependencies.
+    ```batch
+    setup.bat
     ```
--   **Direct Command Execution:**
+
+-   **Usage:** Use the `py` command to run the calculator.
+    -   Interactive Mode: `py calc.py`
+    -   Direct Command: `py calc.py "<expression>"`
+
+#### On Linux and macOS
+
+-   **Setup:** Install dependencies using `pip`.
     ```bash
-    python3 calc.py '<expression>'
+    python3 -m pip install -r requirements.txt
     ```
+
+-   **Usage:** Use the `python3` command to run the calculator.
+    -   Interactive Mode: `python3 calc.py`
+    -   Direct Command: `python3 calc.py '<expression>'`
 
 ## Author
 
