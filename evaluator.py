@@ -53,6 +53,8 @@ def eval_expr(node: ast.AST) -> Union[int, float, timedelta]:
     Recursively evaluate an Abstract Syntax Tree node.
     """
     if isinstance(node, ast.Constant):
+        if not isinstance(node.value, (int, float)):
+            raise TypeError(f'Unsupported constant type: {type(node.value).__name__}')
         return node.value
     elif isinstance(node, ast.BinOp):
         if type(node.op) not in allowed_operators:
