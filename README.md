@@ -107,7 +107,7 @@ This method is for users who prefer not to use containers. The setup and executi
 
 #### On Windows
 
--   **Setup:** Install dependencies using `uv`.
+-   **Setup:** Install dependencies using [`uv`](https://docs.astral.sh/uv/).
     ```batch
     uv pip install --system -r requirements.txt
     ```
@@ -118,7 +118,7 @@ This method is for users who prefer not to use containers. The setup and executi
 
 #### On Linux and macOS
 
--   **Setup:** Install dependencies using `uv`.
+-   **Setup:** Install dependencies using [`uv`](https://docs.astral.sh/uv/).
     ```bash
     uv pip install --system -r requirements.txt
     ```
