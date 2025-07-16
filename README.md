@@ -107,9 +107,9 @@ This method is for users who prefer not to use containers. The setup and executi
 
 #### On Windows
 
--   **Setup:** Run the provided batch script to install dependencies.
+-   **Setup:** Install dependencies using `uv`.
     ```batch
-    setup.bat
+    uv pip install --system -r requirements.txt
     ```
 
 -   **Usage:** Use the `py` command to run the calculator.
@@ -118,9 +118,9 @@ This method is for users who prefer not to use containers. The setup and executi
 
 #### On Linux and macOS
 
--   **Setup:** Install dependencies using `pip`.
+-   **Setup:** Install dependencies using `uv`.
     ```bash
-    python3 -m pip install -r requirements.txt
+    uv pip install --system -r requirements.txt
     ```
 
 -   **Usage:** Use the `python3` command to run the calculator.
