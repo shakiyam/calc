@@ -1,7 +1,7 @@
 import sys
 from io import StringIO
 
-from calc import calculate
+from calc.__main__ import calculate
 
 
 def test_basic_operators():

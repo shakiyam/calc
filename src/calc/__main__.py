@@ -2,9 +2,9 @@ import re
 import sys
 from datetime import timedelta
 
-from evaluator import safe_eval as ast_safe_eval
-
 from prompt_toolkit import PromptSession
+
+from .evaluator import safe_eval as ast_safe_eval
 
 
 def parse_time(time_str: str) -> str:

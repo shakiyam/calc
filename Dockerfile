@@ -8,7 +8,9 @@ WORKDIR /opt/calc
 COPY requirements.txt .
 # hadolint ignore=DL3013
 RUN python3.12 -m pip install --no-cache-dir --upgrade pip && python3.12 -m pip install --no-cache-dir -r requirements.txt
-COPY calc.py evaluator.py ./
+COPY pyproject.toml .
+COPY src ./src
+RUN python3.12 -m pip install --no-cache-dir --no-deps .
 ARG SOURCE_COMMIT
 ENV SOURCE_COMMIT=$SOURCE_COMMIT
-ENTRYPOINT ["python3.12", "calc.py"]
+ENTRYPOINT ["calc"]

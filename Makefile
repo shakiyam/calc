@@ -34,7 +34,7 @@ lint: flake8 hadolint shellcheck shfmt ## Lint for all dependencies
 
 mypy: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev calc.py
+	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev src/calc
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
@@ -46,12 +46,12 @@ shfmt: ## Lint shell scripts
 
 test: ## Test Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./calc_debug pytest -p no:cacheprovider test_calc.py
+	@./calc_debug pytest -p no:cacheprovider tests/test_calc.py
 
 update_requirements: ## Update requirements.txt
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/pip-compile.sh --upgrade --strip-extras
+	@./tools/pip-compile.sh --resolver=backtracking --strip-extras --output-file requirements.txt pyproject.toml
 
 update_requirements_dev: ## Update requirements_dev.txt
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/pip-compile.sh requirements_dev.in --output-file requirements_dev.txt --upgrade --strip-extras
+	@./tools/pip-compile.sh --resolver=backtracking --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
