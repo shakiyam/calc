@@ -103,29 +103,30 @@ The `./calc` script runs the calculator inside a container.
 
 ### Local Python Execution
 
-This method is for users who prefer not to use containers. The setup and execution commands differ slightly based on your operating system.
+This method is for users who prefer not to use containers.
 
-#### On Windows
-
--   **Setup:** Install dependencies using [`uv`](https://docs.astral.sh/uv/).
-    ```batch
-    uv pip install --system -r requirements.txt
-    ```
-
--   **Usage:** Use the `py` command to run the calculator.
-    -   Interactive Mode: `py calc.py`
-    -   Direct Command: `py calc.py "<expression>"`
-
-#### On Linux and macOS
-
--   **Setup:** Install dependencies using [`uv`](https://docs.astral.sh/uv/).
+-   **Setup:** From the project root directory (where this README.md is located), install the package and its dependencies using [`uv`](https://docs.astral.sh/uv/).
+    
+    Option 1: Using virtual environment (recommended)
     ```bash
-    uv pip install --system -r requirements.txt
+    uv venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    uv pip install -e .
+    ```
+    
+    Option 2: System-wide installation (may require administrator privileges)
+    ```bash
+    uv pip install --system -e .
     ```
 
--   **Usage:** Use the `python3` command to run the calculator.
-    -   Interactive Mode: `python3 calc.py`
-    -   Direct Command: `python3 calc.py '<expression>'`
+-   **Usage:** After installation, run the calculator from anywhere:
+    ```bash
+    # Interactive Mode
+    calc
+    
+    # Direct Command
+    calc '1 + 2 * 3'
+    ```
 
 ## Author
 
