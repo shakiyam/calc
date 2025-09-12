@@ -39,10 +39,11 @@ make test           # Test Python code with pytest
 ### Linting and Type Checking
 
 ```bash
-make lint          # Run all linters (flake8, hadolint, shellcheck, shfmt)
+make lint          # Run all linters (flake8, hadolint, markdownlint, shellcheck, shfmt)
 make flake8        # Lint Python code
 make mypy          # Check Python types
 make hadolint      # Lint Dockerfile
+make markdownlint  # Lint Markdown files
 make shellcheck    # Lint shell scripts
 make shfmt         # Lint shell script formatting
 ```

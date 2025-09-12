@@ -30,7 +30,11 @@ help: ## Print this help
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-lint: flake8 hadolint shellcheck shfmt ## Run all linters (flake8, hadolint, shellcheck, shfmt)
+lint: flake8 hadolint markdownlint shellcheck shfmt ## Run all linters (flake8, hadolint, markdownlint, shellcheck, shfmt)
+
+markdownlint: ## Lint Markdown files
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/markdownlint.sh "*.md"
 
 mypy: ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
