@@ -30,9 +30,9 @@ help: ## Print this help
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-lint: flake8 hadolint shellcheck shfmt ## Lint for all dependencies
+lint: flake8 hadolint shellcheck shfmt ## Run all linters (flake8, hadolint, shellcheck, shfmt)
 
-mypy: ## Lint Python code
+mypy: ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev src/calc
 
@@ -40,11 +40,11 @@ shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shellcheck.sh calc tools/*.sh
 
-shfmt: ## Lint shell scripts
+shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc tools/*.sh
 
-test: ## Test Python code
+test: ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
 	@./calc_debug pytest -p no:cacheprovider tests/test_calc.py
 
