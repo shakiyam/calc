@@ -4,14 +4,14 @@ A simple command-line calculator
 
 ## Quick Start
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
+
     ```bash
     git clone https://github.com/shakiyam/calc.git
     cd calc
     ```
 
-2.  **Run it:**
-    Use the `./calc` script to start the interactive shell. It requires Docker or Podman and will pull the necessary image automatically.
+2. **Run it:** Use the `./calc` script to start the interactive shell. It requires Docker or Podman and will pull the necessary image automatically.
 
     ```bash
     $ ./calc
@@ -91,42 +91,47 @@ Type `exit` to leave the interactive shell.
 
 The `./calc` script runs the calculator inside a container.
 
--   **Interactive Shell Mode:**
-    ```bash
-    ./calc
-    ```
--   **Direct Command Execution:**
-    Pass the expression as a single argument.
-    ```bash
-    ./calc '1 + 2 * 3,000'
-    ```
+- **Interactive Shell Mode:**
+
+  ```bash
+  ./calc
+  ```
+
+- **Direct Command Execution:** Pass the expression as a single argument.
+
+  ```bash
+  ./calc '1 + 2 * 3,000'
+  ```
 
 ### Local Python Execution
 
 This method is for users who prefer not to use containers.
 
--   **Setup:** From the project root directory (where this README.md is located), install the package and its dependencies using [`uv`](https://docs.astral.sh/uv/).
-    
-    Option 1: Using virtual environment (recommended)
-    ```bash
-    uv venv
-    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-    uv pip install -e .
-    ```
-    
-    Option 2: System-wide installation (may require administrator privileges)
-    ```bash
-    uv pip install --system -e .
-    ```
+- **Setup:** From the project root directory (where this README.md is located), install the package and its dependencies using [`uv`](https://docs.astral.sh/uv/).
 
--   **Usage:** After installation, run the calculator from anywhere:
-    ```bash
-    # Interactive Mode
-    calc
-    
-    # Direct Command
-    calc '1 + 2 * 3'
-    ```
+  Option 1: Using virtual environment (recommended)
+
+  ```bash
+  uv venv
+  source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+  uv pip install -e .
+  ```
+
+  Option 2: System-wide installation (may require administrator privileges)
+
+  ```bash
+  uv pip install --system -e .
+  ```
+
+- **Usage:** After installation, run the calculator from anywhere:
+
+  ```bash
+  # Interactive Mode
+  calc
+  
+  # Direct Command
+  calc '1 + 2 * 3'
+  ```
 
 ## Author
 
