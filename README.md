@@ -48,6 +48,7 @@ Comments start with `#` and extend to the end of the line.
 | Function        | Description                                     |
 | :-------------- | :---------------------------------------------- |
 | `abs(n)`        | Absolute value of `n`                           |
+| `avg(a, b, ...)`| Average of all arguments                        |
 | `ceil(n)`       | Ceiling: smallest integer >= n                  |
 | `cos(n)`        | Cosine of `n` (in radians)                      |
 | `exp(n)`        | Exponential of `n` (e**n)                       |

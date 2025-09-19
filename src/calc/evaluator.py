@@ -33,8 +33,15 @@ def _sum_wrapper(*args: Any) -> Any:
     return sum(args)
 
 
+def _avg_wrapper(*args: Any) -> Any:
+    if len(args) == 1:
+        return args[0]
+    return sum(args) / Decimal(len(args))
+
+
 allowed_functions: Dict[str, Callable[..., Any]] = {
     'abs': abs,
+    'avg': _avg_wrapper,
     'ceil': math.ceil,
     'cos': math.cos,
     'exp': math.exp,

@@ -44,6 +44,8 @@ def test_mathematical_functions():
     assert calculate('round(3.7)', '0') == '4'
     assert calculate('sum(1, 2, 3)', '0') == '6'
     assert calculate('sum(10)', '0') == '10'
+    assert calculate('avg(1, 2, 3)', '0') == '2'
+    assert calculate('avg(10)', '0') == '10'
 
 
 def test_mathematical_constants():
