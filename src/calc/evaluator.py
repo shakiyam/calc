@@ -32,6 +32,8 @@ def _sum_wrapper(*args: Decimal) -> Decimal:
 
 
 def _avg_wrapper(*args: Decimal) -> Decimal:
+    if len(args) == 0:
+        raise TypeError('avg expected at least 1 argument, got 0')
     return sum(args, Decimal('0')) / Decimal(len(args))
 
 

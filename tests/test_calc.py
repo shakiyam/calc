@@ -136,3 +136,15 @@ def test_error_handling():
     result, output = capture_calculate_output('import os')
     assert result == last_result_val
     assert 'Error: Invalid syntax' in output
+
+    result, output = capture_calculate_output('min()')
+    assert result == last_result_val
+    assert 'Error: min expected at least 1 argument, got 0' in output
+
+    result, output = capture_calculate_output('max()')
+    assert result == last_result_val
+    assert 'Error: max expected at least 1 argument, got 0' in output
+
+    result, output = capture_calculate_output('avg()')
+    assert result == last_result_val
+    assert 'Error: avg expected at least 1 argument, got 0' in output
