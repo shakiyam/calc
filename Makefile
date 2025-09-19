@@ -6,7 +6,7 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 .PHONY: $(ALL_TARGETS)
 .DEFAULT_GOAL := help
 
-all: lint update_requirements_dev build_dev mypy test update_requirements build ## Lint, update requirements.txt, test, and build
+all: lint update_requirements_dev mypy test update_requirements build ## Lint, update requirements.txt, test, and build
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -36,7 +36,7 @@ markdownlint: ## Lint Markdown files
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/markdownlint.sh "*.md"
 
-mypy: ## Check Python types
+mypy: build_dev ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev src/calc
 
@@ -48,7 +48,7 @@ shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc tools/*.sh
 
-test: ## Test Python code with pytest
+test: build_dev ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
 	@./calc_debug pytest -p no:cacheprovider tests/test_calc.py
 
