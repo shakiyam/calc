@@ -76,11 +76,11 @@ def calculate(expression: str, last_result: str) -> str:
         expression = expression.replace('^', '**')
         result = ast_safe_eval(expression)
         if isinstance(result, Decimal):
-            result = f'{result:,}'
+            formatted_result = f'{result:,}'
         elif isinstance(result, timedelta):
-            result = format_time(result)
-        print(f'= {result}')
-        return result
+            formatted_result = format_time(result)
+        print(f'= {formatted_result}')
+        return formatted_result
     except ValueError as e:
         if 'Invalid time format' in str(e):
             print('Error: Invalid time format (use HH:MM:SS with MM,SS as 00-59)')

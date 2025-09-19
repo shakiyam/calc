@@ -15,28 +15,24 @@ allowed_operators: Dict[type, Callable[[Any, Any], Any]] = {
 }
 
 
-def _min_wrapper(*args: Any) -> Any:
+def _min_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     if len(args) == 1:
         return args[0]
     return min(*args)
 
 
-def _max_wrapper(*args: Any) -> Any:
+def _max_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     if len(args) == 1:
         return args[0]
     return max(*args)
 
 
-def _sum_wrapper(*args: Any) -> Any:
-    if len(args) == 1:
-        return args[0]
-    return sum(args)
+def _sum_wrapper(*args: Decimal) -> Decimal:
+    return sum(args, Decimal('0'))
 
 
-def _avg_wrapper(*args: Any) -> Any:
-    if len(args) == 1:
-        return args[0]
-    return sum(args) / Decimal(len(args))
+def _avg_wrapper(*args: Decimal) -> Decimal:
+    return sum(args, Decimal('0')) / Decimal(len(args))
 
 
 allowed_functions: Dict[str, Callable[..., Any]] = {
@@ -131,7 +127,7 @@ def eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         raise TypeError(f'Unsupported AST node type: {type(node).__name__}')
 
 
-def safe_eval(expression: str) -> Any:
+def safe_eval(expression: str) -> Union[Decimal, timedelta]:
     """
     Safely evaluate a mathematical expression string.
     """
