@@ -58,6 +58,7 @@ Comments start with `#` and extend to the end of the line.
 | `round(n[, d])` | Rounds `n` to `d` decimal places (default is 0) |
 | `sin(n)`        | Sine of `n` (in radians)                        |
 | `sqrt(n)`       | Square root of `n`                              |
+| `sum(a, b, ...)`| Sum of all arguments                            |
 | `tan(n)`        | Tangent of `n` (in radians)                     |
 
 When using functions with multiple arguments (e.g., `max(a, b, ...)`), ensure there is a space after the comma separating the arguments.

@@ -17,14 +17,20 @@ allowed_operators: Dict[type, Callable[[Any, Any], Any]] = {
 
 def _min_wrapper(*args: Any) -> Any:
     if len(args) == 1:
-        return min([args[0]])
+        return args[0]
     return min(*args)
 
 
 def _max_wrapper(*args: Any) -> Any:
     if len(args) == 1:
-        return max([args[0]])
+        return args[0]
     return max(*args)
+
+
+def _sum_wrapper(*args: Any) -> Any:
+    if len(args) == 1:
+        return args[0]
+    return sum(args)
 
 
 allowed_functions: Dict[str, Callable[..., Any]] = {
@@ -39,6 +45,7 @@ allowed_functions: Dict[str, Callable[..., Any]] = {
     'round': round,
     'sin': math.sin,
     'sqrt': math.sqrt,
+    'sum': _sum_wrapper,
     'tan': math.tan,
     'timedelta': timedelta,
 }
