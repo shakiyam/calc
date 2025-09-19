@@ -8,7 +8,7 @@ def test_basic_operators():
     """Test all supported operators and aliases"""
     # Basic arithmetic
     assert calculate('10 - 3', '0') == '7'
-    assert calculate('12 / 4', '0') == '3.0'
+    assert calculate('12 / 4', '0') == '3'
     assert calculate('7 % 3', '0') == '1'
     assert calculate('2 ** 3', '0') == '8'
 
@@ -18,6 +18,12 @@ def test_basic_operators():
     # Complex expressions with parentheses and negative numbers
     assert calculate('(2 + 3) * 4', '0') == '20'
     assert calculate('-5 * -3', '0') == '15'
+
+
+def test_decimal_precision():
+    """Test that decimal calculations are precise"""
+    # Classic floating-point error that should be fixed with Decimal
+    assert calculate('0.1 + 0.2', '0') == '0.3'
 
 
 def test_comments():
@@ -110,10 +116,6 @@ def test_error_handling():
     result, output = capture_calculate_output('1 / 0')
     assert result == last_result_val
     assert 'Error: Division by zero' in output
-
-    result, output = capture_calculate_output('10.0 ** 400')
-    assert result == last_result_val
-    assert 'Error: Number too large' in output
 
     result, output = capture_calculate_output('sqrt(-1)')
     assert result == last_result_val

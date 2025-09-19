@@ -1,6 +1,7 @@
 import re
 import sys
 from datetime import timedelta
+from decimal import Decimal
 
 from prompt_toolkit import PromptSession
 
@@ -74,7 +75,7 @@ def calculate(expression: str, last_result: str) -> str:
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
         result = ast_safe_eval(expression)
-        if isinstance(result, (int, float)):
+        if isinstance(result, Decimal):
             result = f'{result:,}'
         elif isinstance(result, timedelta):
             result = format_time(result)
