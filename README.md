@@ -21,6 +21,8 @@ A simple command-line calculator
     = 6,001
     00:01:00 + 123sec
     = 00:03:03
+    25:00:00
+    = 1 day and 01:00:00
     exit
     $
     ```
@@ -73,7 +75,7 @@ When using functions with multiple arguments (e.g., `max(a, b, ...)`), ensure th
 
 ### Time Calculations
 
-`calc` supports time calculations. You can input time in `HH:MM:SS` format or as seconds with the `sec` or `s` unit. The output is formatted as `[D day[s], ]HH:MM:SS[.UUUUUU]`.
+`calc` supports time calculations. You can input time in `HH:MM:SS` format, as seconds with the `sec` or `s` unit, or as days with the `day` or `days` unit. For times that include days, use the format `D day and HH:MM:SS` or `D days and HH:MM:SS`. The output is formatted as `[D day[s] and ]HH:MM:SS[.UUUUUU]`.
 
 ### History
 

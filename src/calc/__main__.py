@@ -10,15 +10,13 @@ from .evaluator import safe_eval as ast_safe_eval
 
 def parse_time(time_str: str) -> str:
     """Parse time string and return timedelta constructor call"""
-    # Handle standalone days
     day_only_match = re.match(r'^(\d+(?:\.\d+)?) +days?$', time_str)
     if day_only_match:
         days = float(day_only_match.group(1))
         td = timedelta(days=days)
     else:
-        # Handle time format with optional days
         time_match = re.search(
-            r'((\d+(?:\.\d+)?) +days?, +)?(\d+):([0-5][0-9]):([0-5][0-9])'
+            r'((\d+(?:\.\d+)?) +days? +and +)?(\d+):([0-5][0-9]):([0-5][0-9])'
             r'(?:\.(\d{1,6}))?', time_str)
         if time_match is None:
             raise ValueError(f'Invalid time format: {time_str}')
@@ -44,9 +42,9 @@ def format_time(td: timedelta) -> str:
     if td.days == 0:
         s = ''
     elif abs(td.days) == 1:
-        s = f'{td.days:d} day, '
+        s = f'{td.days:d} day and '
     else:
-        s = f'{td.days:d} days, '
+        s = f'{td.days:d} days and '
     mm, ss = divmod(td.seconds, 60)
     hh, mm = divmod(mm, 60)
     s = s + f'{hh:02d}:{mm:02d}:{ss:02d}'
@@ -63,7 +61,7 @@ def calculate(expression: str, last_result: str) -> str:
             return last_result
         expression = expression.replace('?', last_result)
         expression = re.sub(
-            r'((\d+(?:\.\d+)? +days?, +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
+            r'((\d+(?:\.\d+)? +days? +and +)?\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? +days?)',
             lambda match: parse_time(match.group(1)),
             expression)
         expression = re.sub(

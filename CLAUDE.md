@@ -15,7 +15,8 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 
 - Interactive shell mode with history support (using `?` for previous result)
 - Safe mathematical expression evaluation with whitelisted functions/operators
-- Time calculations supporting `HH:MM:SS` format and seconds with `s`/`sec` units
+- Time calculations supporting `HH:MM:SS` format, seconds with `s`/`sec` units, and days with `day`/`days` units
+- Time output uses `and` format: `1 day and 02:00:00`
 - Number formatting with thousands separators
 - Comment support (lines starting with `#`)
 - Operator aliases: `x`/`X` for multiplication, `^` for exponentiation

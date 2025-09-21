@@ -6,23 +6,17 @@ from calc.__main__ import calculate
 
 def test_basic_operators():
     """Test all supported operators and aliases"""
-    # Basic arithmetic
     assert calculate('10 - 3', '0') == '7'
     assert calculate('12 / 4', '0') == '3'
     assert calculate('7 % 3', '0') == '1'
     assert calculate('2 ** 3', '0') == '8'
-
-    # Operator aliases
     assert calculate('3 x 4', '0') == '12'
-
-    # Complex expressions with parentheses and negative numbers
     assert calculate('(2 + 3) * 4', '0') == '20'
     assert calculate('-5 * -3', '0') == '15'
 
 
 def test_decimal_precision():
     """Test that decimal calculations are precise"""
-    # Classic floating-point error that should be fixed with Decimal
     assert calculate('0.1 + 0.2', '0') == '0.3'
 
 
@@ -56,19 +50,18 @@ def test_mathematical_constants():
 
 def test_time_calculations():
     """Test time unit conversions and calculations"""
-    # Basic second conversions
     assert calculate('60s', '0') == '00:01:00'
-
-    # Standalone day unit tests
-    assert calculate('1 day', '0') == '1 day, 00:00:00'
-
-    # Time arithmetic
+    assert calculate('1 day', '0') == '1 day and 00:00:00'
     assert calculate('00:01:00 + 30s', '0') == '00:01:30'
     assert calculate('01:00:00 - 30s', '0') == '00:59:30'
     assert calculate('00:30:00 * 2', '0') == '01:00:00'
+    assert calculate('0.5 day and 06:00:00 + 30s', '0') == '18:00:30'
 
-    # Complex time expressions with decimal days
-    assert calculate('0.5 day, 06:00:00 + 30s', '0') == '18:00:30'
+
+def test_time_minmax_functions():
+    """Test min/max functions with time values"""
+    assert calculate('min(01:00:00, 90s)', '0') == '00:01:30'
+    assert calculate('min(1 day, 02:00:00, 25:00:00)', '0') == '02:00:00'
 
 
 def test_history_functionality():
@@ -80,13 +73,8 @@ def test_history_functionality():
 
 def test_input_formatting():
     """Test comma handling and number formatting"""
-    # Comma removal in input
     assert calculate('1,000 + 2,000', '0') == '3,000'
-
-    # @ to comma conversion
     assert calculate('round(3.14159@ 2)', '0') == '3.14'
-
-    # Large number formatting in output
     assert calculate('1000000', '0') == '1,000,000'
 
 
@@ -94,7 +82,6 @@ def test_error_handling():
     """Test error handling with both return values and error messages"""
     last_result_val = '999'
 
-    # Capture stdout to check error messages
     def capture_calculate_output(expression):
         old_stdout = sys.stdout
         sys.stdout = captured_output = StringIO()
