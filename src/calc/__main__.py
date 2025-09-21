@@ -69,7 +69,6 @@ def calculate(expression: str, last_result: str) -> str:
             r'timedelta(seconds=\1)',
             expression)
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
-        expression = expression.replace('@', ',')
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
         result = ast_safe_eval(expression)

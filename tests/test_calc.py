@@ -74,7 +74,6 @@ def test_history_functionality():
 def test_input_formatting():
     """Test comma handling and number formatting"""
     assert calculate('1,000 + 2,000', '0') == '3,000'
-    assert calculate('round(3.14159@ 2)', '0') == '3.14'
     assert calculate('1000000', '0') == '1,000,000'
 
 
