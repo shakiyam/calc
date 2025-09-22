@@ -80,32 +80,44 @@ Comments start with `#` and extend to the end of the line.
 
 ### Time Calculations
 
-`calc` supports time calculations:
+`calc` supports comprehensive time calculations with natural language input:
 
-- **Input:** `HH:MM:SS[.UUUUUU]` format, seconds with `s`/`sec` units, days with `day`/`days` units, or `D day[s] and HH:MM:SS` format
 - **Output:** Always uses `HH:MM:SS` format with `and` for days: `1 day and 02:00:00` (microseconds shown when present)
 
 **Input format examples:**
 
 ```text
+# Basic formats
 01:30:45                    → 01:30:45
 00:01:30.500000             → 00:01:30.500000
-150sec                      → 00:02:30
-150 s                       → 00:02:30
-2day                        → 2 days and 00:00:00
-2 days                      → 2 days and 00:00:00
-1 day and 12:30:00          → 1 day and 12:30:00
-3 days and 05:15:30         → 3 days and 05:15:30
-25:00:00                    → 1 day and 01:00:00
+60s                         → 00:01:00
+30min                       → 00:30:00
+5hr                         → 05:00:00
+1 day                       → 1 day and 00:00:00
+2d                          → 2 days and 00:00:00
+
+# Compact combinations
+1h 30m                      → 01:30:00
+1m 5s                       → 00:01:05
+
+# Day and combinations
+1 day and 10 hours          → 1 day and 10:00:00
+1 day and 1 hour 2 min      → 1 day and 01:02:00
+
+# Natural language
+1 day 2 hours 30 minutes    → 1 day and 02:30:00
+2 hours and 30 minutes      → 02:30:00
 ```
 
 **Calculation examples:**
 
 ```text
-00:01:00 + 123sec           → 00:03:03
-2days + 3:30:00             → 2 days and 03:30:00
-1 day and 12:00:00 - 6:30:00 → 1 day and 05:30:00
-10sec / 3                   → 00:00:03.333333
+00:01:00 + 30s              → 00:01:30
+01:00:00 - 30s              → 00:59:30
+00:30:00 * 2                → 01:00:00
+02:00:00 / 2                → 01:00:00
+1h + 30min                  → 01:30:00
+30min - 5s                  → 00:29:55
 ```
 
 ### History

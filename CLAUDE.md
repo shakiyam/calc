@@ -15,8 +15,13 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 
 - Interactive shell mode with history support (using `?` for previous result)
 - Safe mathematical expression evaluation with whitelisted functions/operators
-- Time calculations supporting `HH:MM:SS` format, seconds with `s`/`sec` units, and days with `day`/`days` units
-- Time output uses `and` format: `1 day and 02:00:00`
+- Comprehensive time calculations with natural language support:
+  - Basic format: `HH:MM:SS[.ffffff]` (microseconds optional)
+  - Basic units: `s`/`sec`/`seconds`, `m`/`min`/`minutes`, `h`/`hr`/`hours`, `d`/`day`/`days`
+  - Compact combinations: `1h 30m`, `1m 5s`
+  - Day combinations: `1 day and 10 hours`, `1 day and 1 hour 2 min`
+  - Natural language: `1 day 2 hours 30 minutes`, `2 hours and 30 minutes`
+- Time output uses `and` format: `1 day and 02:00:00` (with microseconds when present: `00:01:30.500000`)
 - Number formatting with thousands separators
 - Comment support (lines starting with `#`)
 - Operator aliases: `x`/`X` for multiplication, `^` for exponentiation
