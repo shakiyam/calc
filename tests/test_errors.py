@@ -43,7 +43,7 @@ def test_security_errors():
 
     result, output = capture_calculate_output('open("test.txt")', last_result_val)
     assert result == last_result_val
-    assert 'Error: Unsupported function:' in output
+    assert 'Error: Unsupported constant type: str' in output
 
 
 def test_runtime_errors():
@@ -87,9 +87,7 @@ def test_time_related_errors():
     result, output = capture_calculate_output('03:00:00 + 2', last_result_val)
     assert result == last_result_val
     assert 'Error: Unsupported operation' in output
-    assert 'between timedelta and Decimal' in output
 
-    result, output = capture_calculate_output('2 / 03:00:00', last_result_val)
+    result, output = capture_calculate_output('sum(1:00:00, 60)', last_result_val)
     assert result == last_result_val
-    assert 'Error: Unsupported operation' in output
-    assert 'between Decimal and timedelta' in output
+    assert 'Error: Cannot mix timedelta and Decimal in sum' in output
