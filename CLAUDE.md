@@ -34,7 +34,8 @@ make help          # Display all available make targets with descriptions
 
 ```bash
 make test           # Test Python code with pytest
-./calc_debug pytest -p no:cacheprovider tests/test_calc.py  # Run tests directly
+./calc_debug pytest -p no:cacheprovider tests/test_basic.py  # Run specific test file
+./calc_debug pytest -p no:cacheprovider tests/test_errors.py::test_syntax_errors  # Run specific test
 ```
 
 ### Linting and Type Checking
@@ -72,16 +73,14 @@ make update_requirements_dev  # Update requirements_dev.txt
 
 ## Test Structure
 
-Tests are in `tests/test_calc.py` and cover:
+Tests are organized in multiple files under `tests/`:
 
-- Basic arithmetic operators and aliases
-- Mathematical functions (sin, cos, sqrt, etc.)
-- Constants (pi, e)
-- Time calculations
-- Comment handling
-- Error conditions
+- `test_basic.py` - Basic arithmetic, precision, comments, formatting, history
+- `test_functions.py` - Mathematical functions and constants
+- `test_time.py` - Time calculations and conversions
+- `test_errors.py` - Error handling (syntax, security, runtime, arguments, time-related)
 
-When adding new features, add corresponding test cases following the existing pattern.
+When adding new features, add corresponding test cases in the appropriate file following the existing pattern.
 
 ## Security Model
 
