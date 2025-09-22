@@ -13,6 +13,8 @@ A simple command-line calculator
 
 2. **Run it:** Use the `./calc` script to start the interactive shell. It requires Docker or Podman and will pull the necessary image automatically.
 
+   *Note: If you prefer not to use Docker/Podman, see the [Local Python Execution](#local-python-execution) section below.*
+
     ```bash
     $ ./calc
     1 + 1
@@ -64,7 +66,10 @@ Comments start with `#` and extend to the end of the line.
 | `sum(a, b, ...)`| Sum of all arguments                            |
 | `tan(n)`        | Tangent of `n` (in radians)                     |
 
-When using functions with multiple arguments (e.g., `max(a, b, ...)`), ensure there is a space after the comma separating the arguments.
+**Important:** When using functions with multiple arguments, include a space after each comma:
+
+- ✅ Correct: `max(1, 2, 3)` or `avg(10, 20, 30)`
+- ❌ Incorrect: `max(1,2,3)` or `avg(10,20,30)`
 
 ### Constants
 
@@ -75,7 +80,33 @@ When using functions with multiple arguments (e.g., `max(a, b, ...)`), ensure th
 
 ### Time Calculations
 
-`calc` supports time calculations. You can input time in `HH:MM:SS` format, as seconds with the `sec` or `s` unit, or as days with the `day` or `days` unit. For times that include days, use the format `D day and HH:MM:SS` or `D days and HH:MM:SS`. The output is formatted as `[D day[s] and ]HH:MM:SS[.UUUUUU]`.
+`calc` supports time calculations:
+
+- **Input:** `HH:MM:SS[.UUUUUU]` format, seconds with `s`/`sec` units, days with `day`/`days` units, or `D day[s] and HH:MM:SS` format
+- **Output:** Always uses `HH:MM:SS` format with `and` for days: `1 day and 02:00:00` (microseconds shown when present)
+
+**Input format examples:**
+
+```text
+01:30:45                    → 01:30:45
+00:01:30.500000             → 00:01:30.500000
+150sec                      → 00:02:30
+150 s                       → 00:02:30
+2day                        → 2 days and 00:00:00
+2 days                      → 2 days and 00:00:00
+1 day and 12:30:00          → 1 day and 12:30:00
+3 days and 05:15:30         → 3 days and 05:15:30
+25:00:00                    → 1 day and 01:00:00
+```
+
+**Calculation examples:**
+
+```text
+00:01:00 + 123sec           → 00:03:03
+2days + 3:30:00             → 2 days and 03:30:00
+1 day and 12:00:00 - 6:30:00 → 1 day and 05:30:00
+10sec / 3                   → 00:00:03.333333
+```
 
 ### History
 
