@@ -3,9 +3,9 @@ import math
 import operator as op
 from datetime import timedelta
 from decimal import Decimal
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Final, Union
 
-allowed_operators: Dict[type, Callable[[Any, Any], Any]] = {
+_ALLOWED_BINARY_OPERATORS: Final[Dict[type, Callable[[Any, Any], Any]]] = {
     ast.Add: op.add,
     ast.Sub: op.sub,
     ast.Mult: op.mul,
@@ -37,7 +37,7 @@ def _avg_wrapper(*args: Decimal) -> Decimal:
     return sum(args, Decimal('0')) / Decimal(len(args))
 
 
-allowed_functions: Dict[str, Callable[..., Any]] = {
+_ALLOWED_FUNCTIONS: Final[Dict[str, Callable[..., Any]]] = {
     'abs': abs,
     'avg': _avg_wrapper,
     'ceil': math.ceil,
@@ -55,10 +55,54 @@ allowed_functions: Dict[str, Callable[..., Any]] = {
     'timedelta': timedelta,
 }
 
-allowed_constants: Dict[str, Decimal] = {
+_ALLOWED_CONSTANTS: Final[Dict[str, Decimal]] = {
     'e': Decimal(str(math.e)),
     'pi': Decimal(str(math.pi)),
 }
+
+
+def eval_binop(
+    left: Union[Decimal, timedelta],
+    right: Union[Decimal, timedelta],
+    operator_type: type
+) -> Union[Decimal, timedelta]:
+    """
+    Evaluate binary operations with type checking for timedelta and Decimal.
+    Mixed type operations are restricted to multiplication and division.
+    """
+    if operator_type not in _ALLOWED_BINARY_OPERATORS:
+        raise TypeError(f'Unsupported operator: {operator_type.__name__}')
+
+    operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
+
+    if isinstance(left, type(right)) and isinstance(right, type(left)):
+        return operator_func(left, right)
+
+    if isinstance(left, timedelta) and isinstance(right, Decimal):
+        if operator_type in [ast.Mult, ast.Div]:
+            converted_right: float = float(right)
+            result: timedelta = operator_func(left, converted_right)
+            return result
+        else:
+            op_name = operator_type.__name__.replace('ast.', '')
+            raise TypeError(
+                f"Unsupported operation '{op_name}' between timedelta and Decimal. "
+                f'Only multiplication and division are allowed.'
+            )
+
+    elif isinstance(left, Decimal) and isinstance(right, timedelta):
+        if operator_type == ast.Mult:
+            converted_left: float = float(left)
+            result = operator_func(converted_left, right)
+            return result
+        else:
+            op_name = operator_type.__name__.replace('ast.', '')
+            raise TypeError(
+                f"Unsupported operation '{op_name}' between Decimal and timedelta. "
+                f'Only multiplication is allowed in this order.'
+            )
+
+    return operator_func(left, right)
 
 
 def eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
@@ -71,17 +115,9 @@ def eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         original_str = expression[node.col_offset:node.end_col_offset]
         return Decimal(original_str)
     elif isinstance(node, ast.BinOp):
-        if type(node.op) not in allowed_operators:
-            raise TypeError(f'Unsupported operator: {type(node.op).__name__}')
         left = eval_expr(node.left, expression)
         right = eval_expr(node.right, expression)
-
-        if isinstance(left, timedelta) and isinstance(right, Decimal):
-            right = float(right)  # type: ignore
-        elif isinstance(right, timedelta) and isinstance(left, Decimal):
-            left = float(left)  # type: ignore
-
-        return allowed_operators[type(node.op)](left, right)
+        return eval_binop(left, right, type(node.op))
     elif isinstance(node, ast.UnaryOp):
         if isinstance(node.op, ast.UAdd):
             return eval_expr(node.operand, expression)
@@ -93,21 +129,20 @@ def eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         if not isinstance(node.func, ast.Name):
             raise TypeError(f'Unsupported function call type: {type(node.func).__name__}')
         func_name = node.func.id
-        if func_name not in allowed_functions:
+        if func_name not in _ALLOWED_FUNCTIONS:
             raise TypeError(f'Unsupported function: {func_name}')
         args = [eval_expr(arg, expression) for arg in node.args]
         kwargs = {}
         for keyword in node.keywords:
             if keyword.arg is not None:
                 kwargs[keyword.arg] = eval_expr(keyword.value, expression)
-
         if func_name in ['sin', 'cos', 'tan', 'exp', 'log', 'sqrt']:
             float_args = [float(arg) for arg in args]  # type: ignore
             float_kwargs = {k: float(v) for k, v in kwargs.items()}  # type: ignore
-            result = allowed_functions[func_name](*float_args, **float_kwargs)
+            result = _ALLOWED_FUNCTIONS[func_name](*float_args, **float_kwargs)
             return Decimal(str(result))
         elif func_name in ['ceil', 'floor']:
-            result = allowed_functions[func_name](args[0])
+            result = _ALLOWED_FUNCTIONS[func_name](args[0])
             return Decimal(str(result))
         elif func_name == 'round':
             if len(args) == 1:
@@ -118,12 +153,12 @@ def eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         elif func_name == 'timedelta':
             float_args = [float(arg) for arg in args]  # type: ignore
             float_kwargs = {k: float(v) for k, v in kwargs.items()}  # type: ignore
-            return allowed_functions[func_name](*float_args, **float_kwargs)
+            return _ALLOWED_FUNCTIONS[func_name](*float_args, **float_kwargs)
         else:
-            return allowed_functions[func_name](*args, **kwargs)
+            return _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
     elif isinstance(node, ast.Name):
-        if node.id in allowed_constants:
-            return allowed_constants[node.id]
+        if node.id in _ALLOWED_CONSTANTS:
+            return _ALLOWED_CONSTANTS[node.id]
         raise TypeError(f'Unsupported name: {node.id}')
     else:
         raise TypeError(f'Unsupported AST node type: {type(node).__name__}')
