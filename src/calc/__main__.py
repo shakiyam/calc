@@ -8,30 +8,50 @@ from prompt_toolkit import PromptSession
 from .evaluator import safe_eval as ast_safe_eval
 
 
+NUMBER = r'(\d+(?:\.\d+)?)'
+DAYS = NUMBER + r' *d(?:ays?)?'
+HOURS = NUMBER + r' *h(?:ours?|rs?)?'
+MINUTES = NUMBER + r' *m(?:in(?:utes?)?)?'
+SECONDS = NUMBER + r' *s(?:ec(?:onds?)?)?'
+TIME_HH_MM_SS = r'\d+:\d+:\d+(?:\.\d{1,6})?'
+AND_OR_SPACE = r'(?:\s+and\s+|\s+)'
+SPACE = r'\s+'
+DAYS_AND_MINUTES = DAYS + AND_OR_SPACE + MINUTES
+DAYS_AND_SECONDS = DAYS + AND_OR_SPACE + SECONDS
+DAYS_HOURS_MINUTES_SECONDS = DAYS + SPACE + HOURS + SPACE + MINUTES + SPACE + SECONDS
+DAYS_AND_HOURS_MINUTES = DAYS + AND_OR_SPACE + HOURS + SPACE + MINUTES
+DAYS_HOURS_SECONDS = DAYS + SPACE + HOURS + SPACE + SECONDS
+DAYS_AND_HOURS = DAYS + AND_OR_SPACE + HOURS
+HOURS_MINUTES_SECONDS = HOURS + SPACE + MINUTES + SPACE + SECONDS
+DAY_AND_TIME = r'(' + DAYS + r' +and +)?' + TIME_HH_MM_SS
+MINUTES_AND_SECONDS = MINUTES + AND_OR_SPACE + SECONDS
+HOURS_AND_MINUTES = HOURS + AND_OR_SPACE + MINUTES
+HOURS_AND_SECONDS = HOURS + AND_OR_SPACE + SECONDS
+SINGLE_SECOND = SECONDS
+SINGLE_MINUTE = MINUTES
+SINGLE_HOUR = HOURS
+SINGLE_DAY = DAYS
+
+
 def parse_time(time_str: str) -> str:
     """Parse time string and return timedelta constructor call"""
-    day_only_match = re.match(r'^(\d+(?:\.\d+)?) *(?:days?|d)$', time_str)
-    if day_only_match:
-        days = float(day_only_match.group(1))
-        td = timedelta(days=days)
+    time_match = re.search(
+        r'(' + DAYS + r' +and +)?(\d+):([0-5][0-9]):([0-5][0-9])'
+        r'(?:\.(\d{1,6}))?', time_str)
+    if time_match is None:
+        raise ValueError(f'Invalid time format: {time_str}')
+    if time_match.group(1) is None:
+        days = 0.0
     else:
-        time_match = re.search(
-            r'((\d+(?:\.\d+)?) *(?:days?|d) +and +)?(\d+):([0-5][0-9]):([0-5][0-9])'
-            r'(?:\.(\d{1,6}))?', time_str)
-        if time_match is None:
-            raise ValueError(f'Invalid time format: {time_str}')
-        if time_match.group(2) is None:
-            days = 0
-        else:
-            days = float(time_match.group(2))
-        seconds = int(time_match.group(3)) * 60 * 60 + \
-            int(time_match.group(4)) * 60 + \
-            int(time_match.group(5))
-        if time_match.group(6) is None:
-            microseconds = 0
-        else:
-            microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
-        td = timedelta(days=days, seconds=seconds, microseconds=microseconds)
+        days = float(time_match.group(2))
+    seconds = int(time_match.group(3)) * 60 * 60 + \
+        int(time_match.group(4)) * 60 + \
+        int(time_match.group(5))
+    if time_match.group(6) is None:
+        microseconds = 0
+    else:
+        microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
+    td = timedelta(days=days, seconds=seconds, microseconds=microseconds)
 
     return (f'timedelta(days={td.days}, seconds={td.seconds}, '
             f'microseconds={td.microseconds})')
@@ -61,133 +81,51 @@ def calculate(expression: str, last_result: str) -> str:
             return last_result
         expression = expression.replace('?', last_result)
         expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:days?|d) +and +(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)m(?!\w)',
-            lambda m: (f'timedelta(days={m.group(1)}, '
-                       f'hours={m.group(2)}, minutes={m.group(3)})'),
-            expression)
-        pattern = (r'(\d+(?:\.\d+)?) *(?:days?|d) +and +'
-                   r'(\d+(?:\.\d+)?) *hours?\s+(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?')
-        expression = re.sub(
-            pattern,
-            lambda m: (f'timedelta(days={m.group(1)}, '
-                       f'hours={m.group(2)}, minutes={m.group(3)})'),
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:days?|d) +and +(\d+(?:\.\d+)?) *h(?:ours?)?',
-            lambda match: f'timedelta(days={match.group(1)}, hours={match.group(2)})',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:days?|d) +and +(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?',
-            lambda match: f'timedelta(days={match.group(1)}, minutes={match.group(2)})',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:days?|d) +and +(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?',
-            lambda match: f'timedelta(days={match.group(1)}, seconds={match.group(2)})',
-            expression)
-        pattern_dhms = (r'(\d+(?:\.\d+)?) *(?:days?|d)\s+(\d+(?:\.\d+)?) *hours?\s+'
-                        r'(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?\s+'
-                        r'(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?')
-        expression = re.sub(
-            pattern_dhms,
+            DAYS_HOURS_MINUTES_SECONDS,
             lambda m: (f'timedelta(days={m.group(1)}, hours={m.group(2)}, '
                        f'minutes={m.group(3)}, seconds={m.group(4)})'),
             expression)
-        pattern_dhm = (r'(\d+(?:\.\d+)?) *(?:days?|d)\s+(\d+(?:\.\d+)?) *hours?\s+'
-                       r'(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?')
         expression = re.sub(
-            pattern_dhm,
+            DAYS_AND_HOURS_MINUTES,
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})',
             expression)
-        pattern_dhs = (r'(\d+(?:\.\d+)?) *(?:days?|d)\s+(\d+(?:\.\d+)?) *hours?\s+'
-                       r'(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?')
         expression = re.sub(
-            pattern_dhs,
+            DAYS_AND_MINUTES,
+            lambda match: f'timedelta(days={match.group(1)}, minutes={match.group(2)})',
+            expression)
+        expression = re.sub(
+            DAYS_AND_SECONDS,
+            lambda match: f'timedelta(days={match.group(1)}, seconds={match.group(2)})',
+            expression)
+        expression = re.sub(
+            DAYS_HOURS_SECONDS,
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})',
             expression)
         expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:days?|d)\s+(\d+(?:\.\d+)?) *hours?(?!\s*\d)',
+            DAYS_AND_HOURS,
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)})',
             expression)
-        pattern_hms = (r'(\d+(?:\.\d+)?) *hours?\s+(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?\s+'
-                       r'(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?')
         expression = re.sub(
-            pattern_hms,
+            HOURS_MINUTES_SECONDS,
             lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})',
             expression)
         expression = re.sub(
-            r'(\d+(?:\.\d+)?) *hours?\s+(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?(?!\s*\d)',
+            HOURS_AND_MINUTES,
             lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)})',
             expression)
         expression = re.sub(
-            r'(\d+(?:\.\d+)?) *hours?\s+and\s+(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?',
-            lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)})',
+            HOURS_AND_SECONDS,
+            lambda m: f'timedelta(hours={m.group(1)}, seconds={m.group(2)})',
             expression)
         expression = re.sub(
-            r'(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?\s+and\s+(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?',
-            lambda m: f'timedelta(minutes={m.group(1)}, seconds={m.group(2)})',
+            DAY_AND_TIME,
+            lambda match: parse_time(match.group(0)),
             expression)
-        pattern_time_complex = (r'((\d+(?:\.\d+)? *(?:days?|d) +and +)?'
-                                r'\d+:\d+:\d+(?:\.\d{1,6})?|\d+(?:\.\d+)? *(?:days?|d))')
-        expression = re.sub(
-            pattern_time_complex,
-            lambda match: parse_time(match.group(1)),
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)(?:d)\s+(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)m\s+(\d+(?:\.\d+)?)s',
-            r'timedelta(days=\1, hours=\2, minutes=\3, seconds=\4)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)(?:d)\s+(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)m',
-            r'timedelta(days=\1, hours=\2, minutes=\3)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)(?:d)\s+(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)s',
-            r'timedelta(days=\1, hours=\2, seconds=\3)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)(?:d)\s+(\d+(?:\.\d+)?)h',
-            r'timedelta(days=\1, hours=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)m\s+(\d+(?:\.\d+)?)s',
-            r'timedelta(hours=\1, minutes=\2, seconds=\3)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)h\s+(\d+(?:\.\d+)?)m',
-            r'timedelta(hours=\1, minutes=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?)m\s+(\d+(?:\.\d+)?)s',
-            r'timedelta(minutes=\1, seconds=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *min(?:ute)?s?\s+(\d+(?:\.\d+)?) *sec(?:ond)?s?',
-            r'timedelta(minutes=\1, seconds=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *hr?s?\s+(\d+(?:\.\d+)?) *min(?:ute)?s?',
-            r'timedelta(hours=\1, minutes=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *hours?\s+(\d+(?:\.\d+)?) *min(?:ute)?s?',
-            r'timedelta(hours=\1, minutes=\2)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *s(?:ec(?:onds?)?)?(?!\w)',
-            r'timedelta(seconds=\1)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *m(?:in(?:utes?)?)?(?!\w)',
-            r'timedelta(minutes=\1)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *(?:h(?:ours?)?|hrs?)(?!\w)',
-            r'timedelta(hours=\1)',
-            expression)
-        expression = re.sub(
-            r'(\d+(?:\.\d+)?) *d(?!\w)',
-            r'timedelta(days=\1)',
-            expression)
+        expression = re.sub(MINUTES_AND_SECONDS, r'timedelta(minutes=\1, seconds=\2)', expression)
+        expression = re.sub(SINGLE_SECOND, r'timedelta(seconds=\1)', expression)
+        expression = re.sub(SINGLE_MINUTE, r'timedelta(minutes=\1)', expression)
+        expression = re.sub(SINGLE_HOUR, r'timedelta(hours=\1)', expression)
+        expression = re.sub(SINGLE_DAY, r'timedelta(days=\1)', expression)
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
