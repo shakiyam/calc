@@ -30,7 +30,7 @@ MINUTES_AND_SECONDS = MINUTES + AND_OR_SPACE + SECONDS
 DAYS_AND_TIME = DAYS + AND_OR_SPACE + TIME
 
 
-def parse_time(time_str: str, days_str: Optional[str] = None) -> str:
+def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     """Parse time string and return timedelta constructor string"""
     time_match = re.match(TIME_STRICT, time_str)
     if not time_match:
@@ -46,7 +46,7 @@ def parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     return f'timedelta({", ".join(parts)})'
 
 
-def format_time(td: timedelta) -> str:
+def _format_time(td: timedelta) -> str:
     """Format timedelta to display string representation"""
     if td.days == 0:
         s = ''
@@ -112,13 +112,13 @@ def calculate(expression: str, last_result: str) -> str:
             expression)
         expression = re.sub(
             DAYS_AND_TIME,
-            lambda m: parse_time(m.group(2), m.group(1)),
+            lambda m: _parse_time(m.group(2), m.group(1)),
             expression)
         expression = re.sub(DAYS, lambda m: f'timedelta(days={m.group(1)})', expression)
         expression = re.sub(HOURS, lambda m: f'timedelta(hours={m.group(1)})', expression)
         expression = re.sub(MINUTES, lambda m: f'timedelta(minutes={m.group(1)})', expression)
         expression = re.sub(SECONDS, lambda m: f'timedelta(seconds={m.group(1)})', expression)
-        expression = re.sub(TIME, lambda m: parse_time(m.group(1)), expression)
+        expression = re.sub(TIME, lambda m: _parse_time(m.group(1)), expression)
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
@@ -126,7 +126,7 @@ def calculate(expression: str, last_result: str) -> str:
         if isinstance(result, Decimal):
             formatted_result = f'{result:,}'
         elif isinstance(result, timedelta):
-            formatted_result = format_time(result)
+            formatted_result = _format_time(result)
         print(f'= {formatted_result}')
         return formatted_result
     except ValueError as e:
