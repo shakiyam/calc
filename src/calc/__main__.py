@@ -163,14 +163,23 @@ def main() -> None:
         calculate(expression, last_result)
         sys.exit()
 
-    session: PromptSession = PromptSession()
-    while True:
-        expression = session.prompt()
-        if not expression:
-            continue
-        elif expression == 'exit':
-            break
-        last_result = calculate(expression, last_result)
+    if sys.stdin.isatty():
+        session: PromptSession = PromptSession()
+        while True:
+            expression = session.prompt()
+            if not expression:
+                continue
+            elif expression == 'exit':
+                break
+            last_result = calculate(expression, last_result)
+    else:
+        for line in sys.stdin:
+            expression = line.strip()
+            if not expression:
+                continue
+            elif expression == 'exit':
+                break
+            last_result = calculate(expression, last_result)
 
 
 if __name__ == '__main__':

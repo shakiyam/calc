@@ -1,17 +1,25 @@
 #!/bin/bash
 set -Eeu -o pipefail
 
+if [ -t 0 ]; then
+  TTY_FLAGS="-t"
+else
+  TTY_FLAGS=""
+fi
+
 if command -v docker &>/dev/null; then
   docker container run \
     --name "calc_$(uuidgen | head -c8)" \
     --rm \
-    -it \
+    -i \
+    $TTY_FLAGS \
     -u "$(id -u):$(id -g)" \
     ghcr.io/shakiyam/calc "$@"
 else
   podman container run \
     --name "calc_$(uuidgen | head -c8)" \
     --rm \
-    -it \
+    -i \
+    $TTY_FLAGS \
     ghcr.io/shakiyam/calc "$@"
 fi
