@@ -2,59 +2,48 @@ import re
 import sys
 from datetime import timedelta
 from decimal import Decimal
+from typing import Optional
 
 from prompt_toolkit import PromptSession
 
 from .evaluator import safe_eval as ast_safe_eval
-
 
 NUMBER = r'(\d+(?:\.\d+)?)'
 DAYS = NUMBER + r' *d(?:ays?)?'
 HOURS = NUMBER + r' *h(?:ours?|rs?)?'
 MINUTES = NUMBER + r' *m(?:in(?:utes?)?)?'
 SECONDS = NUMBER + r' *s(?:ec(?:onds?)?)?'
-TIME_HH_MM_SS = r'\d+:\d+:\d+(?:\.\d{1,6})?'
+TIME = r'(\d+:\d+:\d+(?:\.\d{1,6})?)'
+TIME_STRICT = r'(\d+):([0-5][0-9]):([0-5][0-9])(?:\.(\d{1,6}))?'
 AND_OR_SPACE = r'(?:\s+and\s+|\s+)'
 SPACE = r'\s+'
-DAYS_AND_MINUTES = DAYS + AND_OR_SPACE + MINUTES
-DAYS_AND_SECONDS = DAYS + AND_OR_SPACE + SECONDS
 DAYS_HOURS_MINUTES_SECONDS = DAYS + SPACE + HOURS + SPACE + MINUTES + SPACE + SECONDS
 DAYS_AND_HOURS_MINUTES = DAYS + AND_OR_SPACE + HOURS + SPACE + MINUTES
 DAYS_HOURS_SECONDS = DAYS + SPACE + HOURS + SPACE + SECONDS
-DAYS_AND_HOURS = DAYS + AND_OR_SPACE + HOURS
 HOURS_MINUTES_SECONDS = HOURS + SPACE + MINUTES + SPACE + SECONDS
-DAY_AND_TIME = r'(' + DAYS + r' +and +)?' + TIME_HH_MM_SS
-MINUTES_AND_SECONDS = MINUTES + AND_OR_SPACE + SECONDS
+DAYS_AND_HOURS = DAYS + AND_OR_SPACE + HOURS
+DAYS_AND_MINUTES = DAYS + AND_OR_SPACE + MINUTES
+DAYS_AND_SECONDS = DAYS + AND_OR_SPACE + SECONDS
 HOURS_AND_MINUTES = HOURS + AND_OR_SPACE + MINUTES
 HOURS_AND_SECONDS = HOURS + AND_OR_SPACE + SECONDS
-SINGLE_SECOND = SECONDS
-SINGLE_MINUTE = MINUTES
-SINGLE_HOUR = HOURS
-SINGLE_DAY = DAYS
+MINUTES_AND_SECONDS = MINUTES + AND_OR_SPACE + SECONDS
+DAYS_AND_TIME = DAYS + AND_OR_SPACE + TIME
 
 
-def parse_time(time_str: str) -> str:
-    """Parse time string and return timedelta constructor call"""
-    time_match = re.search(
-        r'(' + DAYS + r' +and +)?(\d+):([0-5][0-9]):([0-5][0-9])'
-        r'(?:\.(\d{1,6}))?', time_str)
-    if time_match is None:
+def parse_time(time_str: str, days_str: Optional[str] = None) -> str:
+    """Parse time string and return timedelta constructor string"""
+    time_match = re.match(TIME_STRICT, time_str)
+    if not time_match:
         raise ValueError(f'Invalid time format: {time_str}')
-    if time_match.group(1) is None:
-        days = 0.0
-    else:
-        days = float(time_match.group(2))
-    seconds = int(time_match.group(3)) * 60 * 60 + \
-        int(time_match.group(4)) * 60 + \
-        int(time_match.group(5))
-    if time_match.group(6) is None:
-        microseconds = 0
-    else:
-        microseconds = int(time_match.group(6)) * 10 ** (6 - len(time_match.group(6)))
-    td = timedelta(days=days, seconds=seconds, microseconds=microseconds)
-
-    return (f'timedelta(days={td.days}, seconds={td.seconds}, '
-            f'microseconds={td.microseconds})')
+    parts = []
+    if days_str:
+        parts.append(f'days={days_str}')
+    parts.append(f'hours={int(time_match.group(1))}')
+    parts.append(f'minutes={int(time_match.group(2))}')
+    parts.append(f'seconds={int(time_match.group(3))}')
+    if time_match.group(4):
+        parts.append(f'microseconds={int(time_match.group(4).ljust(6, "0"))}')
+    return f'timedelta({", ".join(parts)})'
 
 
 def format_time(td: timedelta) -> str:
@@ -90,24 +79,24 @@ def calculate(expression: str, last_result: str) -> str:
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})',
             expression)
         expression = re.sub(
-            DAYS_AND_MINUTES,
-            lambda match: f'timedelta(days={match.group(1)}, minutes={match.group(2)})',
-            expression)
-        expression = re.sub(
-            DAYS_AND_SECONDS,
-            lambda match: f'timedelta(days={match.group(1)}, seconds={match.group(2)})',
-            expression)
-        expression = re.sub(
             DAYS_HOURS_SECONDS,
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})',
+            expression)
+        expression = re.sub(
+            HOURS_MINUTES_SECONDS,
+            lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})',
             expression)
         expression = re.sub(
             DAYS_AND_HOURS,
             lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)})',
             expression)
         expression = re.sub(
-            HOURS_MINUTES_SECONDS,
-            lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})',
+            DAYS_AND_MINUTES,
+            lambda m: f'timedelta(days={m.group(1)}, minutes={m.group(2)})',
+            expression)
+        expression = re.sub(
+            DAYS_AND_SECONDS,
+            lambda m: f'timedelta(days={m.group(1)}, seconds={m.group(2)})',
             expression)
         expression = re.sub(
             HOURS_AND_MINUTES,
@@ -118,14 +107,18 @@ def calculate(expression: str, last_result: str) -> str:
             lambda m: f'timedelta(hours={m.group(1)}, seconds={m.group(2)})',
             expression)
         expression = re.sub(
-            DAY_AND_TIME,
-            lambda match: parse_time(match.group(0)),
+            MINUTES_AND_SECONDS,
+            lambda m: f'timedelta(minutes={m.group(1)}, seconds={m.group(2)})',
             expression)
-        expression = re.sub(MINUTES_AND_SECONDS, r'timedelta(minutes=\1, seconds=\2)', expression)
-        expression = re.sub(SINGLE_SECOND, r'timedelta(seconds=\1)', expression)
-        expression = re.sub(SINGLE_MINUTE, r'timedelta(minutes=\1)', expression)
-        expression = re.sub(SINGLE_HOUR, r'timedelta(hours=\1)', expression)
-        expression = re.sub(SINGLE_DAY, r'timedelta(days=\1)', expression)
+        expression = re.sub(
+            DAYS_AND_TIME,
+            lambda m: parse_time(m.group(2), m.group(1)),
+            expression)
+        expression = re.sub(DAYS, lambda m: f'timedelta(days={m.group(1)})', expression)
+        expression = re.sub(HOURS, lambda m: f'timedelta(hours={m.group(1)})', expression)
+        expression = re.sub(MINUTES, lambda m: f'timedelta(minutes={m.group(1)})', expression)
+        expression = re.sub(SECONDS, lambda m: f'timedelta(seconds={m.group(1)})', expression)
+        expression = re.sub(TIME, lambda m: parse_time(m.group(1)), expression)
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
         expression = re.sub(r'\b[xX]\b', '*', expression)
         expression = expression.replace('^', '**')
