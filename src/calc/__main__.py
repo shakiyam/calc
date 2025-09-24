@@ -48,18 +48,21 @@ def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
 
 def _format_time(td: timedelta) -> str:
     """Format timedelta to display string representation"""
-    if td.days == 0:
-        s = ''
-    elif abs(td.days) == 1:
-        s = f'{td.days:d} day and '
-    else:
-        s = f'{td.days:d} days and '
     mm, ss = divmod(td.seconds, 60)
     hh, mm = divmod(mm, 60)
-    s = s + f'{hh:02d}:{mm:02d}:{ss:02d}'
+    time_part = f'{hh:02d}:{mm:02d}:{ss:02d}'
     if td.microseconds:
-        s = s + f'.{td.microseconds:06d}'
-    return s
+        time_part += f'.{td.microseconds:06d}'
+
+    if td.days == 0:
+        return time_part
+
+    day_text = 'day' if abs(td.days) == 1 else 'days'
+
+    if td.seconds == 0 and td.microseconds == 0:
+        return f'{td.days:d} {day_text}'
+    else:
+        return f'{td.days:d} {day_text} and {time_part}'
 
 
 def calculate(expression: str, last_result: str) -> str:
