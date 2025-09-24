@@ -93,8 +93,8 @@ Comments start with `#` and extend to the end of the line.
 60s                         → 00:01:00
 30min                       → 00:30:00
 5hr                         → 05:00:00
-1 day                       → 1 day and 00:00:00
-2d                          → 2 days and 00:00:00
+1 day                       → 1 day
+2d                          → 2 days
 
 # Compact combinations
 1h 30m                      → 01:30:00
