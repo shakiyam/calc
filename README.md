@@ -38,14 +38,14 @@ Comments start with `#` and extend to the end of the line.
 
 ### Operators
 
-| Operator | Description      | Aliases    |
-| :------- | :--------------- | :--------- |
-| `+`      | Addition         |            |
-| `-`      | Subtraction      |            |
-| `*`      | Multiplication   | `x`, `X`   |
-| `/`      | Division         |            |
-| `%`      | Modulo           |            |
-| `**`     | Exponentiation   | `^`        |
+| Operator | Description      | Aliases                    |
+| :------- | :--------------- | :------------------------- |
+| `+`      | Addition         |                            |
+| `-`      | Subtraction      |                            |
+| `*`      | Multiplication   | `x`, `X` (require spaces)  |
+| `/`      | Division         |                            |
+| `%`      | Modulo           |                            |
+| `**`     | Exponentiation   | `^`                        |
 
 ### Functions
 
@@ -127,6 +127,13 @@ When running in the interactive shell (as shown in the Quick Start), you can acc
 ### Number Formatting
 
 Numbers are displayed with a comma as a thousands separator (e.g., `1,234,567`). Input also supports numbers with thousands separators.
+
+### Unit Handling
+
+Non-time units after numbers are ignored, allowing natural expressions:
+
+- `5 items + 3 items` → `8`
+- `100 yen * 0.5` → `50`
 
 ### Exiting
 

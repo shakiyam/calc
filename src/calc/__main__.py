@@ -29,6 +29,13 @@ HOURS_AND_SECONDS = HOURS + AND_OR_SPACE + SECONDS
 MINUTES_AND_SECONDS = MINUTES + AND_OR_SPACE + SECONDS
 DAYS_AND_TIME = DAYS + AND_OR_SPACE + TIME
 
+PRESERVED_WORDS = {
+    'abs', 'avg', 'ceil', 'cos', 'e', 'exp',
+    'floor', 'log', 'max', 'min', 'pi', 'round',
+    'sin', 'sqrt', 'sum', 'tan', 'timedelta'
+}
+UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([a-zA-Z]+)\b'
+
 
 def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     """Parse time string and return timedelta constructor string"""
@@ -44,6 +51,18 @@ def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     if time_match.group(4):
         parts.append(f'microseconds={int(time_match.group(4).ljust(6, "0"))}')
     return f'timedelta({", ".join(parts)})'
+
+
+def _remove_non_time_units(expression: str) -> str:
+    """Remove non-time unit words after numbers."""
+    def replace_unit(match):
+        number = match.group(1)
+        word = match.group(2)
+        if word in PRESERVED_WORDS:
+            return match.group(0)
+        return number
+
+    return re.sub(UNIT_PATTERN, replace_unit, expression)
 
 
 def _format_time(td: timedelta) -> str:
@@ -72,6 +91,8 @@ def calculate(expression: str, last_result: str) -> str:
         if not expression:
             return last_result
         expression = expression.replace('?', last_result)
+        expression = re.sub(r'\b[xX]\b', '*', expression)
+        expression = expression.replace('^', '**')
         expression = re.sub(
             DAYS_HOURS_MINUTES_SECONDS,
             lambda m: (f'timedelta(days={m.group(1)}, hours={m.group(2)}, '
@@ -122,9 +143,8 @@ def calculate(expression: str, last_result: str) -> str:
         expression = re.sub(MINUTES, lambda m: f'timedelta(minutes={m.group(1)})', expression)
         expression = re.sub(SECONDS, lambda m: f'timedelta(seconds={m.group(1)})', expression)
         expression = re.sub(TIME, lambda m: _parse_time(m.group(1)), expression)
+        expression = _remove_non_time_units(expression)
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
-        expression = re.sub(r'\b[xX]\b', '*', expression)
-        expression = expression.replace('^', '**')
         result = ast_safe_eval(expression)
         if isinstance(result, Decimal):
             formatted_result = f'{result:,}'

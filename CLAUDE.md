@@ -24,7 +24,8 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 - Time output uses `and` format when time components exist: `1 day and 02:00:00`, or just `1 day` for whole days (with microseconds when present: `00:01:30.500000`)
 - Number formatting with thousands separators
 - Comment support (lines starting with `#`)
-- Operator aliases: `x`/`X` for multiplication, `^` for exponentiation
+- Operator aliases: `x`/`X` for multiplication (requires spaces: `2 x 3`, not `2x3`), `^` for exponentiation
+- Non-time unit removal: Units after numbers are ignored except for time units (e.g., `items`, `JPY`, `GB`)
 
 ## Common Development Commands
 

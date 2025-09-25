@@ -39,3 +39,10 @@ def test_history_functionality():
     assert calculate('5 + 3', last_result_val) == '8'
     assert calculate('? * 2', '8') == '16'
     assert calculate('? + ?', '16') == '32'
+
+
+def test_unit_removal():
+    """Test removal of non-time units from expressions"""
+    last_result_val = '0'
+    assert calculate('5 items + 3 items', last_result_val) == '8'
+    assert calculate('100 yen * 0.5', last_result_val) == '50.0'
