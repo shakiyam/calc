@@ -17,6 +17,7 @@ def test_decimal_precision():
     """Test that decimal calculations are precise"""
     last_result_val = '0'
     assert calculate('0.1 + 0.2', last_result_val) == '0.3'
+    assert calculate('1 / 3 * 3', last_result_val) == '1'
 
 
 def test_comments():

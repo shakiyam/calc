@@ -35,6 +35,7 @@ PRESERVED_WORDS = {
     'sin', 'sqrt', 'sum', 'tan', 'timedelta'
 }
 UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([a-zA-Z]+)\b'
+PRECISION_DIGITS = 12
 
 
 def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
@@ -63,6 +64,26 @@ def _remove_non_time_units(expression: str) -> str:
         return number
 
     return re.sub(UNIT_PATTERN, replace_unit, expression)
+
+
+def _has_precision_artifact(value: Decimal) -> bool:
+    """Check if value has precision artifacts like repeated 9s or 0s"""
+    str_val = str(value)
+    pattern_9s = '9' * PRECISION_DIGITS
+    pattern_0s = '0' * PRECISION_DIGITS
+    return (pattern_9s in str_val or pattern_0s in str_val)
+
+
+def _normalize_result(value: Decimal) -> Decimal:
+    """Normalize high-precision Decimal to user-friendly display format"""
+    if _has_precision_artifact(value):
+        quantize_pattern = Decimal('0.' + '0' * PRECISION_DIGITS)
+        tolerance = Decimal('1e-' + str(PRECISION_DIGITS - 2))
+        rounded = value.quantize(quantize_pattern)
+        if abs(rounded - round(rounded)) < tolerance:
+            return Decimal(int(round(rounded)))
+        return rounded.normalize()
+    return value
 
 
 def _format_time(td: timedelta) -> str:
@@ -147,7 +168,8 @@ def calculate(expression: str, last_result: str) -> str:
         expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
         result = ast_safe_eval(expression)
         if isinstance(result, Decimal):
-            formatted_result = f'{result:,}'
+            normalized_result = _normalize_result(result)
+            formatted_result = f'{normalized_result:,}'
         elif isinstance(result, timedelta):
             formatted_result = _format_time(result)
         print(f'= {formatted_result}')
