@@ -25,7 +25,7 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 - Number formatting with thousands separators
 - Comment support (lines starting with `#`)
 - Operator aliases: `x`/`X` for multiplication (requires spaces: `2 x 3`, not `2x3`), `^` for exponentiation
-- Non-time unit removal: Units after numbers are ignored except for time units (e.g., `items`, `JPY`, `GB`)
+- Non-time unit removal: Units after numbers are ignored except for time units (e.g., `個`, `円`, `kg`, `GB`, `USD`)
 
 ## Common Development Commands
 

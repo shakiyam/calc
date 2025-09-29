@@ -132,8 +132,10 @@ Numbers are displayed with a comma as a thousands separator (e.g., `1,234,567`).
 
 Non-time units after numbers are ignored, allowing natural expressions:
 
-- `5 items + 3 items` → `8`
-- `100 yen * 0.5` → `50`
+- `10個 + 20個` → `30`
+- `100 円 - 50 円` → `50`
+- `10.5kg * 2` → `21.0`
+- `1,024 GB / 4` → `256`
 
 ### Exiting
 

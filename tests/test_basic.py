@@ -45,5 +45,7 @@ def test_history_functionality():
 def test_unit_removal():
     """Test removal of non-time units from expressions"""
     last_result_val = '0'
-    assert calculate('5 items + 3 items', last_result_val) == '8'
-    assert calculate('100 yen * 0.5', last_result_val) == '50.0'
+    assert calculate('10個 + 20個', last_result_val) == '30'
+    assert calculate('100 円 - 50 円', last_result_val) == '50'
+    assert calculate('10.5kg * 2', last_result_val) == '21.0'
+    assert calculate('1,024 GB / 4', last_result_val) == '256'

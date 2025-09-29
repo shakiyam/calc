@@ -34,7 +34,7 @@ PRESERVED_WORDS = {
     'floor', 'log', 'max', 'min', 'pi', 'round',
     'sin', 'sqrt', 'sum', 'tan', 'timedelta'
 }
-UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([a-zA-Z]+)\b'
+UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b'
 PRECISION_DIGITS = 12
 
 
