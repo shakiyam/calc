@@ -112,7 +112,11 @@ def calculate(expression: str, last_result: str) -> str:
         if not expression:
             return last_result
         expression = expression.replace('?', last_result)
+        expression = expression.replace('＋', '+')
+        expression = expression.replace('－', '-')
         expression = re.sub(r'\b[xX]\b', '*', expression)
+        expression = expression.replace('×', '*')
+        expression = expression.replace('÷', '/')
         expression = expression.replace('^', '**')
         expression = re.sub(
             DAYS_HOURS_MINUTES_SECONDS,

@@ -2,15 +2,26 @@ from calc.__main__ import calculate
 
 
 def test_basic_operators():
-    """Test all supported operators and aliases"""
+    """Test basic mathematical operators"""
     last_result_val = '0'
     assert calculate('10 - 3', last_result_val) == '7'
     assert calculate('12 / 4', last_result_val) == '3'
     assert calculate('7 % 3', last_result_val) == '1'
     assert calculate('2 ** 3', last_result_val) == '8'
-    assert calculate('3 x 4', last_result_val) == '12'
     assert calculate('(2 + 3) * 4', last_result_val) == '20'
     assert calculate('-5 * -3', last_result_val) == '15'
+
+
+def test_operator_aliases():
+    """Test operator aliases"""
+    last_result_val = '0'
+    assert calculate('10 ＋ 5', last_result_val) == '15'
+    assert calculate('20 － 8', last_result_val) == '12'
+    assert calculate('3 x 4', last_result_val) == '12'
+    assert calculate('5 X 2', last_result_val) == '10'
+    assert calculate('6 × 7', last_result_val) == '42'
+    assert calculate('18 ÷ 3', last_result_val) == '6'
+    assert calculate('2 ^ 3', last_result_val) == '8'
 
 
 def test_decimal_precision():
