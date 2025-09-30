@@ -23,7 +23,7 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
   - Natural language: `1 day 2 hours 30 minutes`, `2 hours and 30 minutes`
 - Time output uses `and` format when time components exist: `1 day and 02:00:00`, or just `1 day` for whole days (with microseconds when present: `00:01:30.500000`)
 - Number formatting with thousands separators
-- Comment support (lines starting with `#`)
+- Comment support (`#` and everything after it is ignored)
 - Operator aliases:
   - Addition: `＋`
   - Subtraction: `－`
