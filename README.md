@@ -38,14 +38,14 @@ Comments start with `#` and extend to the end of the line.
 
 ### Operators
 
-| Operator | Description    | Aliases                        |
-| :------- | :------------- | :------------------------------|
-| `+`      | Addition       | `＋`                           |
-| `-`      | Subtraction    | `－`                           |
-| `*`      | Multiplication | `x` `X` (require spaces), `×` |
-| `/`      | Division       | `÷`                           |
-| `%`      | Modulo         |                                |
-| `**`     | Exponentiation | `^`                            |
+| Operator | Description    | Aliases      |
+| :------- | :------------- | :----------- |
+| `+`      | Addition       | `＋`         |
+| `-`      | Subtraction    | `－`         |
+| `*`      | Multiplication | `x` `X` `×` |
+| `/`      | Division       | `÷`         |
+| `%`      | Modulo         |              |
+| `**`     | Exponentiation | `^`          |
 
 ### Functions
 

@@ -114,7 +114,7 @@ def calculate(expression: str, last_result: str) -> str:
         expression = expression.replace('?', last_result)
         expression = expression.replace('＋', '+')
         expression = expression.replace('－', '-')
-        expression = re.sub(r'\b[xX]\b', '*', expression)
+        expression = re.sub(r'([\d\s\-+*/(),.^%])([xX])([\d\s\-+*/(),.^%])', r'\1*\3', expression)
         expression = expression.replace('×', '*')
         expression = expression.replace('÷', '/')
         expression = expression.replace('^', '**')

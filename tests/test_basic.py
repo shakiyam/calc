@@ -19,6 +19,8 @@ def test_operator_aliases():
     assert calculate('20 － 8', last_result_val) == '12'
     assert calculate('3 x 4', last_result_val) == '12'
     assert calculate('5 X 2', last_result_val) == '10'
+    assert calculate('2x3', last_result_val) == '6'
+    assert calculate('(2+3)x4', last_result_val) == '20'
     assert calculate('6 × 7', last_result_val) == '42'
     assert calculate('18 ÷ 3', last_result_val) == '6'
     assert calculate('2 ^ 3', last_result_val) == '8'

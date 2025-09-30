@@ -27,7 +27,7 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 - Operator aliases:
   - Addition: `＋`
   - Subtraction: `－`
-  - Multiplication: `x` `X` (require spaces: `2 x 3`, not `2x3`), `×`
+  - Multiplication: `x` `X` `×`
   - Division: `÷`
   - Exponentiation: `^` (alternative to `**`)
 - Non-time unit removal: Units after numbers are ignored except for time units (e.g., `個`, `円`, `kg`, `GB`, `USD`)
