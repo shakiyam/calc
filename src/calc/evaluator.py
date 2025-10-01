@@ -15,15 +15,31 @@ _ALLOWED_BINARY_OPERATORS: Final[Dict[type, Callable[[Any, Any], Any]]] = {
 }
 
 
+def _validate_uniform_types(args: tuple, function_name: str) -> type:
+    """Validate that all arguments are of the same type"""
+    if not args:
+        raise TypeError(f'{function_name} expected at least 1 argument, got 0')
+
+    expected_type = type(args[0])
+
+    for arg in args:
+        if not isinstance(arg, expected_type):
+            raise TypeError(f'Cannot mix timedelta and Decimal in {function_name}')
+
+    return expected_type
+
+
 def _min_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     if len(args) == 1:
         return args[0]
+    _validate_uniform_types(args, 'min')
     return min(*args)
 
 
 def _max_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     if len(args) == 1:
         return args[0]
+    _validate_uniform_types(args, 'max')
     return max(*args)
 
 
@@ -31,36 +47,23 @@ def _sum_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     if not args:
         return Decimal('0')
 
-    first_arg = args[0]
-    if isinstance(first_arg, timedelta):
-        for arg in args:
-            if not isinstance(arg, timedelta):
-                raise TypeError('Cannot mix timedelta and Decimal in sum')
+    arg_type = _validate_uniform_types(args, 'sum')
+
+    if arg_type is timedelta:
         return sum(args, timedelta())
     else:
-        for arg in args:
-            if not isinstance(arg, Decimal):
-                raise TypeError('Cannot mix timedelta and Decimal in sum')
         return sum(args, Decimal('0'))
 
 
 def _avg_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
-    if len(args) == 0:
-        raise TypeError('avg expected at least 1 argument, got 0')
+    arg_type = _validate_uniform_types(args, 'avg')
 
-    first_arg = args[0]
-    if isinstance(first_arg, timedelta):
-        for arg in args:
-            if not isinstance(arg, timedelta):
-                raise TypeError('Cannot mix timedelta and Decimal in avg')
+    if arg_type is timedelta:
         total_time = sum(args, timedelta())
         assert isinstance(total_time, timedelta)
         avg_seconds = total_time.total_seconds() / len(args)
         return timedelta(seconds=avg_seconds)
     else:
-        for arg in args:
-            if not isinstance(arg, Decimal):
-                raise TypeError('Cannot mix timedelta and Decimal in avg')
         total = sum(args, Decimal('0'))
         assert isinstance(total, Decimal)
         return total / Decimal(len(args))
