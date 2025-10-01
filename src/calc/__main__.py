@@ -2,7 +2,7 @@ import re
 import sys
 from datetime import timedelta
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, Union
 
 from prompt_toolkit import PromptSession
 
@@ -29,6 +29,42 @@ HOURS_AND_SECONDS = HOURS + AND_SEPARATOR + SECONDS
 MINUTES_AND_SECONDS = MINUTES + AND_SEPARATOR + SECONDS
 DAYS_AND_TIME = DAYS + AND_SEPARATOR + TIME
 
+_TIME_CONVERSION_PATTERNS = [
+    (DAYS_HOURS_MINUTES_SECONDS,
+     lambda m: (f'timedelta(days={m.group(1)}, hours={m.group(2)}, '
+                f'minutes={m.group(3)}, seconds={m.group(4)})')),
+    (DAYS_AND_HOURS_MINUTES,
+     lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})'),
+    (DAYS_HOURS_SECONDS,
+     lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})'),
+    (HOURS_MINUTES_SECONDS,
+     lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})'),
+    (DAYS_AND_HOURS,
+     lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)})'),
+    (DAYS_AND_MINUTES,
+     lambda m: f'timedelta(days={m.group(1)}, minutes={m.group(2)})'),
+    (DAYS_AND_SECONDS,
+     lambda m: f'timedelta(days={m.group(1)}, seconds={m.group(2)})'),
+    (HOURS_AND_MINUTES,
+     lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)})'),
+    (HOURS_AND_SECONDS,
+     lambda m: f'timedelta(hours={m.group(1)}, seconds={m.group(2)})'),
+    (MINUTES_AND_SECONDS,
+     lambda m: f'timedelta(minutes={m.group(1)}, seconds={m.group(2)})'),
+    (DAYS_AND_TIME,
+     lambda m: _parse_time(m.group(2), m.group(1))),
+    (DAYS,
+     lambda m: f'timedelta(days={m.group(1)})'),
+    (HOURS,
+     lambda m: f'timedelta(hours={m.group(1)})'),
+    (MINUTES,
+     lambda m: f'timedelta(minutes={m.group(1)})'),
+    (SECONDS,
+     lambda m: f'timedelta(seconds={m.group(1)})'),
+    (TIME,
+     lambda m: _parse_time(m.group(1))),
+]
+
 PRESERVED_WORDS = {
     'abs', 'avg', 'ceil', 'cos', 'e', 'exp',
     'floor', 'log', 'max', 'min', 'pi', 'round',
@@ -54,8 +90,32 @@ def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     return f'timedelta({", ".join(parts)})'
 
 
+def _preprocess_expression(expression: str, last_result: str) -> str:
+    """Remove comments and substitute history reference"""
+    expression = expression.split('#', 1)[0].strip()
+    return expression.replace('?', last_result)
+
+
+def _normalize_operators(expression: str) -> str:
+    """Normalize operator aliases to standard Python operators"""
+    expression = expression.replace('＋', '+')
+    expression = expression.replace('－', '-')
+    expression = re.sub(r'([\d\s\-+*/(),.^%])([xX])([\d\s\-+*/(),.^%])', r'\1*\3', expression)
+    expression = expression.replace('×', '*')
+    expression = expression.replace('÷', '/')
+    expression = expression.replace('^', '**')
+    return expression
+
+
+def _convert_time_expressions(expression: str) -> str:
+    """Convert natural language time expressions to timedelta constructors"""
+    for pattern, replacement in _TIME_CONVERSION_PATTERNS:
+        expression = re.sub(pattern, replacement, expression)
+    return expression
+
+
 def _remove_non_time_units(expression: str) -> str:
-    """Remove non-time unit words after numbers."""
+    """Remove non-time unit words after numbers"""
     def replace_unit(match):
         number = match.group(1)
         word = match.group(2)
@@ -64,6 +124,11 @@ def _remove_non_time_units(expression: str) -> str:
         return number
 
     return re.sub(UNIT_PATTERN, replace_unit, expression)
+
+
+def _remove_thousands_separators(expression: str) -> str:
+    """Remove comma separators from numbers"""
+    return re.sub(r'(\d),(\d)', r'\1\2', expression)
 
 
 def _has_precision_artifact(value: Decimal) -> bool:
@@ -98,86 +163,40 @@ def _format_time(td: timedelta) -> str:
         return time_part
 
     day_text = 'day' if abs(td.days) == 1 else 'days'
-
     if td.seconds == 0 and td.microseconds == 0:
         return f'{td.days:d} {day_text}'
     else:
         return f'{td.days:d} {day_text} and {time_part}'
 
 
+def _format_result(result: Union[Decimal, timedelta]) -> str:
+    """Format calculation result for display"""
+    if isinstance(result, Decimal):
+        normalized = _normalize_result(result)
+        return f'{normalized:,}'
+    elif isinstance(result, timedelta):
+        return _format_time(result)
+    return str(result)
+
+
 def calculate(expression: str, last_result: str) -> str:
     """Calculate mathematical expression and return formatted result"""
+    expression = _preprocess_expression(expression, last_result)
+    if not expression:
+        return last_result
+
     try:
-        expression = expression.split('#', 1)[0].strip()
-        if not expression:
-            return last_result
-        expression = expression.replace('?', last_result)
-        expression = expression.replace('＋', '+')
-        expression = expression.replace('－', '-')
-        expression = re.sub(r'([\d\s\-+*/(),.^%])([xX])([\d\s\-+*/(),.^%])', r'\1*\3', expression)
-        expression = expression.replace('×', '*')
-        expression = expression.replace('÷', '/')
-        expression = expression.replace('^', '**')
-        expression = re.sub(
-            DAYS_HOURS_MINUTES_SECONDS,
-            lambda m: (f'timedelta(days={m.group(1)}, hours={m.group(2)}, '
-                       f'minutes={m.group(3)}, seconds={m.group(4)})'),
-            expression)
-        expression = re.sub(
-            DAYS_AND_HOURS_MINUTES,
-            lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})',
-            expression)
-        expression = re.sub(
-            DAYS_HOURS_SECONDS,
-            lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})',
-            expression)
-        expression = re.sub(
-            HOURS_MINUTES_SECONDS,
-            lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})',
-            expression)
-        expression = re.sub(
-            DAYS_AND_HOURS,
-            lambda m: f'timedelta(days={m.group(1)}, hours={m.group(2)})',
-            expression)
-        expression = re.sub(
-            DAYS_AND_MINUTES,
-            lambda m: f'timedelta(days={m.group(1)}, minutes={m.group(2)})',
-            expression)
-        expression = re.sub(
-            DAYS_AND_SECONDS,
-            lambda m: f'timedelta(days={m.group(1)}, seconds={m.group(2)})',
-            expression)
-        expression = re.sub(
-            HOURS_AND_MINUTES,
-            lambda m: f'timedelta(hours={m.group(1)}, minutes={m.group(2)})',
-            expression)
-        expression = re.sub(
-            HOURS_AND_SECONDS,
-            lambda m: f'timedelta(hours={m.group(1)}, seconds={m.group(2)})',
-            expression)
-        expression = re.sub(
-            MINUTES_AND_SECONDS,
-            lambda m: f'timedelta(minutes={m.group(1)}, seconds={m.group(2)})',
-            expression)
-        expression = re.sub(
-            DAYS_AND_TIME,
-            lambda m: _parse_time(m.group(2), m.group(1)),
-            expression)
-        expression = re.sub(DAYS, lambda m: f'timedelta(days={m.group(1)})', expression)
-        expression = re.sub(HOURS, lambda m: f'timedelta(hours={m.group(1)})', expression)
-        expression = re.sub(MINUTES, lambda m: f'timedelta(minutes={m.group(1)})', expression)
-        expression = re.sub(SECONDS, lambda m: f'timedelta(seconds={m.group(1)})', expression)
-        expression = re.sub(TIME, lambda m: _parse_time(m.group(1)), expression)
+        expression = _normalize_operators(expression)
+        expression = _convert_time_expressions(expression)
         expression = _remove_non_time_units(expression)
-        expression = re.sub(r'(\d),(\d)', r'\1\2', expression)
+        expression = _remove_thousands_separators(expression)
+
         result = ast_safe_eval(expression)
-        if isinstance(result, Decimal):
-            normalized_result = _normalize_result(result)
-            formatted_result = f'{normalized_result:,}'
-        elif isinstance(result, timedelta):
-            formatted_result = _format_time(result)
+        formatted_result = _format_result(result)
+
         print(f'= {formatted_result}')
         return formatted_result
+
     except ValueError as e:
         if 'Invalid time format' in str(e):
             print('Error: Invalid time format (use HH:MM:SS with MM,SS as 00-59)')
