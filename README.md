@@ -96,17 +96,23 @@ Comments start with `#` and extend to the end of the line.
 1 day                       → 1 day
 2d                          → 2 days
 
-# Compact combinations
+# Compact combinations (English)
 1h 30m                      → 01:30:00
 1m 5s                       → 00:01:05
 
-# Day and combinations
+# Day and combinations (English)
 1 day and 10 hours          → 1 day and 10:00:00
 1 day and 1 hour 2 min      → 1 day and 01:02:00
 
-# Natural language
+# Natural language (English)
 1 day 2 hours 30 minutes    → 1 day and 02:30:00
 2 hours and 30 minutes      → 02:30:00
+
+# Natural language (Japanese)
+1時間 30分                  → 01:30:00
+1時間30分                   → 01:30:00
+2日 3時間                   → 2 days and 03:00:00
+2日3時間                    → 2 days and 03:00:00
 ```
 
 **Calculation examples:**
@@ -118,6 +124,8 @@ Comments start with `#` and extend to the end of the line.
 02:00:00 / 2                → 01:00:00
 1h + 30min                  → 01:30:00
 30min - 5s                  → 00:29:55
+1時間 + 30分                → 01:30:00
+2時間 - 15分                → 01:45:00
 ```
 
 ### History

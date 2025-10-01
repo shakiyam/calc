@@ -17,10 +17,11 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 - Safe mathematical expression evaluation with whitelisted functions/operators
 - Comprehensive time calculations with natural language support:
   - Basic format: `HH:MM:SS[.ffffff]` (microseconds optional)
-  - Basic units: `s`/`sec`/`seconds`, `m`/`min`/`minutes`, `h`/`hr`/`hours`, `d`/`day`/`days`
+  - English units: `s`/`sec`/`seconds`, `m`/`min`/`minutes`, `h`/`hr`/`hours`, `d`/`day`/`days`
+  - Japanese units: `秒`/`秒間`, `分`/`分間`, `時`/`時間`, `日`/`日間`
   - Compact combinations: `1h 30m`, `1m 5s`
   - Day combinations: `1 day and 10 hours`, `1 day and 1 hour 2 min`
-  - Natural language: `1 day 2 hours 30 minutes`, `2 hours and 30 minutes`
+  - Natural language: `1 day 2 hours 30 minutes`, `1時間 30分` (or `1時間30分`), `2日 3時間` (or `2日3時間`)
 - Time output uses `and` format when time components exist: `1 day and 02:00:00`, or just `1 day` for whole days (with microseconds when present: `00:01:30.500000`)
 - Number formatting with thousands separators
 - Comment support (`#` and everything after it is ignored)

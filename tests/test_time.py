@@ -23,6 +23,27 @@ def test_time_formats():
     assert calculate('2 hours and 30 minutes', last_result_val) == '02:30:00'
 
 
+def test_japanese_time_formats():
+    """Test Japanese time format support"""
+    last_result_val = '0'
+    # Basic formats
+    assert calculate('1時間', last_result_val) == '01:00:00'
+    assert calculate('30分', last_result_val) == '00:30:00'
+    assert calculate('45秒', last_result_val) == '00:00:45'
+    assert calculate('2日', last_result_val) == '2 days'
+    # With 間
+    assert calculate('30分間', last_result_val) == '00:30:00'
+    assert calculate('45秒間', last_result_val) == '00:00:45'
+    assert calculate('2日間', last_result_val) == '2 days'
+    # Combinations with spaces
+    assert calculate('1時間 30分', last_result_val) == '01:30:00'
+    assert calculate('2日 3時間', last_result_val) == '2 days and 03:00:00'
+    assert calculate('1日 2時間 30分', last_result_val) == '1 day and 02:30:00'
+    # Combinations without spaces
+    assert calculate('1時間30分', last_result_val) == '01:30:00'
+    assert calculate('5分30秒', last_result_val) == '00:05:30'
+
+
 def test_time_operations():
     """Test time arithmetic operations"""
     last_result_val = '0'
@@ -33,6 +54,8 @@ def test_time_operations():
     assert calculate('0.5 day and 06:00:00 + 30s', last_result_val) == '18:00:30'
     assert calculate('1h + 30min', last_result_val) == '01:30:00'
     assert calculate('30min - 5s', last_result_val) == '00:29:55'
+    assert calculate('1時間 + 30分', last_result_val) == '01:30:00'
+    assert calculate('2時間 - 15分', last_result_val) == '01:45:00'
 
 
 def test_time_functions():
