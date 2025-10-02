@@ -112,6 +112,33 @@ _ALLOWED_CONSTANTS: Final[Dict[str, Decimal]] = {
 }
 
 
+def _can_mix_types(
+    left: Union[Decimal, timedelta],
+    right: Union[Decimal, timedelta],
+    operator_type: type
+) -> bool:
+    """Check if type mixing is allowed for the given operation"""
+    if isinstance(left, timedelta) and isinstance(right, Decimal):
+        return operator_type in [ast.Mult, ast.Div]
+    elif isinstance(left, Decimal) and isinstance(right, timedelta):
+        return operator_type == ast.Mult
+    else:
+        return True
+
+
+def _convert_for_mixed_operation(
+    left: Union[Decimal, timedelta],
+    right: Union[Decimal, timedelta]
+) -> tuple[Union[Decimal, float, timedelta], Union[Decimal, float, timedelta]]:
+    """Convert operands for mixed-type operations"""
+    if isinstance(left, timedelta) and isinstance(right, Decimal):
+        return left, float(right)
+    elif isinstance(left, Decimal) and isinstance(right, timedelta):
+        return float(left), right
+    else:
+        return left, right
+
+
 def _eval_binop(
     left: Union[Decimal, timedelta],
     right: Union[Decimal, timedelta],
@@ -121,35 +148,17 @@ def _eval_binop(
     if operator_type not in _ALLOWED_BINARY_OPERATORS:
         raise TypeError(f'Unsupported operator: {operator_type.__name__}')
 
+    if not _can_mix_types(left, right, operator_type):
+        op_name = operator_type.__name__.replace('ast.', '')
+        left_type = type(left).__name__
+        right_type = type(right).__name__
+        raise TypeError(
+            f"Unsupported operation '{op_name}' between {left_type} and {right_type}"
+        )
+
     operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
-    if isinstance(left, type(right)) and isinstance(right, type(left)):
-        return operator_func(left, right)
-
-    if isinstance(left, timedelta) and isinstance(right, Decimal):
-        if operator_type in [ast.Mult, ast.Div]:
-            converted_right: float = float(right)
-            result: timedelta = operator_func(left, converted_right)
-            return result
-        else:
-            op_name = operator_type.__name__.replace('ast.', '')
-            raise TypeError(
-                f"Unsupported operation '{op_name}' between timedelta and Decimal. "
-                f'Only multiplication and division are allowed.'
-            )
-
-    elif isinstance(left, Decimal) and isinstance(right, timedelta):
-        if operator_type == ast.Mult:
-            converted_left: float = float(left)
-            result = operator_func(converted_left, right)
-            return result
-        else:
-            op_name = operator_type.__name__.replace('ast.', '')
-            raise TypeError(
-                f"Unsupported operation '{op_name}' between Decimal and timedelta. "
-                f'Only multiplication is allowed in this order.'
-            )
-
-    return operator_func(left, right)
+    converted_left, converted_right = _convert_for_mixed_operation(left, right)
+    return operator_func(converted_left, converted_right)
 
 
 def _eval_math_func(func_name: str, args: list, kwargs: dict) -> Decimal:
