@@ -134,7 +134,7 @@ def main() -> None:
     if sys.stdin.isatty():
         session: PromptSession = PromptSession()
         while True:
-            expression = session.prompt()
+            expression = session.prompt().strip()
             if not expression:
                 continue
             elif expression == 'exit':
