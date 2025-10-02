@@ -82,11 +82,17 @@ def _format_result(result: Union[Decimal, timedelta]) -> str:
     return str(result)
 
 
-def calculate(expression: str, last_result: str) -> str:
-    """Calculate mathematical expression and return formatted result"""
+def evaluate_expression(expression: str, last_result: str) -> tuple[bool, str, str]:
+    """
+    Evaluate mathematical expression without I/O
+
+    Returns:
+        (success: bool, value: str, error: str)
+        Error is empty string when successful
+    """
     expression = _preprocess_expression(expression, last_result)
     if not expression:
-        return last_result
+        return (True, last_result, '')
 
     try:
         expression = _normalize_operators(expression)
@@ -97,30 +103,40 @@ def calculate(expression: str, last_result: str) -> str:
         result = ast_safe_eval(expression)
         formatted_result = _format_result(result)
 
-        print(f'= {formatted_result}')
-        return formatted_result
+        return (True, formatted_result, '')
 
     except ValueError as e:
         if 'Invalid time format' in str(e):
-            print('Error: Invalid time format (use HH:MM:SS with MM,SS as 00-59)')
+            error = 'Invalid time format (use HH:MM:SS with MM,SS as 00-59)'
         else:
-            print(f'Error: {e}')
-        return last_result
+            error = str(e)
+        return (False, last_result, error)
     except TypeError as e:
-        print(f'Error: {e}')
-        return last_result
+        return (False, last_result, str(e))
     except ZeroDivisionError:
-        print('Error: Division by zero')
-        return last_result
+        return (False, last_result, 'Division by zero')
     except OverflowError:
-        print('Error: Number too large')
-        return last_result
+        return (False, last_result, 'Number too large')
     except SyntaxError:
-        print('Error: Invalid syntax')
-        return last_result
+        return (False, last_result, 'Invalid syntax')
     except Exception as e:
-        print(f'Error: {type(e).__name__} - {e}')
+        return (False, last_result, f'{type(e).__name__} - {e}')
+
+
+def calculate(expression: str, last_result: str) -> str:
+    """Calculate mathematical expression and return formatted result"""
+    expression_stripped = _preprocess_expression(expression, last_result)
+    if not expression_stripped:
         return last_result
+
+    success, value, error = evaluate_expression(expression, last_result)
+
+    if success:
+        print(f'= {value}')
+    else:
+        print(f'Error: {error}')
+
+    return value
 
 
 def main() -> None:
