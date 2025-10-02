@@ -1,93 +1,56 @@
-import sys
-from io import StringIO
-
-from calc.__main__ import calculate
-
-
-def capture_calculate_output(expression, last_result='999'):
-    """Helper function to capture both result and printed output"""
-    old_stdout = sys.stdout
-    sys.stdout = captured_output = StringIO()
-    try:
-        result = calculate(expression, last_result)
-        output = captured_output.getvalue().strip()
-        return result, output
-    finally:
-        sys.stdout = old_stdout
+from calc.__main__ import evaluate_expression
 
 
 def test_syntax_errors():
     """Test syntax error handling"""
     last_result_val = '999'
-
-    result, output = capture_calculate_output('', last_result_val)
-    assert result == last_result_val
-    assert output == ''
-
-    result, output = capture_calculate_output('1 +', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Invalid syntax' in output
-
-    result, output = capture_calculate_output('(', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Invalid syntax' in output
-
-    result, output = capture_calculate_output('import os', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Invalid syntax' in output
+    success, value, error = evaluate_expression('', last_result_val)
+    assert success and value == last_result_val
+    success, value, error = evaluate_expression('1 +', last_result_val)
+    assert not success and value == last_result_val and error == 'Invalid syntax'
+    success, value, error = evaluate_expression('(', last_result_val)
+    assert not success and value == last_result_val and error == 'Invalid syntax'
+    success, value, error = evaluate_expression('import os', last_result_val)
+    assert not success and value == last_result_val and error == 'Invalid syntax'
 
 
 def test_security_errors():
     """Test security-related error handling"""
     last_result_val = '999'
-
-    result, output = capture_calculate_output('open("test.txt")', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Unsupported constant type: str' in output
+    success, value, error = evaluate_expression('open("test.txt")', last_result_val)
+    assert not success and value == last_result_val and 'Unsupported constant type: str' in error
 
 
 def test_runtime_errors():
     """Test runtime error handling"""
     last_result_val = '999'
-
-    result, output = capture_calculate_output('1 / 0', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Division by zero' in output
-
-    result, output = capture_calculate_output('sqrt(-1)', last_result_val)
-    assert result == last_result_val
-    assert 'Error: math domain error' in output
+    success, value, error = evaluate_expression('1 / 0', last_result_val)
+    assert not success and value == last_result_val and error == 'Division by zero'
+    success, value, error = evaluate_expression('sqrt(-1)', last_result_val)
+    assert not success and value == last_result_val and 'math domain error' in error
 
 
 def test_function_argument_errors():
     """Test function argument error handling"""
     last_result_val = '999'
-
-    result, output = capture_calculate_output('min()', last_result_val)
-    assert result == last_result_val
-    assert 'Error: min expected at least 1 argument, got 0' in output
-
-    result, output = capture_calculate_output('max()', last_result_val)
-    assert result == last_result_val
-    assert 'Error: max expected at least 1 argument, got 0' in output
-
-    result, output = capture_calculate_output('avg()', last_result_val)
-    assert result == last_result_val
-    assert 'Error: avg expected at least 1 argument, got 0' in output
+    success, value, error = evaluate_expression('min()', last_result_val)
+    assert (not success and value == last_result_val and
+            'min expected at least 1 argument, got 0' in error)
+    success, value, error = evaluate_expression('max()', last_result_val)
+    assert (not success and value == last_result_val and
+            'max expected at least 1 argument, got 0' in error)
+    success, value, error = evaluate_expression('avg()', last_result_val)
+    assert (not success and value == last_result_val and
+            'avg expected at least 1 argument, got 0' in error)
 
 
 def test_time_related_errors():
     """Test time-related error handling"""
     last_result_val = '999'
-
-    result, output = capture_calculate_output('25:99:99', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Invalid time format' in output
-
-    result, output = capture_calculate_output('03:00:00 + 2', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Unsupported operation' in output
-
-    result, output = capture_calculate_output('sum(1:00:00, 60)', last_result_val)
-    assert result == last_result_val
-    assert 'Error: Cannot mix timedelta and Decimal in sum' in output
+    success, value, error = evaluate_expression('25:99:99', last_result_val)
+    assert not success and value == last_result_val and 'Invalid time format' in error
+    success, value, error = evaluate_expression('03:00:00 + 2', last_result_val)
+    assert not success and value == last_result_val and 'Unsupported operation' in error
+    success, value, error = evaluate_expression('sum(1:00:00, 60)', last_result_val)
+    assert (not success and value == last_result_val and
+            'Cannot mix timedelta and Decimal in sum' in error)
