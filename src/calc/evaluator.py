@@ -187,8 +187,8 @@ def _eval_rounding_func(func_name: str, args: list) -> Union[Decimal, timedelta]
             return Decimal(str(result))
 
 
-def _eval_timedelta_constructor(args: list, kwargs: dict) -> timedelta:
-    """Evaluate timedelta constructor"""
+def _eval_timedelta(args: list, kwargs: dict) -> timedelta:
+    """Evaluate timedelta function"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
     float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
     return timedelta(*float_args, **float_kwargs)
@@ -204,12 +204,12 @@ def _eval_func(func_name: str, args: list, kwargs: dict) -> Union[Decimal, timed
     elif func_name in ['ceil', 'floor', 'round']:
         return _eval_rounding_func(func_name, args)
     elif func_name == 'timedelta':
-        return _eval_timedelta_constructor(args, kwargs)
+        return _eval_timedelta(args, kwargs)
     else:
         return _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
 
 
-def _eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
+def _eval_node(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
     """Recursively evaluate AST node to Decimal or timedelta"""
     if isinstance(node, ast.Constant):
         if not isinstance(node.value, (int, float)):
@@ -217,25 +217,25 @@ def _eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         original_str = expression[node.col_offset:node.end_col_offset]
         return Decimal(original_str)
     elif isinstance(node, ast.BinOp):
-        left = _eval_expr(node.left, expression)
-        right = _eval_expr(node.right, expression)
+        left = _eval_node(node.left, expression)
+        right = _eval_node(node.right, expression)
         return _eval_binop(left, right, type(node.op))
     elif isinstance(node, ast.UnaryOp):
         if isinstance(node.op, ast.UAdd):
-            return _eval_expr(node.operand, expression)
+            return _eval_node(node.operand, expression)
         elif isinstance(node.op, ast.USub):
-            return -_eval_expr(node.operand, expression)
+            return -_eval_node(node.operand, expression)
         else:
             raise TypeError(f'Unsupported unary operator: {type(node.op).__name__}')
     elif isinstance(node, ast.Call):
         if not isinstance(node.func, ast.Name):
             raise TypeError(f'Unsupported function call type: {type(node.func).__name__}')
         func_name = node.func.id
-        args = [_eval_expr(arg, expression) for arg in node.args]
+        args = [_eval_node(arg, expression) for arg in node.args]
         kwargs = {}
         for keyword in node.keywords:
             if keyword.arg is not None:
-                kwargs[keyword.arg] = _eval_expr(keyword.value, expression)
+                kwargs[keyword.arg] = _eval_node(keyword.value, expression)
         return _eval_func(func_name, args, kwargs)
     elif isinstance(node, ast.Name):
         if node.id in _ALLOWED_CONSTANTS:
@@ -248,4 +248,4 @@ def _eval_expr(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
 def safe_eval(expression: str) -> Union[Decimal, timedelta]:
     """Safely evaluate mathematical expression using AST-based whitelist approach"""
     node = ast.parse(expression, mode='eval').body
-    return _eval_expr(node, expression)
+    return _eval_node(node, expression)
