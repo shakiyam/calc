@@ -28,7 +28,7 @@ def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
     """Parse time string and return timedelta constructor string"""
     time_match = re.match(TIME_STRICT, time_str)
     if not time_match:
-        raise ValueError(f'Invalid time format: {time_str}')
+        raise ValueError(f'Invalid time format: {time_str} (use HH:MM:SS with MM,SS as 00-59)')
     parts = []
     if days_str:
         parts.append(f'days={days_str}')

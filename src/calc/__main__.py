@@ -111,11 +111,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
         return (True, formatted_result, '')
 
     except ValueError as e:
-        if 'Invalid time format' in str(e):
-            error = 'Invalid time format (use HH:MM:SS with MM,SS as 00-59)'
-        else:
-            error = str(e)
-        return (False, last_result, error)
+        return (False, last_result, str(e))
     except TypeError as e:
         return (False, last_result, str(e))
     except ZeroDivisionError:
