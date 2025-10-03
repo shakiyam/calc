@@ -18,9 +18,13 @@ UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b'
 PRECISION_DIGITS = 12
 
 
-def _preprocess_expression(expression: str, last_result: str) -> str:
-    """Remove comments and substitute history reference"""
-    expression = expression.split('#', 1)[0].strip()
+def _remove_comments(expression: str) -> str:
+    """Remove comments from expression"""
+    return expression.split('#', 1)[0].strip()
+
+
+def _substitute_history(expression: str, last_result: str) -> str:
+    """Substitute ? with last result"""
     return expression.replace('?', last_result)
 
 
@@ -82,15 +86,16 @@ def _format_result(result: Union[Decimal, timedelta]) -> str:
     return str(result)
 
 
-def evaluate_expression(expression: str, last_result: str) -> tuple[bool, str, str]:
+def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
     """
-    Evaluate mathematical expression without I/O
+    Calculate mathematical expression without I/O
 
     Returns:
         (success: bool, value: str, error: str)
         Error is empty string when successful
     """
-    expression = _preprocess_expression(expression, last_result)
+    expression = _remove_comments(expression)
+    expression = _substitute_history(expression, last_result)
     if not expression:
         return (True, last_result, '')
 
@@ -123,13 +128,12 @@ def evaluate_expression(expression: str, last_result: str) -> tuple[bool, str, s
         return (False, last_result, f'{type(e).__name__} - {e}')
 
 
-def calculate(expression: str, last_result: str) -> str:
-    """Calculate mathematical expression and return formatted result"""
-    expression_stripped = _preprocess_expression(expression, last_result)
-    if not expression_stripped:
+def display_result(expression: str, last_result: str) -> str:
+    """Calculate and display result"""
+    if not _remove_comments(expression):
         return last_result
 
-    success, value, error = evaluate_expression(expression, last_result)
+    success, value, error = calculate(expression, last_result)
 
     if success:
         print(f'= {value}')
@@ -144,7 +148,7 @@ def main() -> None:
 
     if len(sys.argv) > 1:
         expression = ' '.join(sys.argv[1:])
-        calculate(expression, last_result)
+        display_result(expression, last_result)
         sys.exit()
 
     if sys.stdin.isatty():
@@ -155,7 +159,7 @@ def main() -> None:
                 continue
             elif expression == 'exit':
                 break
-            last_result = calculate(expression, last_result)
+            last_result = display_result(expression, last_result)
     else:
         for line in sys.stdin:
             expression = line.strip()
@@ -163,7 +167,7 @@ def main() -> None:
                 continue
             elif expression == 'exit':
                 break
-            last_result = calculate(expression, last_result)
+            last_result = display_result(expression, last_result)
 
 
 if __name__ == '__main__':
