@@ -89,11 +89,9 @@ def _format_result(result: Union[Decimal, timedelta]) -> str:
 
 def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
     """
-    Calculate mathematical expression without I/O
+    Calculate mathematical expression with preprocessing
 
-    Returns:
-        (success: bool, value: str, error: str)
-        Error is empty string when successful
+    Returns: (success: bool, value: str, error: str)
     """
     expression = _remove_comments(expression)
     expression = _substitute_history(expression, last_result)
@@ -140,6 +138,25 @@ def display_result(expression: str, last_result: str) -> str:
     return value
 
 
+def _process_command(expression: str, last_result: str) -> tuple[bool, str]:
+    """
+    Process a single command expression
+
+    Returns:
+        (should_continue: bool, last_result: str)
+    """
+    if not expression:
+        return (True, last_result)
+    elif expression == 'exit':
+        return (False, last_result)
+    elif expression == 'help':
+        print(get_help())
+        return (True, last_result)
+    else:
+        new_result = display_result(expression, last_result)
+        return (True, new_result)
+
+
 def main() -> None:
     last_result = '0'
 
@@ -152,25 +169,15 @@ def main() -> None:
         session: PromptSession[str] = PromptSession()
         while True:
             expression = session.prompt().strip()
-            if not expression:
-                continue
-            elif expression == 'exit':
+            should_continue, last_result = _process_command(expression, last_result)
+            if not should_continue:
                 break
-            elif expression == 'help':
-                print(get_help())
-            else:
-                last_result = display_result(expression, last_result)
     else:
         for line in sys.stdin:
             expression = line.strip()
-            if not expression:
-                continue
-            elif expression == 'exit':
+            should_continue, last_result = _process_command(expression, last_result)
+            if not should_continue:
                 break
-            elif expression == 'help':
-                print(get_help())
-            else:
-                last_result = display_result(expression, last_result)
 
 
 if __name__ == '__main__':
