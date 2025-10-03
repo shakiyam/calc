@@ -17,7 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "prompt-toolkit",
 ]
@@ -39,3 +39,16 @@ calc = "calc.__main__:main"
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = ["calc"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]

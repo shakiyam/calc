@@ -15,7 +15,9 @@ _ALLOWED_BINARY_OPERATORS: Final[Dict[type, Callable[[Any, Any], Any]]] = {
 }
 
 
-def _validate_uniform_types(args: tuple, function_name: str) -> type:
+def _validate_uniform_types(
+    args: tuple[Union[Decimal, timedelta], ...], function_name: str
+) -> type:
     """Validate that all arguments are of the same type"""
     if not args:
         raise TypeError(f'{function_name} expected at least 1 argument, got 0')
@@ -37,7 +39,7 @@ def _ensure_decimal(value: Union[Decimal, timedelta]) -> Decimal:
         raise TypeError(f'Math functions only accept Decimal values, got {type(value).__name__}')
 
 
-def _apply_to_timedelta_seconds(td: timedelta, func: Callable, *args: Any) -> timedelta:
+def _apply_to_timedelta_seconds(td: timedelta, func: Callable[..., Any], *args: Any) -> timedelta:
     """Apply function to timedelta by converting to seconds and back"""
     seconds = Decimal(str(td.total_seconds()))
     result_seconds = func(seconds, *args)
@@ -158,10 +160,16 @@ def _eval_binop(
 
     operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
     converted_left, converted_right = _convert_for_mixed_operation(left, right)
-    return operator_func(converted_left, converted_right)
+    result = operator_func(converted_left, converted_right)
+    assert isinstance(result, (Decimal, timedelta))
+    return result
 
 
-def _eval_math_func(func_name: str, args: list, kwargs: dict) -> Decimal:
+def _eval_math_func(
+    func_name: str,
+    args: list[Union[Decimal, timedelta]],
+    kwargs: dict[str, Union[Decimal, timedelta]]
+) -> Decimal:
     """Evaluate math functions (cos, exp, log, sin, sqrt, tan)"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
     float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
@@ -169,7 +177,9 @@ def _eval_math_func(func_name: str, args: list, kwargs: dict) -> Decimal:
     return Decimal(str(result))
 
 
-def _eval_rounding_func(func_name: str, args: list) -> Union[Decimal, timedelta]:
+def _eval_rounding_func(
+    func_name: str, args: list[Union[Decimal, timedelta]]
+) -> Union[Decimal, timedelta]:
     """Evaluate rounding functions (ceil, floor, round)"""
     if isinstance(args[0], timedelta):
         if func_name == 'round' and len(args) > 1:
@@ -187,14 +197,21 @@ def _eval_rounding_func(func_name: str, args: list) -> Union[Decimal, timedelta]
             return Decimal(str(result))
 
 
-def _eval_timedelta(args: list, kwargs: dict) -> timedelta:
+def _eval_timedelta(
+    args: list[Union[Decimal, timedelta]],
+    kwargs: dict[str, Union[Decimal, timedelta]]
+) -> timedelta:
     """Evaluate timedelta function"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
     float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
     return timedelta(*float_args, **float_kwargs)
 
 
-def _eval_func(func_name: str, args: list, kwargs: dict) -> Union[Decimal, timedelta]:
+def _eval_func(
+    func_name: str,
+    args: list[Union[Decimal, timedelta]],
+    kwargs: dict[str, Union[Decimal, timedelta]]
+) -> Union[Decimal, timedelta]:
     """Dispatch function call to appropriate handler"""
     if func_name not in _ALLOWED_FUNCTIONS:
         raise TypeError(f'Unsupported function: {func_name}')
@@ -206,7 +223,9 @@ def _eval_func(func_name: str, args: list, kwargs: dict) -> Union[Decimal, timed
     elif func_name == 'timedelta':
         return _eval_timedelta(args, kwargs)
     else:
-        return _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
+        result = _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
+        assert isinstance(result, (Decimal, timedelta))
+        return result
 
 
 def _eval_node(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:

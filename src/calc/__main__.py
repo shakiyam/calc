@@ -42,7 +42,7 @@ def _normalize_operators(expression: str) -> str:
 
 def _remove_non_time_units(expression: str) -> str:
     """Remove non-time unit words after numbers"""
-    def replace_unit(match):
+    def replace_unit(match: re.Match[str]) -> str:
         number = match.group(1)
         word = match.group(2)
         if word in PRESERVED_WORDS:
@@ -149,7 +149,7 @@ def main() -> None:
         sys.exit()
 
     if sys.stdin.isatty():
-        session: PromptSession = PromptSession()
+        session: PromptSession[str] = PromptSession()
         while True:
             expression = session.prompt().strip()
             if not expression:
