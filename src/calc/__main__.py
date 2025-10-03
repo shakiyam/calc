@@ -7,6 +7,7 @@ from typing import Union
 from prompt_toolkit import PromptSession
 
 from .evaluator import safe_eval as ast_safe_eval
+from .help_text import get_help
 from .time_utils import convert_time_expressions, format_time
 
 PRESERVED_WORDS = {
@@ -155,7 +156,10 @@ def main() -> None:
                 continue
             elif expression == 'exit':
                 break
-            last_result = display_result(expression, last_result)
+            elif expression == 'help':
+                print(get_help())
+            else:
+                last_result = display_result(expression, last_result)
     else:
         for line in sys.stdin:
             expression = line.strip()
@@ -163,7 +167,10 @@ def main() -> None:
                 continue
             elif expression == 'exit':
                 break
-            last_result = display_result(expression, last_result)
+            elif expression == 'help':
+                print(get_help())
+            else:
+                last_result = display_result(expression, last_result)
 
 
 if __name__ == '__main__':

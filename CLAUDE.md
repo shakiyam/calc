@@ -4,16 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Core Architecture
 
-This is a Python-based command-line calculator with two main components:
+This is a Python-based command-line calculator with the following main components:
 
 - `src/calc/__main__.py`: Main calculator interface with expression parsing, time handling, and interactive shell
 - `src/calc/evaluator.py`: Safe expression evaluation engine using AST (Abstract Syntax Tree) for security
+- `src/calc/time_utils.py`: Time expression conversion and formatting utilities
+- `src/calc/help_text.py`: Help command text definitions
 
 The calculator uses a secure evaluation approach - it parses expressions into AST nodes and only allows predefined operators, functions, and constants to prevent arbitrary code execution.
 
 ## Key Features
 
 - Interactive shell mode with history support (using `?` for previous result)
+- Built-in help system (`help` command)
 - Safe mathematical expression evaluation with whitelisted functions/operators
 - Comprehensive time calculations with natural language support:
   - Basic format: `HH:MM:SS[.ffffff]` (microseconds optional)
@@ -45,9 +48,7 @@ make help          # Display all available make targets with descriptions
 ### Testing
 
 ```bash
-make test           # Test Python code with pytest
-./calc_debug pytest -p no:cacheprovider tests/test_basic.py  # Run specific test file
-./calc_debug pytest -p no:cacheprovider tests/test_errors.py::test_syntax_errors  # Run specific test
+make test          # Test Python code with pytest
 ```
 
 ### Linting and Type Checking
@@ -79,7 +80,7 @@ make update_requirements_dev  # Update requirements_dev.txt
 ### Running the Calculator
 
 ```bash
-./calc                    # Interactive mode (containerized)
+./calc                   # Interactive mode (containerized)
 ./calc "1 + 2 * 3"       # Direct calculation (containerized)
 ```
 
@@ -90,6 +91,7 @@ Tests are organized in multiple files under `tests/`:
 - `test_basic.py` - Basic arithmetic, precision, comments, formatting, history
 - `test_functions.py` - Mathematical functions and constants
 - `test_time.py` - Time calculations and conversions
+- `test_time_utils.py` - Time utilities and conversion functions
 - `test_errors.py` - Error handling (syntax, security, runtime, arguments, time-related)
 
 When adding new features, add corresponding test cases in the appropriate file following the existing pattern.
@@ -113,3 +115,24 @@ Never add functions that could execute arbitrary code or access the filesystem.
 ## Development Environment
 
 The project uses containerized development with Docker. The `calc_debug` script runs tools in the development container for consistent environments across different systems.
+
+## Documentation Maintenance
+
+The project maintains feature documentation in multiple places with specific roles:
+
+- **Help command** (`src/calc/help_text.py`): Quick reference for users during calculator use - minimal content only
+- **README.md**: Detailed user documentation with examples for all features
+- **CLAUDE.md**: Architecture, development commands, and implementation details for AI/developers
+
+### Feature Addition Checklist
+
+When adding new features, update documentation as follows:
+
+- [ ] Add tests in appropriate `tests/test_*.py` file (test-first)
+- [ ] Implement feature code
+- [ ] Run `make lint` to ensure code quality
+- [ ] Run `make test` to verify all tests pass
+- [ ] Update help command in `src/calc/help_text.py` (if user-facing)
+- [ ] Update README.md with examples and detailed explanations
+- [ ] Update CLAUDE.md as needed (architecture, features, test structure, etc.)
+- [ ] Run `make all` for final verification (lint, mypy, test, requirements, build)
