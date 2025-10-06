@@ -15,7 +15,7 @@ PRESERVED_WORDS = {
     'floor', 'log', 'max', 'min', 'pi', 'round',
     'sin', 'sqrt', 'sum', 'tan', 'timedelta'
 }
-UNIT_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b'
+NUMBER_WITH_SUFFIX_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b'
 PRECISION_DIGITS = 12
 
 
@@ -49,7 +49,7 @@ def _remove_non_time_units(expression: str) -> str:
             return match.group(0)
         return number
 
-    return re.sub(UNIT_PATTERN, replace_unit, expression)
+    return re.sub(NUMBER_WITH_SUFFIX_PATTERN, replace_unit, expression)
 
 
 def _remove_thousands_separators(expression: str) -> str:
