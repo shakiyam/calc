@@ -1,9 +1,5 @@
-FROM ghcr.io/oracle/oraclelinux:9-slim
+FROM python:3.14-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-# hadolint ignore=DL3041
-RUN microdnf -y install python3.12 \
-  && microdnf clean all \
-  && rm -rf /var/cache
 RUN mkdir -p /opt/calc
 WORKDIR /opt/calc
 COPY requirements.txt .

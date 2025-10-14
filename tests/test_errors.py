@@ -26,7 +26,8 @@ def test_runtime_errors():
     success, value, error = calculate('1 / 0', LAST_RESULT)
     assert not success and value == LAST_RESULT and error == 'Division by zero'
     success, value, error = calculate('sqrt(-1)', LAST_RESULT)
-    assert not success and value == LAST_RESULT and 'math domain error' in error
+    assert (not success and value == LAST_RESULT and
+            ('math domain error' in error or 'expected a nonnegative input' in error))
 
 
 def test_function_argument_errors():
