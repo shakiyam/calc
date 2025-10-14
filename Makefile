@@ -46,7 +46,7 @@ shellcheck: ## Lint shell scripts
 
 shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc calc_debug tools/*.sh
+	@./tools/shfmt.sh -l -d -i 2 -ci -bn calc calc_debug tools/*.sh
 
 test: build_dev ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
