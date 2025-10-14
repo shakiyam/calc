@@ -42,11 +42,11 @@ mypy: build_dev ## Check Python types
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/shellcheck.sh calc tools/*.sh
+	@./tools/shellcheck.sh calc calc_debug tools/*.sh
 
 shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc tools/*.sh
+	@./tools/shfmt.sh -l -d -i 2 -ci -bn -kp calc calc_debug tools/*.sh
 
 test: build_dev ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
