@@ -54,8 +54,8 @@ test: build_dev ## Test Python code with pytest
 
 update_requirements: ## Update requirements.txt
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/uv.sh pip compile --strip-extras --output-file requirements.txt pyproject.toml
+	@./tools/uv.sh pip compile --upgrade --strip-extras --output-file requirements.txt pyproject.toml
 
 update_requirements_dev: ## Update requirements_dev.txt
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/uv.sh pip compile --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
+	@./tools/uv.sh pip compile --upgrade --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
