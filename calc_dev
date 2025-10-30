@@ -9,7 +9,7 @@ fi
 
 if command -v docker &>/dev/null; then
   docker container run \
-    --name "calc_debug_$(uuidgen | head -c8)" \
+    --name "calc_dev_$(uuidgen | head -c8)" \
     --rm \
     -i \
     $TTY_FLAGS \
@@ -20,7 +20,7 @@ if command -v docker &>/dev/null; then
     ghcr.io/shakiyam/calc_dev "$@"
 else
   podman container run \
-    --name "calc_debug_$(uuidgen | head -c8)" \
+    --name "calc_dev_$(uuidgen | head -c8)" \
     --rm \
     --security-opt label=disable \
     -i \

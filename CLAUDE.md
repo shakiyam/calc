@@ -114,7 +114,7 @@ Never add functions that could execute arbitrary code or access the filesystem.
 
 ## Development Environment
 
-The project uses containerized development with Docker. The `calc_debug` script runs tools in the development container for consistent environments across different systems.
+The project uses containerized development with Docker. The `calc_dev` script runs tools in the development container for consistent environments across different systems.
 
 ## Documentation Maintenance
 

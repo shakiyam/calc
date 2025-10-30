@@ -42,15 +42,15 @@ ruff: ## Lint Python code
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/shellcheck.sh calc calc_debug tools/*.sh
+	@./tools/shellcheck.sh calc calc_dev tools/*.sh
 
 shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/shfmt.sh -l -d -i 2 -ci -bn calc calc_debug tools/*.sh
+	@./tools/shfmt.sh -l -d -i 2 -ci -bn calc calc_dev tools/*.sh
 
 test: build_dev ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
-	@./calc_debug pytest
+	@./calc_dev pytest
 
 update_requirements: ## Update requirements.txt
 	@echo -e "\033[36m$@\033[0m"
