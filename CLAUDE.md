@@ -66,8 +66,8 @@ make shfmt         # Lint shell script formatting
 ### Building
 
 ```bash
-make build         # Build image 'shakiyam/calc' from Dockerfile
-make build_dev     # Build image 'shakiyam/calc_dev' from Dockerfile.dev
+make build         # Build image 'ghcr.io/shakiyam/calc' from Dockerfile
+make build_dev     # Build image 'ghcr.io/shakiyam/calc_dev' from Dockerfile.dev
 ```
 
 ### Requirements Management
