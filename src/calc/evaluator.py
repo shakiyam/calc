@@ -3,7 +3,7 @@ import math
 import operator as op
 from datetime import timedelta
 from decimal import Decimal
-from typing import Any, Callable, Final, Union
+from typing import Any, Callable, Final, Union, cast
 
 _ALLOWED_BINARY_OPERATORS: Final[dict[type, Callable[[Any, Any], Any]]] = {
     ast.Add: op.add,
@@ -51,13 +51,11 @@ def _avg_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     arg_type = _validate_uniform_types(args, "avg")
 
     if arg_type is timedelta:
-        total_time = sum(args, timedelta())
-        assert isinstance(total_time, timedelta)  # noqa: S101
+        total_time = cast(timedelta, sum(args, timedelta()))
         avg_seconds = total_time.total_seconds() / len(args)
         return timedelta(seconds=avg_seconds)
     else:
-        total = sum(args, Decimal("0"))
-        assert isinstance(total, Decimal)  # noqa: S101
+        total = cast(Decimal, sum(args, Decimal("0")))
         return total / Decimal(len(args))
 
 
@@ -161,8 +159,7 @@ def _eval_binop(
     operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
     converted_left, converted_right = _convert_for_mixed_operation(left, right)
     result = operator_func(converted_left, converted_right)
-    assert isinstance(result, (Decimal, timedelta))  # noqa: S101
-    return result
+    return cast(Union[Decimal, timedelta], result)
 
 
 def _eval_math_func(
@@ -224,8 +221,7 @@ def _eval_func(
         return _eval_timedelta(args, kwargs)
     else:
         result = _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
-        assert isinstance(result, (Decimal, timedelta))  # noqa: S101
-        return result
+        return cast(Union[Decimal, timedelta], result)
 
 
 def _eval_node(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
