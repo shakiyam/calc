@@ -11,32 +11,32 @@ from .help_text import get_help
 from .time_utils import convert_time_expressions, format_time
 
 PRESERVED_WORDS = {
-    'abs', 'avg', 'ceil', 'cos', 'e', 'exp',
-    'floor', 'log', 'max', 'min', 'pi', 'round',
-    'sin', 'sqrt', 'sum', 'tan', 'timedelta'
+    "abs", "avg", "ceil", "cos", "e", "exp",
+    "floor", "log", "max", "min", "pi", "round",
+    "sin", "sqrt", "sum", "tan", "timedelta"
 }
-NUMBER_WITH_SUFFIX_PATTERN = r'\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b'
+NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b"
 PRECISION_DIGITS = 12
 
 
 def _remove_comments(expression: str) -> str:
     """Remove comments from expression"""
-    return expression.split('#', 1)[0].strip()
+    return expression.split("#", 1)[0].strip()
 
 
 def _substitute_history(expression: str, last_result: str) -> str:
     """Substitute ? with last result"""
-    return expression.replace('?', last_result)
+    return expression.replace("?", last_result)
 
 
 def _normalize_operators(expression: str) -> str:
     """Normalize operator aliases to standard Python operators"""
-    expression = expression.replace('＋', '+')
-    expression = expression.replace('－', '-')
-    expression = re.sub(r'([\d\s\-+*/(),.^%])([xX])([\d\s\-+*/(),.^%])', r'\1*\3', expression)
-    expression = expression.replace('×', '*')
-    expression = expression.replace('÷', '/')
-    expression = expression.replace('^', '**')
+    expression = expression.replace("＋", "+")
+    expression = expression.replace("－", "-")
+    expression = re.sub(r"([\d\s\-+*/(),.^%])([xX])([\d\s\-+*/(),.^%])", r"\1*\3", expression)
+    expression = expression.replace("×", "*")
+    expression = expression.replace("÷", "/")
+    expression = expression.replace("^", "**")
     return expression
 
 
@@ -54,22 +54,22 @@ def _remove_non_time_units(expression: str) -> str:
 
 def _remove_thousands_separators(expression: str) -> str:
     """Remove comma separators from numbers"""
-    return re.sub(r'(\d),(\d)', r'\1\2', expression)
+    return re.sub(r"(\d),(\d)", r"\1\2", expression)
 
 
 def _has_precision_artifact(value: Decimal) -> bool:
     """Check if value has precision artifacts like repeated 9s or 0s"""
     str_val = str(value)
-    pattern_9s = '9' * PRECISION_DIGITS
-    pattern_0s = '0' * PRECISION_DIGITS
+    pattern_9s = "9" * PRECISION_DIGITS
+    pattern_0s = "0" * PRECISION_DIGITS
     return (pattern_9s in str_val or pattern_0s in str_val)
 
 
 def _normalize_result(value: Decimal) -> Decimal:
     """Normalize high-precision Decimal to user-friendly display format"""
     if _has_precision_artifact(value):
-        quantize_pattern = Decimal('0.' + '0' * PRECISION_DIGITS)
-        tolerance = Decimal('1e-' + str(PRECISION_DIGITS - 2))
+        quantize_pattern = Decimal("0." + "0" * PRECISION_DIGITS)
+        tolerance = Decimal("1e-" + str(PRECISION_DIGITS - 2))
         rounded = value.quantize(quantize_pattern)
         if abs(rounded - round(rounded)) < tolerance:
             return Decimal(int(round(rounded)))
@@ -81,7 +81,7 @@ def _format_result(result: Union[Decimal, timedelta]) -> str:
     """Format calculation result for display"""
     if isinstance(result, Decimal):
         normalized = _normalize_result(result)
-        return f'{normalized:,}'
+        return f"{normalized:,}"
     elif isinstance(result, timedelta):
         return format_time(result)
     return str(result)
@@ -96,7 +96,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
     expression = _remove_comments(expression)
     expression = _substitute_history(expression, last_result)
     if not expression:
-        return (True, last_result, '')
+        return (True, last_result, "")
 
     try:
         expression = _normalize_operators(expression)
@@ -107,20 +107,20 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
         result = ast_safe_eval(expression)
         formatted_result = _format_result(result)
 
-        return (True, formatted_result, '')
+        return (True, formatted_result, "")
 
     except ValueError as e:
         return (False, last_result, str(e))
     except TypeError as e:
         return (False, last_result, str(e))
     except ZeroDivisionError:
-        return (False, last_result, 'Division by zero')
+        return (False, last_result, "Division by zero")
     except OverflowError:
-        return (False, last_result, 'Number too large')
+        return (False, last_result, "Number too large")
     except SyntaxError:
-        return (False, last_result, 'Invalid syntax')
+        return (False, last_result, "Invalid syntax")
     except Exception as e:
-        return (False, last_result, f'{type(e).__name__} - {e}')
+        return (False, last_result, f"{type(e).__name__} - {e}")
 
 
 def display_result(expression: str, last_result: str) -> str:
@@ -131,9 +131,9 @@ def display_result(expression: str, last_result: str) -> str:
     success, value, error = calculate(expression, last_result)
 
     if success:
-        print(f'= {value}')
+        print(f"= {value}")
     else:
-        print(f'Error: {error}')
+        print(f"Error: {error}")
 
     return value
 
@@ -147,9 +147,9 @@ def _process_command(expression: str, last_result: str) -> tuple[bool, str]:
     """
     if not expression:
         return (True, last_result)
-    elif expression == 'exit':
+    elif expression == "exit":
         return (False, last_result)
-    elif expression == 'help':
+    elif expression == "help":
         print(get_help())
         return (True, last_result)
     else:
@@ -158,10 +158,10 @@ def _process_command(expression: str, last_result: str) -> tuple[bool, str]:
 
 
 def main() -> None:
-    last_result = '0'
+    last_result = "0"
 
     if len(sys.argv) > 1:
-        expression = ' '.join(sys.argv[1:])
+        expression = " ".join(sys.argv[1:])
         display_result(expression, last_result)
         sys.exit()
 
@@ -180,5 +180,5 @@ def main() -> None:
                 break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

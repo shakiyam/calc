@@ -54,8 +54,8 @@ make test          # Test Python code with pytest
 ### Linting and Type Checking
 
 ```bash
-make lint          # Run all linters (flake8, hadolint, markdownlint, shellcheck, shfmt)
-make flake8        # Lint Python code
+make lint          # Run all linters (ruff, hadolint, markdownlint, shellcheck, shfmt)
+make ruff          # Lint Python code
 make mypy          # Check Python types
 make hadolint      # Lint Dockerfile
 make markdownlint  # Lint Markdown files
