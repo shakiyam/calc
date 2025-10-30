@@ -68,8 +68,8 @@ def _has_precision_artifact(value: Decimal) -> bool:
 def _normalize_result(value: Decimal) -> Decimal:
     """Normalize high-precision Decimal to user-friendly display format"""
     if _has_precision_artifact(value):
-        quantize_pattern = Decimal("0." + "0" * PRECISION_DIGITS)
-        tolerance = Decimal("1e-" + str(PRECISION_DIGITS - 2))
+        quantize_pattern = Decimal(f"0.{'0' * PRECISION_DIGITS}")
+        tolerance = Decimal(f"1e-{PRECISION_DIGITS - 2}")
         rounded = value.quantize(quantize_pattern)
         if abs(rounded - round(rounded)) < tolerance:
             return Decimal(int(round(rounded)))
