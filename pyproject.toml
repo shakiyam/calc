@@ -40,6 +40,9 @@ calc = "calc.__main__:main"
 package-dir = {"" = "src"}
 packages = ["calc"]
 
+[tool.setuptools.package-data]
+calc = ["py.typed"]
+
 [tool.mypy]
 python_version = "3.9"
 strict = true
