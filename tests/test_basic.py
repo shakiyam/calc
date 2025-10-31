@@ -3,7 +3,7 @@ from calc.__main__ import calculate
 LAST_RESULT = "0"
 
 
-def test_basic_operators():
+def test_basic_operators() -> None:
     """Test basic mathematical operators"""
     success, value, error = calculate("10 - 3", LAST_RESULT)
     assert success and value == "7"
@@ -19,7 +19,7 @@ def test_basic_operators():
     assert success and value == "15"
 
 
-def test_operator_aliases():
+def test_operator_aliases() -> None:
     """Test operator aliases"""
     success, value, error = calculate("10 ＋ 5", LAST_RESULT)
     assert success and value == "15"
@@ -41,7 +41,7 @@ def test_operator_aliases():
     assert success and value == "8"
 
 
-def test_decimal_precision():
+def test_decimal_precision() -> None:
     """Test that decimal calculations are precise"""
     success, value, error = calculate("0.1 + 0.2", LAST_RESULT)
     assert success and value == "0.3"
@@ -49,7 +49,7 @@ def test_decimal_precision():
     assert success and value == "1"
 
 
-def test_comments():
+def test_comments() -> None:
     """Test that comments are ignored"""
     success, value, error = calculate("1 + 1 # This is a comment", LAST_RESULT)
     assert success and value == "2"
@@ -57,7 +57,7 @@ def test_comments():
     assert success and value == LAST_RESULT
 
 
-def test_input_formatting():
+def test_input_formatting() -> None:
     """Test comma handling and number formatting"""
     success, value, error = calculate("1,000 + 2,000", LAST_RESULT)
     assert success and value == "3,000"
@@ -65,7 +65,7 @@ def test_input_formatting():
     assert success and value == "1,000,000"
 
 
-def test_history_functionality():
+def test_history_functionality() -> None:
     """Test history reference with ?"""
     success, value, error = calculate("5 + 3", LAST_RESULT)
     assert success and value == "8"
@@ -75,7 +75,7 @@ def test_history_functionality():
     assert success and value == "32"
 
 
-def test_unit_removal():
+def test_unit_removal() -> None:
     """Test removal of non-time units from expressions"""
     success, value, error = calculate("10個 + 20個", LAST_RESULT)
     assert success and value == "30"

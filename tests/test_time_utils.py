@@ -3,7 +3,7 @@ from datetime import timedelta
 from calc.time_utils import convert_time_expressions, format_time
 
 
-def test_convert_time_expressions():
+def test_convert_time_expressions() -> None:
     """Test conversion of natural language time to timedelta constructors"""
     # Basic units
     assert convert_time_expressions("60s") == "timedelta(seconds=60)"
@@ -36,7 +36,7 @@ def test_convert_time_expressions():
     )
 
 
-def test_format_time():
+def test_format_time() -> None:
     """Test formatting of timedelta to display string"""
     # Basic time
     assert format_time(timedelta(hours=1, minutes=30, seconds=45)) == "01:30:45"

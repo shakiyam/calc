@@ -3,7 +3,7 @@ from calc.__main__ import calculate
 LAST_RESULT = "999"
 
 
-def test_syntax_errors():
+def test_syntax_errors() -> None:
     """Test syntax error handling"""
     success, value, error = calculate("", LAST_RESULT)
     assert success and value == LAST_RESULT
@@ -15,13 +15,13 @@ def test_syntax_errors():
     assert not success and value == LAST_RESULT and error == "Invalid syntax"
 
 
-def test_security_errors():
+def test_security_errors() -> None:
     """Test security-related error handling"""
     success, value, error = calculate('open("test.txt")', LAST_RESULT)
     assert not success and value == LAST_RESULT and "Unsupported constant type: str" in error
 
 
-def test_runtime_errors():
+def test_runtime_errors() -> None:
     """Test runtime error handling"""
     success, value, error = calculate("1 / 0", LAST_RESULT)
     assert not success and value == LAST_RESULT and error == "Division by zero"
@@ -30,7 +30,7 @@ def test_runtime_errors():
             ("math domain error" in error or "expected a nonnegative input" in error))
 
 
-def test_function_argument_errors():
+def test_function_argument_errors() -> None:
     """Test function argument error handling"""
     success, value, error = calculate("min()", LAST_RESULT)
     assert (not success and value == LAST_RESULT and
@@ -43,7 +43,7 @@ def test_function_argument_errors():
             "avg expected at least 1 argument, got 0" in error)
 
 
-def test_time_related_errors():
+def test_time_related_errors() -> None:
     """Test time-related error handling"""
     success, value, error = calculate("25:99:99", LAST_RESULT)
     assert not success and value == LAST_RESULT and "Invalid time format" in error

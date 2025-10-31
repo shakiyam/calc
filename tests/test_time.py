@@ -3,7 +3,7 @@ from calc.__main__ import calculate
 LAST_RESULT = "0"
 
 
-def test_time_formats():
+def test_time_formats() -> None:
     """Test various time format inputs"""
     # Basic formats
     success, value, error = calculate("01:30:45", LAST_RESULT)
@@ -37,7 +37,7 @@ def test_time_formats():
     assert success and value == "02:30:00"
 
 
-def test_japanese_time_formats():
+def test_japanese_time_formats() -> None:
     """Test Japanese time format support"""
     # Basic formats
     success, value, error = calculate("1時間", LAST_RESULT)
@@ -69,7 +69,7 @@ def test_japanese_time_formats():
     assert success and value == "00:05:30"
 
 
-def test_time_operations():
+def test_time_operations() -> None:
     """Test time arithmetic operations"""
     success, value, error = calculate("00:01:00 + 30s", LAST_RESULT)
     assert success and value == "00:01:30"
@@ -91,7 +91,7 @@ def test_time_operations():
     assert success and value == "01:45:00"
 
 
-def test_time_functions():
+def test_time_functions() -> None:
     """Test functions with time values"""
     success, value, error = calculate("ceil(0.1s)", LAST_RESULT)
     assert success and value == "00:00:01"

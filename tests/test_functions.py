@@ -3,7 +3,7 @@ from calc.__main__ import calculate
 LAST_RESULT = "0"
 
 
-def test_numeric_functions():
+def test_numeric_functions() -> None:
     """Test functions with numeric values"""
     success, value, error = calculate("exp(1)", LAST_RESULT)
     assert success and value == "2.718281828459045"
@@ -31,7 +31,7 @@ def test_numeric_functions():
     assert success and value == "10"
 
 
-def test_mathematical_constants():
+def test_mathematical_constants() -> None:
     """Test mathematical constants pi and e"""
     success, value, error = calculate("pi", LAST_RESULT)
     assert success and value == "3.141592653589793"
