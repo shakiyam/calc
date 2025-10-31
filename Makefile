@@ -34,7 +34,8 @@ markdownlint: ## Lint Markdown files
 
 mypy: build_dev ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/mypy.sh ghcr.io/shakiyam/calc_dev src/calc
+	@[[ -d .mypy_cache ]] || mkdir .mypy_cache
+	@./calc_dev mypy src/calc tests
 
 ruff: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
