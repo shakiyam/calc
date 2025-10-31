@@ -101,7 +101,7 @@ When adding new features, add corresponding test cases in the appropriate file f
 The evaluator uses a whitelist approach:
 
 - `allowed_operators`: Only basic math operators (+, -, *, /, %, **)
-- `allowed_functions`: Math functions, min/max, round, timedelta
+- `allowed_functions`: Math, rounding, and aggregate functions, timedelta
 - `allowed_constants`: Just pi and e
 
 Never add functions that could execute arbitrary code or access the filesystem.
