@@ -50,7 +50,7 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 
-[tool.pytest.ini_options]
+[tool.pytest]
 addopts = ["-p", "no:cacheprovider", "-ra"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
