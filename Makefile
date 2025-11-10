@@ -30,7 +30,7 @@ lint: ruff hadolint markdownlint shellcheck shfmt ## Run all linters (ruff, hado
 
 markdownlint: ## Lint Markdown files
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/markdownlint.sh "*.md"
+	@./tools/markdownlint-cli2.sh "*.md"
 
 mypy: build_dev ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
