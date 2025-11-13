@@ -28,7 +28,7 @@ pygments==2.19.2
     # via
     #   ptpython
     #   pytest
-pytest==9.0.0
+pytest==9.0.1
     # via calc (pyproject.toml)
 typing-extensions==4.15.0
     # via mypy
