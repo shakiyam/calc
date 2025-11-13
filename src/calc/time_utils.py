@@ -1,6 +1,5 @@
 import re
 from datetime import timedelta
-from typing import Optional
 
 NUMBER = r"(\d+(?:\.\d+)?)"
 DAYS = NUMBER + r" *(?:d(?:ays?)?|日(?:間)?)"
@@ -24,7 +23,7 @@ MINUTES_AND_SECONDS = MINUTES + AND_SEPARATOR + SECONDS
 DAYS_AND_TIME = DAYS + AND_SEPARATOR + TIME
 
 
-def _parse_time(time_str: str, days_str: Optional[str] = None) -> str:
+def _parse_time(time_str: str, days_str: str | None = None) -> str:
     """Parse time string and return timedelta constructor string"""
     time_match = re.match(TIME_STRICT, time_str)
     if not time_match:

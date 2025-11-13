@@ -1,9 +1,10 @@
 import ast
 import math
 import operator as op
+from collections.abc import Callable
 from datetime import timedelta
 from decimal import Decimal
-from typing import Any, Callable, Final, Union, cast
+from typing import Any, Final, cast
 
 _ALLOWED_BINARY_OPERATORS: Final[dict[type, Callable[[Any, Any], Any]]] = {
     ast.Add: op.add,
@@ -16,7 +17,7 @@ _ALLOWED_BINARY_OPERATORS: Final[dict[type, Callable[[Any, Any], Any]]] = {
 
 
 def _validate_uniform_types(
-    args: tuple[Union[Decimal, timedelta], ...], function_name: str
+    args: tuple[Decimal | timedelta, ...], function_name: str
 ) -> type:
     """Validate that all arguments are of the same type"""
     if not args:
@@ -31,7 +32,7 @@ def _validate_uniform_types(
     return expected_type
 
 
-def _ensure_decimal(value: Union[Decimal, timedelta]) -> Decimal:
+def _ensure_decimal(value: Decimal | timedelta) -> Decimal:
     """Ensure value is Decimal, raising TypeError for timedelta"""
     if isinstance(value, Decimal):
         return value
@@ -46,7 +47,7 @@ def _apply_to_timedelta_seconds(td: timedelta, func: Callable[..., Any], *args: 
     return timedelta(seconds=float(result_seconds))
 
 
-def _avg_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
+def _avg_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
     """Calculate average of Decimal or timedelta values"""
     arg_type = _validate_uniform_types(args, "avg")
 
@@ -59,7 +60,7 @@ def _avg_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
         return total / Decimal(len(args))
 
 
-def _max_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
+def _max_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
     """Return maximum of Decimal or timedelta values"""
     if len(args) == 1:
         return args[0]
@@ -67,7 +68,7 @@ def _max_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     return max(*args)
 
 
-def _min_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
+def _min_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
     """Return minimum of Decimal or timedelta values"""
     if len(args) == 1:
         return args[0]
@@ -75,7 +76,7 @@ def _min_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
     return min(*args)
 
 
-def _sum_wrapper(*args: Union[Decimal, timedelta]) -> Union[Decimal, timedelta]:
+def _sum_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
     """Calculate sum of Decimal or timedelta values"""
     if not args:
         return Decimal("0")
@@ -113,8 +114,8 @@ _ALLOWED_CONSTANTS: Final[dict[str, Decimal]] = {
 
 
 def _can_mix_types(
-    left: Union[Decimal, timedelta],
-    right: Union[Decimal, timedelta],
+    left: Decimal | timedelta,
+    right: Decimal | timedelta,
     operator_type: type
 ) -> bool:
     """Check if type mixing is allowed for the given operation"""
@@ -127,9 +128,9 @@ def _can_mix_types(
 
 
 def _convert_for_mixed_operation(
-    left: Union[Decimal, timedelta],
-    right: Union[Decimal, timedelta]
-) -> tuple[Union[Decimal, float, timedelta], Union[Decimal, float, timedelta]]:
+    left: Decimal | timedelta,
+    right: Decimal | timedelta
+) -> tuple[Decimal | float | timedelta, Decimal | float | timedelta]:
     """Convert operands for mixed-type operations"""
     if isinstance(left, timedelta) and isinstance(right, Decimal):
         return left, float(right)
@@ -140,10 +141,10 @@ def _convert_for_mixed_operation(
 
 
 def _eval_binop(
-    left: Union[Decimal, timedelta],
-    right: Union[Decimal, timedelta],
+    left: Decimal | timedelta,
+    right: Decimal | timedelta,
     operator_type: type
-) -> Union[Decimal, timedelta]:
+) -> Decimal | timedelta:
     """Evaluate binary operation with type mixing rules for timedelta and Decimal"""
     if operator_type not in _ALLOWED_BINARY_OPERATORS:
         raise TypeError(f"Unsupported operator: {operator_type.__name__}")
@@ -159,13 +160,13 @@ def _eval_binop(
     operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
     converted_left, converted_right = _convert_for_mixed_operation(left, right)
     result = operator_func(converted_left, converted_right)
-    return cast(Union[Decimal, timedelta], result)
+    return cast(Decimal | timedelta, result)
 
 
 def _eval_math_func(
     func_name: str,
-    args: list[Union[Decimal, timedelta]],
-    kwargs: dict[str, Union[Decimal, timedelta]]
+    args: list[Decimal | timedelta],
+    kwargs: dict[str, Decimal | timedelta]
 ) -> Decimal:
     """Evaluate math functions (cos, exp, log, sin, sqrt, tan)"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
@@ -175,8 +176,8 @@ def _eval_math_func(
 
 
 def _eval_rounding_func(
-    func_name: str, args: list[Union[Decimal, timedelta]]
-) -> Union[Decimal, timedelta]:
+    func_name: str, args: list[Decimal | timedelta]
+) -> Decimal | timedelta:
     """Evaluate rounding functions (ceil, floor, round)"""
     if isinstance(args[0], timedelta):
         if func_name == "round" and len(args) > 1:
@@ -195,8 +196,8 @@ def _eval_rounding_func(
 
 
 def _eval_timedelta(
-    args: list[Union[Decimal, timedelta]],
-    kwargs: dict[str, Union[Decimal, timedelta]]
+    args: list[Decimal | timedelta],
+    kwargs: dict[str, Decimal | timedelta]
 ) -> timedelta:
     """Evaluate timedelta function"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
@@ -206,9 +207,9 @@ def _eval_timedelta(
 
 def _eval_func(
     func_name: str,
-    args: list[Union[Decimal, timedelta]],
-    kwargs: dict[str, Union[Decimal, timedelta]]
-) -> Union[Decimal, timedelta]:
+    args: list[Decimal | timedelta],
+    kwargs: dict[str, Decimal | timedelta]
+) -> Decimal | timedelta:
     """Dispatch function call to appropriate handler"""
     if func_name not in _ALLOWED_FUNCTIONS:
         raise TypeError(f"Unsupported function: {func_name}")
@@ -221,10 +222,10 @@ def _eval_func(
         return _eval_timedelta(args, kwargs)
     else:
         result = _ALLOWED_FUNCTIONS[func_name](*args, **kwargs)
-        return cast(Union[Decimal, timedelta], result)
+        return cast(Decimal | timedelta, result)
 
 
-def _eval_node(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
+def _eval_node(node: ast.AST, expression: str) -> Decimal | timedelta:
     """Recursively evaluate AST node to Decimal or timedelta"""
     if isinstance(node, ast.Constant):
         if not isinstance(node.value, (int, float)):
@@ -260,7 +261,7 @@ def _eval_node(node: ast.AST, expression: str) -> Union[Decimal, timedelta]:
         raise TypeError(f"Unsupported AST node type: {type(node).__name__}")
 
 
-def safe_eval(expression: str) -> Union[Decimal, timedelta]:
+def safe_eval(expression: str) -> Decimal | timedelta:
     """Safely evaluate mathematical expression using AST-based whitelist approach"""
     node = ast.parse(expression, mode="eval").body
     return _eval_node(node, expression)

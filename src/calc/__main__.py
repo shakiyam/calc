@@ -2,7 +2,6 @@ import re
 import sys
 from datetime import timedelta
 from decimal import Decimal
-from typing import Union
 
 from prompt_toolkit import PromptSession
 
@@ -77,7 +76,7 @@ def _normalize_result(value: Decimal) -> Decimal:
     return value
 
 
-def _format_result(result: Union[Decimal, timedelta]) -> str:
+def _format_result(result: Decimal | timedelta) -> str:
     """Format calculation result for display"""
     if isinstance(result, Decimal):
         normalized = _normalize_result(result)
