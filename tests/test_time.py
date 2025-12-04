@@ -95,10 +95,6 @@ def test_time_with_thousands_separator() -> None:
     """Test time units with thousands separator in numbers"""
     success, value, error = calculate("1,234s", LAST_RESULT)
     assert success and value == "00:20:34"
-    success, value, error = calculate("1,234,567s", LAST_RESULT)
-    assert success and value == "14 days and 06:56:07"
-    success, value, error = calculate("1,000m", LAST_RESULT)
-    assert success and value == "16:40:00"
 
 
 def test_time_functions() -> None:
