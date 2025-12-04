@@ -101,9 +101,9 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
 
     try:
         expression = _normalize_operators(expression)
+        expression = _remove_thousands_separators(expression)
         expression = convert_time_expressions(expression)
         expression = _remove_non_time_units(expression)
-        expression = _remove_thousands_separators(expression)
 
         result = ast_safe_eval(expression)
         formatted_result = _format_result(result)
