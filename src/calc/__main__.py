@@ -80,7 +80,9 @@ def _format_result(result: Decimal | timedelta) -> str:
     """Format calculation result for display"""
     if isinstance(result, Decimal):
         normalized = _normalize_result(result)
-        return f"{normalized:,}"
+        if normalized == normalized.to_integral_value():
+            return f"{int(normalized):,}"
+        return f"{normalized:,f}"
     elif isinstance(result, timedelta):
         return format_time(result)
     return str(result)

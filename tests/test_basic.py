@@ -65,6 +65,14 @@ def test_input_formatting() -> None:
     assert success and value == "1,000,000"
 
 
+def test_no_exponential_notation() -> None:
+    """Test that large numbers are not formatted in exponential notation"""
+    success, value, error = calculate("26 * 1024 / 1.04", LAST_RESULT)
+    assert success and value == "25,600"
+    success, value, error = calculate("1000000 * 100", LAST_RESULT)
+    assert success and value == "100,000,000"
+
+
 def test_history_functionality() -> None:
     """Test history reference with ?"""
     success, value, error = calculate("5 + 3", LAST_RESULT)
@@ -82,6 +90,6 @@ def test_unit_removal() -> None:
     success, value, error = calculate("100 円 - 50 円", LAST_RESULT)
     assert success and value == "50"
     success, value, error = calculate("10.5kg * 2", LAST_RESULT)
-    assert success and value == "21.0"
+    assert success and value == "21"
     success, value, error = calculate("1,024 GB / 4", LAST_RESULT)
     assert success and value == "256"
