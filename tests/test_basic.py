@@ -55,8 +55,8 @@ def test_comments() -> None:
     assert success and value == LAST_RESULT
 
 
-def test_input_formatting() -> None:
-    """Test comma handling and number formatting"""
+def test_thousands_separator() -> None:
+    """Test thousands separator in input and output"""
     success, value, error = calculate("1,000 + 2,000", LAST_RESULT)
     assert success and value == "3,000"
     success, value, error = calculate("1000000", LAST_RESULT)
