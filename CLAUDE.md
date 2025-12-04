@@ -41,7 +41,7 @@ The calculator uses a secure evaluation approach - it parses expressions into AS
 ### Quick Commands
 
 ```bash
-make all           # Lint, update requirements.txt, test, and build
+make all           # Check for updates, lint, update requirements.txt, test, and build
 make help          # Display all available make targets with descriptions
 ```
 
@@ -75,6 +75,14 @@ make build_dev     # Build image 'ghcr.io/shakiyam/calc_dev' from Dockerfile.dev
 ```bash
 make update_requirements      # Update requirements.txt
 make update_requirements_dev  # Update requirements_dev.txt
+```
+
+### Dependency Updates
+
+```bash
+make check_for_updates        # Check for updates to all dependencies
+make check_for_action_updates # Check for GitHub Actions updates
+make check_for_image_updates  # Check for Docker image updates
 ```
 
 ### Running the Calculator
