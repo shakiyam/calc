@@ -6,7 +6,7 @@ iniconfig==2.3.0
     # via pytest
 jedi==0.19.2
     # via ptpython
-librt==0.6.3
+librt==0.7.3
     # via mypy
 mypy==1.19.0
     # via calc (pyproject.toml)
@@ -30,7 +30,7 @@ pygments==2.19.2
     # via
     #   ptpython
     #   pytest
-pytest==9.0.1
+pytest==9.0.2
     # via calc (pyproject.toml)
 typing-extensions==4.15.0
     # via mypy
