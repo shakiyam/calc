@@ -110,9 +110,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
 
         return (True, formatted_result, "")
 
-    except ValueError as e:
-        return (False, last_result, str(e))
-    except TypeError as e:
+    except (ValueError, TypeError) as e:
         return (False, last_result, str(e))
     except ZeroDivisionError:
         return (False, last_result, "Division by zero")
