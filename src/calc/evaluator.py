@@ -112,6 +112,10 @@ _ALLOWED_CONSTANTS: Final[dict[str, Decimal]] = {
     "pi": Decimal(str(math.pi)),
 }
 
+ALLOWED_NAMES: Final[frozenset[str]] = frozenset(
+    _ALLOWED_FUNCTIONS.keys() | _ALLOWED_CONSTANTS.keys()
+)
+
 
 def _can_mix_types(
     left: Decimal | timedelta,

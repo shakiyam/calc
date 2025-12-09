@@ -5,15 +5,11 @@ from decimal import Decimal
 
 from prompt_toolkit import PromptSession
 
-from .evaluator import safe_eval as ast_safe_eval
+from .evaluator import ALLOWED_NAMES, safe_eval as ast_safe_eval
 from .help_text import get_help
 from .time_utils import convert_time_expressions, format_time
 
-PRESERVED_WORDS = {
-    "abs", "avg", "ceil", "cos", "e", "exp",
-    "floor", "log", "max", "min", "pi", "round",
-    "sin", "sqrt", "sum", "tan", "timedelta"
-}
+PRESERVED_WORDS = ALLOWED_NAMES
 NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b"
 PRECISION_DIGITS = 12
 
