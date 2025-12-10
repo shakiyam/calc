@@ -5,7 +5,8 @@ from decimal import Decimal
 
 from prompt_toolkit import PromptSession
 
-from .evaluator import ALLOWED_NAMES, safe_eval as ast_safe_eval
+from .evaluator import ALLOWED_NAMES
+from .evaluator import safe_eval as ast_safe_eval
 from .help_text import get_help
 from .time_utils import convert_time_expressions, format_time
 
