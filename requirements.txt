@@ -2,5 +2,5 @@
 #    uv pip compile --strip-extras --output-file requirements.txt pyproject.toml
 prompt-toolkit==3.0.52
     # via calc (pyproject.toml)
-wcwidth==0.5.2
+wcwidth==0.5.3
     # via prompt-toolkit
