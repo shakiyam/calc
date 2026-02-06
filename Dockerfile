@@ -1,5 +1,5 @@
 FROM python:3.14-slim-trixie
-COPY --from=ghcr.io/astral-sh/uv:0.9 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.10 /uv /bin/uv
 RUN mkdir -p /opt/calc
 WORKDIR /opt/calc
 COPY requirements.txt .
