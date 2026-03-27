@@ -86,3 +86,6 @@ ignore = [
 "tests/**/*.py" = [
     "S101",  # Use of assert in tests is expected
 ]
+
+[tool.uv]
+exclude-newer = "3 days"
