@@ -12,7 +12,7 @@ mypy==1.20.2
     # via calc (pyproject.toml)
 mypy-extensions==1.1.0
     # via mypy
-packaging==26.1
+packaging==26.2
     # via pytest
 parso==0.8.6
     # via jedi
