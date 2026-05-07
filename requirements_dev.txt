@@ -4,7 +4,7 @@ appdirs==1.4.4
     # via ptpython
 iniconfig==2.3.0
     # via pytest
-jedi==0.19.2
+jedi==0.20.0
     # via ptpython
 librt==0.9.0
     # via mypy
@@ -14,9 +14,9 @@ mypy-extensions==1.1.0
     # via mypy
 packaging==26.2
     # via pytest
-parso==0.8.6
+parso==0.8.7
     # via jedi
-pathspec==1.1.0
+pathspec==1.1.1
     # via mypy
 pluggy==1.6.0
     # via pytest
@@ -34,5 +34,5 @@ pytest==9.0.3
     # via calc (pyproject.toml)
 typing-extensions==4.15.0
     # via mypy
-wcwidth==0.6.0
+wcwidth==0.7.0
     # via prompt-toolkit
