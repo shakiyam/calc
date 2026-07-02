@@ -8,20 +8,19 @@ MINUTES = NUMBER + r" *(?:m(?:in(?:utes?)?)?|分(?:間)?)"
 SECONDS = NUMBER + r" *(?:s(?:ec(?:onds?)?)?|秒(?:間)?)"
 TIME = r"(\d+:\d+:\d+(?:\.\d{1,6})?)"
 TIME_STRICT = r"(\d+):([0-5][0-9]):([0-5][0-9])(?:\.(\d{1,6}))?"
-AND_SEPARATOR = r"(?:\s+and\s+|\s*)"
-SEPARATOR = r"\s*"
+SEPARATOR = r"(?:\s+and\s+|\s*)"
 DAYS_HOURS_MINUTES_SECONDS = DAYS + SEPARATOR + HOURS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
-DAYS_AND_HOURS_MINUTES = DAYS + AND_SEPARATOR + HOURS + SEPARATOR + MINUTES
+DAYS_HOURS_MINUTES = DAYS + SEPARATOR + HOURS + SEPARATOR + MINUTES
 DAYS_HOURS_SECONDS = DAYS + SEPARATOR + HOURS + SEPARATOR + SECONDS
 DAYS_MINUTES_SECONDS = DAYS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
 HOURS_MINUTES_SECONDS = HOURS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
-DAYS_AND_HOURS = DAYS + AND_SEPARATOR + HOURS
-DAYS_AND_MINUTES = DAYS + AND_SEPARATOR + MINUTES
-DAYS_AND_SECONDS = DAYS + AND_SEPARATOR + SECONDS
-HOURS_AND_MINUTES = HOURS + AND_SEPARATOR + MINUTES
-HOURS_AND_SECONDS = HOURS + AND_SEPARATOR + SECONDS
-MINUTES_AND_SECONDS = MINUTES + AND_SEPARATOR + SECONDS
-DAYS_AND_TIME = DAYS + AND_SEPARATOR + TIME
+DAYS_HOURS = DAYS + SEPARATOR + HOURS
+DAYS_MINUTES = DAYS + SEPARATOR + MINUTES
+DAYS_SECONDS = DAYS + SEPARATOR + SECONDS
+HOURS_MINUTES = HOURS + SEPARATOR + MINUTES
+HOURS_SECONDS = HOURS + SEPARATOR + SECONDS
+MINUTES_SECONDS = MINUTES + SEPARATOR + SECONDS
+DAYS_TIME = DAYS + SEPARATOR + TIME
 
 
 def _parse_time(time_str: str, days_str: str | None = None) -> str:
@@ -49,7 +48,7 @@ _TIME_CONVERSION_PATTERNS = [
         ),
     ),
     (
-        DAYS_AND_HOURS_MINUTES,
+        DAYS_HOURS_MINUTES,
         lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})",
     ),
     (
@@ -64,13 +63,13 @@ _TIME_CONVERSION_PATTERNS = [
         HOURS_MINUTES_SECONDS,
         lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})",
     ),
-    (DAYS_AND_HOURS, lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)})"),
-    (DAYS_AND_MINUTES, lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)})"),
-    (DAYS_AND_SECONDS, lambda m: f"timedelta(days={m.group(1)}, seconds={m.group(2)})"),
-    (HOURS_AND_MINUTES, lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)})"),
-    (HOURS_AND_SECONDS, lambda m: f"timedelta(hours={m.group(1)}, seconds={m.group(2)})"),
-    (MINUTES_AND_SECONDS, lambda m: f"timedelta(minutes={m.group(1)}, seconds={m.group(2)})"),
-    (DAYS_AND_TIME, lambda m: _parse_time(m.group(2), m.group(1))),
+    (DAYS_HOURS, lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)})"),
+    (DAYS_MINUTES, lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)})"),
+    (DAYS_SECONDS, lambda m: f"timedelta(days={m.group(1)}, seconds={m.group(2)})"),
+    (HOURS_MINUTES, lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)})"),
+    (HOURS_SECONDS, lambda m: f"timedelta(hours={m.group(1)}, seconds={m.group(2)})"),
+    (MINUTES_SECONDS, lambda m: f"timedelta(minutes={m.group(1)}, seconds={m.group(2)})"),
+    (DAYS_TIME, lambda m: _parse_time(m.group(2), m.group(1))),
     (DAYS, lambda m: f"timedelta(days={m.group(1)})"),
     (HOURS, lambda m: f"timedelta(hours={m.group(1)})"),
     (MINUTES, lambda m: f"timedelta(minutes={m.group(1)})"),

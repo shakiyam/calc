@@ -24,6 +24,23 @@ def test_convert_time_expressions() -> None:
     assert convert_time_expressions("1d 30m 15s") == ("timedelta(days=1, minutes=30, seconds=15)")
     assert convert_time_expressions("1日30分15秒") == ("timedelta(days=1, minutes=30, seconds=15)")
 
+    # "and" at any junction
+    assert convert_time_expressions("1 day and 2 hours 15 sec") == (
+        "timedelta(days=1, hours=2, seconds=15)"
+    )
+    assert convert_time_expressions("1 day and 30 min 15 sec") == (
+        "timedelta(days=1, minutes=30, seconds=15)"
+    )
+    assert convert_time_expressions("1 day 2 hours and 30 min") == (
+        "timedelta(days=1, hours=2, minutes=30)"
+    )
+    assert convert_time_expressions("2 hours and 30 min 15 sec") == (
+        "timedelta(hours=2, minutes=30, seconds=15)"
+    )
+    assert convert_time_expressions("1 day and 2 hours and 30 minutes and 15 seconds") == (
+        "timedelta(days=1, hours=2, minutes=30, seconds=15)"
+    )
+
     # HH:MM:SS format
     assert convert_time_expressions("01:30:45") == "timedelta(hours=1, minutes=30, seconds=45)"
 

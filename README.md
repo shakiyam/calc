@@ -103,10 +103,13 @@ Comments start with `#` and extend to the end of the line.
 # Day and combinations (English)
 1 day and 10 hours          → 1 day and 10:00:00
 1 day and 1 hour 2 min      → 1 day and 01:02:00
+1d 30m 15s                  → 1 day and 00:30:15
 
-# Natural language (English)
+# Natural language (English, "and" is optional between units)
 1 day 2 hours 30 minutes    → 1 day and 02:30:00
 2 hours and 30 minutes      → 02:30:00
+1 day and 2 hours and 30 minutes and 15 seconds
+                            → 1 day and 02:30:15
 
 # Natural language (Japanese)
 1時間 30分                  → 01:30:00

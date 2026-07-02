@@ -40,6 +40,13 @@ def test_time_formats() -> None:
     assert success and value == "1 day and 00:30:15"
     success, value, error = calculate("1日30分15秒", LAST_RESULT)
     assert success and value == "1 day and 00:30:15"
+    # "and" at any junction
+    success, value, error = calculate("1 day and 2 hours 15 sec", LAST_RESULT)
+    assert success and value == "1 day and 02:00:15"
+    success, value, error = calculate(
+        "1 day and 2 hours and 30 minutes and 15 seconds", LAST_RESULT
+    )
+    assert success and value == "1 day and 02:30:15"
 
 
 def test_japanese_time_formats() -> None:
