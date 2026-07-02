@@ -77,6 +77,66 @@ def test_style_format_round_trip() -> None:
         assert success and reparsed == formatted
 
 
+def test_unit_formats() -> None:
+    """Test unit format directives (sec/min/hour/day)"""
+    success, value, error = calculate("1h30m as sec", LAST_RESULT)
+    assert success and value == "5,400 sec"
+    success, value, error = calculate("1h30m as min", LAST_RESULT)
+    assert success and value == "90 min"
+    success, value, error = calculate("1h30m as hour", LAST_RESULT)
+    assert success and value == "1.5 hour"
+    success, value, error = calculate("1h30m as day", LAST_RESULT)
+    assert success and value == "0.0625 day"
+    # Negative and zero
+    success, value, error = calculate("0s - 90min as min", LAST_RESULT)
+    assert success and value == "-90 min"
+    success, value, error = calculate("1h - 1h as sec", LAST_RESULT)
+    assert success and value == "0 sec"
+
+
+def test_unit_format_aliases() -> None:
+    """Test unit format aliases render with the canonical unit word"""
+    for alias in ["seconds", "s"]:
+        success, value, error = calculate(f"1h30m as {alias}", LAST_RESULT)
+        assert success and value == "5,400 sec"
+    for alias in ["minutes", "m"]:
+        success, value, error = calculate(f"1h30m as {alias}", LAST_RESULT)
+        assert success and value == "90 min"
+    for alias in ["hours", "h"]:
+        success, value, error = calculate(f"1h30m as {alias}", LAST_RESULT)
+        assert success and value == "1.5 hour"
+    for alias in ["days", "d"]:
+        success, value, error = calculate(f"1h30m as {alias}", LAST_RESULT)
+        assert success and value == "0.0625 day"
+
+
+def test_unit_format_precision() -> None:
+    """Test that repeating decimals match plain number formatting"""
+    success, plain, error = calculate("10/60", LAST_RESULT)
+    assert success
+    success, value, error = calculate("10min as hour", LAST_RESULT)
+    assert success and value == f"{plain} hour"
+
+
+def test_unit_format_round_trip() -> None:
+    """Test that unit-formatted output re-parses to the same value"""
+    for expression, fmt in [
+        ("1h30m", "sec"),
+        ("1h30m", "hour"),
+        ("0s - 90min", "min"),
+        ("1h - 1h", "sec"),
+    ]:
+        success, formatted, error = calculate(f"{expression} as {fmt}", LAST_RESULT)
+        assert success
+        success, reparsed, error = calculate(f"{formatted} as {fmt}", LAST_RESULT)
+        assert success and reparsed == formatted
+    # Repeating decimal re-parses to the same value at float precision
+    success, formatted, error = calculate("10min as hour", LAST_RESULT)
+    assert success
+    success, reparsed, error = calculate(formatted, LAST_RESULT)
+    assert success and reparsed == "00:10:00"
+
+
 def test_unknown_format_error() -> None:
     """Test that an unknown format directive is an error"""
     success, value, error = calculate("2 + 3 as foo", LAST_RESULT)
@@ -91,6 +151,10 @@ def test_directive_on_non_time_result() -> None:
     success, value, error = calculate("2 + 3 as japanese", LAST_RESULT)
     assert not success and value == LAST_RESULT
     assert "'japanese' format only applies to time values" in error
+    # Unit formats give the same error
+    success, value, error = calculate("2 + 3 as min", LAST_RESULT)
+    assert not success and value == LAST_RESULT
+    assert "'min' format only applies to time values" in error
     # Plain number formatting is unaffected when no directive is given
     success, value, error = calculate("2 + 3", LAST_RESULT)
     assert success and value == "5"

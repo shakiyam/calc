@@ -8,7 +8,13 @@ from prompt_toolkit import PromptSession
 from .evaluator import ALLOWED_NAMES
 from .evaluator import safe_eval as ast_safe_eval
 from .help_text import get_help
-from .time_utils import convert_time_expressions, format_english, format_japanese, format_time
+from .time_utils import (
+    convert_time_expressions,
+    format_english,
+    format_japanese,
+    format_time,
+    to_scalar,
+)
 
 PRESERVED_WORDS = ALLOWED_NAMES
 NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b"
@@ -22,6 +28,20 @@ TIME_FORMATTERS = {
     "ja": format_japanese,
     "english": format_english,
     "en": format_english,
+}
+TIME_UNITS = {
+    "sec": "sec",
+    "seconds": "sec",
+    "s": "sec",
+    "min": "min",
+    "minutes": "min",
+    "m": "min",
+    "hour": "hour",
+    "hours": "hour",
+    "h": "hour",
+    "day": "day",
+    "days": "day",
+    "d": "day",
 }
 
 
@@ -92,20 +112,28 @@ def _normalize_result(value: Decimal) -> Decimal:
     return value
 
 
+def _format_decimal(value: Decimal) -> str:
+    """Format Decimal with normalization and thousands separators"""
+    normalized = _normalize_result(value)
+    if normalized == normalized.to_integral_value():
+        return f"{int(normalized):,}"
+    return f"{normalized:,f}"
+
+
 def _format_result(result: Decimal | timedelta, directive: str | None = None) -> str:
     """Format calculation result for display"""
-    if directive is not None and directive not in TIME_FORMATTERS:
+    if directive is not None and directive not in TIME_FORMATTERS and directive not in TIME_UNITS:
         raise ValueError(f"Unknown format: '{directive}'")
     if isinstance(result, Decimal):
         if directive is not None:
             raise ValueError(
                 f"'{directive}' format only applies to time values, got a plain number"
             )
-        normalized = _normalize_result(result)
-        if normalized == normalized.to_integral_value():
-            return f"{int(normalized):,}"
-        return f"{normalized:,f}"
+        return _format_decimal(result)
     elif isinstance(result, timedelta):
+        if directive in TIME_UNITS:
+            unit = TIME_UNITS[directive]
+            return f"{_format_decimal(to_scalar(result, unit))} {unit}"
         return TIME_FORMATTERS[directive or "default"](result)
     return str(result)
 

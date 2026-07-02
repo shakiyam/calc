@@ -1,10 +1,12 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from calc.time_utils import (
     convert_time_expressions,
     format_english,
     format_japanese,
     format_time,
+    to_scalar,
 )
 
 
@@ -131,3 +133,19 @@ def test_format_english() -> None:
     # Negative: sign first, absolute decomposition
     assert format_english(timedelta(minutes=-30)) == "-30m"
     assert format_english(-timedelta(days=1, hours=2)) == "-1d 2h"
+
+
+def test_to_scalar() -> None:
+    """Test conversion of timedelta to a Decimal value in a unit"""
+    assert to_scalar(timedelta(hours=1, minutes=30), "sec") == Decimal("5400")
+    assert to_scalar(timedelta(hours=1, minutes=30), "min") == Decimal("90")
+    assert to_scalar(timedelta(hours=1, minutes=30), "hour") == Decimal("1.5")
+    assert to_scalar(timedelta(hours=1, minutes=30), "day") == Decimal("0.0625")
+
+    # Negative, zero, and sub-second values are exact
+    assert to_scalar(timedelta(minutes=-90), "min") == Decimal("-90")
+    assert to_scalar(timedelta(0), "sec") == Decimal("0")
+    assert to_scalar(timedelta(microseconds=500000), "sec") == Decimal("0.5")
+
+    # Repeating decimals match plain Decimal division
+    assert to_scalar(timedelta(minutes=10), "hour") == Decimal(10) / Decimal(60)
