@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Comment support (`#`)
 - Operator aliases (`＋`, `－`, `×`, `÷`, `^`)
 - Time calculations with English/Japanese natural language support
+- Time output formats (`as <format>` directive, `format` session command)
 - Interactive shell with history (`?` for previous result)
 - Number formatting with thousands separators
 - Unit handling (non-time units like `個`, `円`, `kg` are ignored)
@@ -25,6 +26,7 @@ calc/
 ├── tests/                 # Test files
 │   ├── test_basic.py      # Arithmetic, comments, formatting, history
 │   ├── test_functions.py  # Math functions and constants
+│   ├── test_output_format.py # Time output formats (as directive, format command)
 │   ├── test_time.py       # Time calculations
 │   ├── test_time_utils.py # Time utilities
 │   └── test_errors.py     # Error handling
@@ -42,9 +44,11 @@ Python-based command-line calculator with secure expression evaluation using AST
 
 **Processing Pipeline**:
 
-1. `src/calc/__main__.py`: Parse comments, handle `?` substitution, convert time formats
+1. `src/calc/__main__.py`: Parse comments, extract the trailing `as <format>` directive,
+   handle `?` substitution, convert time formats
 2. `src/calc/evaluator.py`: Parse to AST and evaluate with security restrictions
-3. `src/calc/__main__.py`: Format output (thousands separators, time formatting)
+3. `src/calc/__main__.py`: Format output (thousands separators, time formatting per the
+   `as` directive or the session default set by the `format` command)
 
 **Security Model**: The evaluator uses a whitelist approach:
 
@@ -53,6 +57,12 @@ Python-based command-line calculator with secure expression evaluation using AST
 - `allowed_constants`: Just pi and e
 
 Never add functions that could execute arbitrary code or access the filesystem.
+
+**Round-trip Invariant**: History reuse (`?`) substitutes the formatted output string
+into the next expression, so every time output format must re-parse as valid input.
+When adding or changing output formats, emit only text the input grammar in
+`time_utils.py` accepts (e.g. unit formats keep the unit word: `90 min`, never a bare
+`90`), and extend the input patterns if a new output shape needs them.
 
 ## Code Style
 

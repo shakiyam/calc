@@ -17,10 +17,15 @@ Constants: pi e
 Time:
   HH:MM:SS    1h 30m    1 hour 30 minutes    1時間 30分
 
+Time output:
+  as <format>    Format a time result: default japanese english sec min hour day
+  format <name>  Set the session default time format (format alone shows it)
+
 Examples:
   1,000 x 3      → 3,000 (comma separators, alias)
   ? ÷ 2         → 1,500 (previous result, alias)
   1h 30m + 45s   → 01:30:45 (time)
+  1h + 30min as japanese → 1時間30分 (time output format)
   10個 + 20個    → 30 (units ignored)
 
 More: https://github.com/shakiyam/calc"""

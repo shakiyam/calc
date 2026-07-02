@@ -82,7 +82,7 @@ Comments start with `#` and extend to the end of the line.
 
 `calc` supports comprehensive time calculations with natural language input:
 
-- **Output:** Always uses `HH:MM:SS` format with `and` for days: `1 day and 02:00:00` (microseconds shown when present)
+- **Output:** Uses `HH:MM:SS` format with `and` for days by default: `1 day and 02:00:00` (microseconds shown when present). See [Output formats](#output-formats) to choose a different format.
 
 **Input format examples:**
 
@@ -131,6 +131,39 @@ Comments start with `#` and extend to the end of the line.
 30min - 5s                  → 00:29:55
 1時間 + 30分                → 01:30:00
 2時間 - 15分                → 01:45:00
+```
+
+#### Output formats
+
+Append `as <format>` to an expression to choose how a time result is displayed.
+The format applies to the final result of the whole expression:
+
+| Format     | Aliases        | Example (`1h30m as <format>`) |
+| :--------- | :------------- | :---------------------------- |
+| `default`  | `colon`        | `01:30:00`                    |
+| `japanese` | `jp`, `ja`     | `1時間30分`                   |
+| `english`  | `en`           | `1h 30m`                      |
+| `sec`      | `seconds`, `s` | `5,400 sec`                   |
+| `min`      | `minutes`, `m` | `90 min`                      |
+| `hour`     | `hours`, `h`   | `1.5 hour`                    |
+| `day`      | `days`, `d`    | `0.0625 day`                  |
+
+Formatted output is still a valid time input, so history reuse with `?` keeps
+working:
+
+```text
+1h + 30min as min           → 90 min
+? + 30min                   → 02:00:00
+```
+
+In the interactive shell, the `format` command sets the session default format
+for time results. Plain numbers are unaffected, and an explicit `as <format>`
+still takes precedence:
+
+```text
+format japanese             # display time results in Japanese from now on
+format                      # show the current default format
+format default              # restore the default format
 ```
 
 ### History
