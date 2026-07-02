@@ -74,6 +74,11 @@ def test_japanese_time_formats() -> None:
     assert success and value == "2 days and 03:00:00"
     success, value, error = calculate("1日 2時間 30分", LAST_RESULT)
     assert success and value == "1 day and 02:30:00"
+    # "と" at any junction
+    success, value, error = calculate("1時間と30分", LAST_RESULT)
+    assert success and value == "01:30:00"
+    success, value, error = calculate("1日と2時間と30分と15秒", LAST_RESULT)
+    assert success and value == "1 day and 02:30:15"
     # Combinations without spaces
     success, value, error = calculate("1時間30分", LAST_RESULT)
     assert success and value == "01:30:00"

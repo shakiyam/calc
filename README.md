@@ -111,11 +111,13 @@ Comments start with `#` and extend to the end of the line.
 1 day and 2 hours and 30 minutes and 15 seconds
                             → 1 day and 02:30:15
 
-# Natural language (Japanese)
+# Natural language (Japanese, "と" is optional between units)
 1時間 30分                  → 01:30:00
 1時間30分                   → 01:30:00
+1時間と30分                 → 01:30:00
 2日 3時間                   → 2 days and 03:00:00
 2日3時間                    → 2 days and 03:00:00
+1日と2時間と30分と15秒      → 1 day and 02:30:15
 ```
 
 **Calculation examples:**

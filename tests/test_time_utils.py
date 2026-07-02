@@ -41,6 +41,15 @@ def test_convert_time_expressions() -> None:
         "timedelta(days=1, hours=2, minutes=30, seconds=15)"
     )
 
+    # "と" at any junction (Japanese)
+    assert convert_time_expressions("1時間と30分") == "timedelta(hours=1, minutes=30)"
+    assert convert_time_expressions("1日と2時間と30分") == (
+        "timedelta(days=1, hours=2, minutes=30)"
+    )
+    assert convert_time_expressions("1日と30分15秒") == (
+        "timedelta(days=1, minutes=30, seconds=15)"
+    )
+
     # HH:MM:SS format
     assert convert_time_expressions("01:30:45") == "timedelta(hours=1, minutes=30, seconds=45)"
 
