@@ -36,46 +36,46 @@ def _parse_time(time_str: str, days_str: str | None = None) -> str:
     parts.append(f"minutes={int(time_match.group(2))}")
     parts.append(f"seconds={int(time_match.group(3))}")
     if time_match.group(4):
-        parts.append(f'microseconds={int(time_match.group(4).ljust(6, "0"))}')
-    return f'timedelta({", ".join(parts)})'
+        parts.append(f"microseconds={int(time_match.group(4).ljust(6, '0'))}")
+    return f"timedelta({', '.join(parts)})"
 
 
 _TIME_CONVERSION_PATTERNS = [
-    (DAYS_HOURS_MINUTES_SECONDS,
-     lambda m: (f"timedelta(days={m.group(1)}, hours={m.group(2)}, "
-                f"minutes={m.group(3)}, seconds={m.group(4)})")),
-    (DAYS_AND_HOURS_MINUTES,
-     lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})"),
-    (DAYS_HOURS_SECONDS,
-     lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})"),
-    (DAYS_MINUTES_SECONDS,
-     lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})"),
-    (HOURS_MINUTES_SECONDS,
-     lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})"),
-    (DAYS_AND_HOURS,
-     lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)})"),
-    (DAYS_AND_MINUTES,
-     lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)})"),
-    (DAYS_AND_SECONDS,
-     lambda m: f"timedelta(days={m.group(1)}, seconds={m.group(2)})"),
-    (HOURS_AND_MINUTES,
-     lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)})"),
-    (HOURS_AND_SECONDS,
-     lambda m: f"timedelta(hours={m.group(1)}, seconds={m.group(2)})"),
-    (MINUTES_AND_SECONDS,
-     lambda m: f"timedelta(minutes={m.group(1)}, seconds={m.group(2)})"),
-    (DAYS_AND_TIME,
-     lambda m: _parse_time(m.group(2), m.group(1))),
-    (DAYS,
-     lambda m: f"timedelta(days={m.group(1)})"),
-    (HOURS,
-     lambda m: f"timedelta(hours={m.group(1)})"),
-    (MINUTES,
-     lambda m: f"timedelta(minutes={m.group(1)})"),
-    (SECONDS,
-     lambda m: f"timedelta(seconds={m.group(1)})"),
-    (TIME,
-     lambda m: _parse_time(m.group(1))),
+    (
+        DAYS_HOURS_MINUTES_SECONDS,
+        lambda m: (
+            f"timedelta(days={m.group(1)}, hours={m.group(2)}, "
+            f"minutes={m.group(3)}, seconds={m.group(4)})"
+        ),
+    ),
+    (
+        DAYS_AND_HOURS_MINUTES,
+        lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})",
+    ),
+    (
+        DAYS_HOURS_SECONDS,
+        lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})",
+    ),
+    (
+        DAYS_MINUTES_SECONDS,
+        lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})",
+    ),
+    (
+        HOURS_MINUTES_SECONDS,
+        lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})",
+    ),
+    (DAYS_AND_HOURS, lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)})"),
+    (DAYS_AND_MINUTES, lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)})"),
+    (DAYS_AND_SECONDS, lambda m: f"timedelta(days={m.group(1)}, seconds={m.group(2)})"),
+    (HOURS_AND_MINUTES, lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)})"),
+    (HOURS_AND_SECONDS, lambda m: f"timedelta(hours={m.group(1)}, seconds={m.group(2)})"),
+    (MINUTES_AND_SECONDS, lambda m: f"timedelta(minutes={m.group(1)}, seconds={m.group(2)})"),
+    (DAYS_AND_TIME, lambda m: _parse_time(m.group(2), m.group(1))),
+    (DAYS, lambda m: f"timedelta(days={m.group(1)})"),
+    (HOURS, lambda m: f"timedelta(hours={m.group(1)})"),
+    (MINUTES, lambda m: f"timedelta(minutes={m.group(1)})"),
+    (SECONDS, lambda m: f"timedelta(seconds={m.group(1)})"),
+    (TIME, lambda m: _parse_time(m.group(1))),
 ]
 
 

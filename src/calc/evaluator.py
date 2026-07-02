@@ -16,9 +16,7 @@ _ALLOWED_BINARY_OPERATORS: Final[dict[type, Callable[[Any, Any], Any]]] = {
 }
 
 
-def _validate_uniform_types(
-    args: tuple[Decimal | timedelta, ...], function_name: str
-) -> type:
+def _validate_uniform_types(args: tuple[Decimal | timedelta, ...], function_name: str) -> type:
     """Validate that all arguments are of the same type"""
     if not args:
         raise TypeError(f"{function_name} expected at least 1 argument, got 0")
@@ -118,9 +116,7 @@ ALLOWED_NAMES: Final[frozenset[str]] = frozenset(
 
 
 def _can_mix_types(
-    left: Decimal | timedelta,
-    right: Decimal | timedelta,
-    operator_type: type
+    left: Decimal | timedelta, right: Decimal | timedelta, operator_type: type
 ) -> bool:
     """Check if type mixing is allowed for the given operation"""
     if isinstance(left, timedelta) and isinstance(right, Decimal):
@@ -132,8 +128,7 @@ def _can_mix_types(
 
 
 def _convert_for_mixed_operation(
-    left: Decimal | timedelta,
-    right: Decimal | timedelta
+    left: Decimal | timedelta, right: Decimal | timedelta
 ) -> tuple[Decimal | float | timedelta, Decimal | float | timedelta]:
     """Convert operands for mixed-type operations"""
     if isinstance(left, timedelta) and isinstance(right, Decimal):
@@ -145,9 +140,7 @@ def _convert_for_mixed_operation(
 
 
 def _eval_binop(
-    left: Decimal | timedelta,
-    right: Decimal | timedelta,
-    operator_type: type
+    left: Decimal | timedelta, right: Decimal | timedelta, operator_type: type
 ) -> Decimal | timedelta:
     """Evaluate binary operation with type mixing rules for timedelta and Decimal"""
     if operator_type not in _ALLOWED_BINARY_OPERATORS:
@@ -157,9 +150,7 @@ def _eval_binop(
         op_name = operator_type.__name__.replace("ast.", "")
         left_type = type(left).__name__
         right_type = type(right).__name__
-        raise TypeError(
-            f"Unsupported operation '{op_name}' between {left_type} and {right_type}"
-        )
+        raise TypeError(f"Unsupported operation '{op_name}' between {left_type} and {right_type}")
 
     operator_func = _ALLOWED_BINARY_OPERATORS[operator_type]
     converted_left, converted_right = _convert_for_mixed_operation(left, right)
@@ -168,9 +159,7 @@ def _eval_binop(
 
 
 def _eval_math_func(
-    func_name: str,
-    args: list[Decimal | timedelta],
-    kwargs: dict[str, Decimal | timedelta]
+    func_name: str, args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> Decimal:
     """Evaluate math functions (cos, exp, log, sin, sqrt, tan)"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
@@ -179,9 +168,7 @@ def _eval_math_func(
     return Decimal(str(result))
 
 
-def _eval_rounding_func(
-    func_name: str, args: list[Decimal | timedelta]
-) -> Decimal | timedelta:
+def _eval_rounding_func(func_name: str, args: list[Decimal | timedelta]) -> Decimal | timedelta:
     """Evaluate rounding functions (ceil, floor, round)"""
     if isinstance(args[0], timedelta):
         if func_name == "round" and len(args) > 1:
@@ -200,8 +187,7 @@ def _eval_rounding_func(
 
 
 def _eval_timedelta(
-    args: list[Decimal | timedelta],
-    kwargs: dict[str, Decimal | timedelta]
+    args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> timedelta:
     """Evaluate timedelta function"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
@@ -210,9 +196,7 @@ def _eval_timedelta(
 
 
 def _eval_func(
-    func_name: str,
-    args: list[Decimal | timedelta],
-    kwargs: dict[str, Decimal | timedelta]
+    func_name: str, args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> Decimal | timedelta:
     """Dispatch function call to appropriate handler"""
     if func_name not in _ALLOWED_FUNCTIONS:
@@ -234,7 +218,7 @@ def _eval_node(node: ast.AST, expression: str) -> Decimal | timedelta:
     if isinstance(node, ast.Constant):
         if not isinstance(node.value, (int, float)):
             raise TypeError(f"Unsupported constant type: {type(node.value).__name__}")
-        original_str = expression[node.col_offset:node.end_col_offset]
+        original_str = expression[node.col_offset : node.end_col_offset]
         return Decimal(original_str)
     elif isinstance(node, ast.BinOp):
         left = _eval_node(node.left, expression)

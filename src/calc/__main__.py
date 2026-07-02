@@ -38,6 +38,7 @@ def _normalize_operators(expression: str) -> str:
 
 def _remove_non_time_units(expression: str) -> str:
     """Remove non-time unit words after numbers"""
+
     def replace_unit(match: re.Match[str]) -> str:
         number = match.group(1)
         word = match.group(2)
@@ -58,7 +59,7 @@ def _has_precision_artifact(value: Decimal) -> bool:
     str_val = str(value)
     pattern_9s = "9" * PRECISION_DIGITS
     pattern_0s = "0" * PRECISION_DIGITS
-    return (pattern_9s in str_val or pattern_0s in str_val)
+    return pattern_9s in str_val or pattern_0s in str_val
 
 
 def _normalize_result(value: Decimal) -> Decimal:
