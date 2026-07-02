@@ -8,16 +8,34 @@ from prompt_toolkit import PromptSession
 from .evaluator import ALLOWED_NAMES
 from .evaluator import safe_eval as ast_safe_eval
 from .help_text import get_help
-from .time_utils import convert_time_expressions, format_time
+from .time_utils import convert_time_expressions, format_english, format_japanese, format_time
 
 PRESERVED_WORDS = ALLOWED_NAMES
 NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b"
+OUTPUT_DIRECTIVE_PATTERN = r"\s+as\s+(\w+)\s*$"
 PRECISION_DIGITS = 12
+TIME_FORMATTERS = {
+    "default": format_time,
+    "colon": format_time,
+    "japanese": format_japanese,
+    "jp": format_japanese,
+    "ja": format_japanese,
+    "english": format_english,
+    "en": format_english,
+}
 
 
 def _remove_comments(expression: str) -> str:
     """Remove comments from expression"""
     return expression.split("#", 1)[0].strip()
+
+
+def _extract_output_directive(expression: str) -> tuple[str, str | None]:
+    """Extract trailing output format directive (as <format>)"""
+    match = re.search(OUTPUT_DIRECTIVE_PATTERN, expression)
+    if not match:
+        return (expression, None)
+    return (expression[: match.start()], match.group(1))
 
 
 def _substitute_history(expression: str, last_result: str) -> str:
@@ -74,15 +92,21 @@ def _normalize_result(value: Decimal) -> Decimal:
     return value
 
 
-def _format_result(result: Decimal | timedelta) -> str:
+def _format_result(result: Decimal | timedelta, directive: str | None = None) -> str:
     """Format calculation result for display"""
+    if directive is not None and directive not in TIME_FORMATTERS:
+        raise ValueError(f"Unknown format: '{directive}'")
     if isinstance(result, Decimal):
+        if directive is not None:
+            raise ValueError(
+                f"'{directive}' format only applies to time values, got a plain number"
+            )
         normalized = _normalize_result(result)
         if normalized == normalized.to_integral_value():
             return f"{int(normalized):,}"
         return f"{normalized:,f}"
     elif isinstance(result, timedelta):
-        return format_time(result)
+        return TIME_FORMATTERS[directive or "default"](result)
     return str(result)
 
 
@@ -93,6 +117,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
     Returns: (success: bool, value: str, error: str)
     """
     expression = _remove_comments(expression)
+    expression, directive = _extract_output_directive(expression)
     expression = _substitute_history(expression, last_result)
     if not expression:
         return (True, last_result, "")
@@ -104,7 +129,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
         expression = _remove_non_time_units(expression)
 
         result = ast_safe_eval(expression)
-        formatted_result = _format_result(result)
+        formatted_result = _format_result(result, directive)
 
         return (True, formatted_result, "")
 

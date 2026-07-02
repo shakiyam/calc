@@ -1,6 +1,11 @@
 from datetime import timedelta
 
-from calc.time_utils import convert_time_expressions, format_time
+from calc.time_utils import (
+    convert_time_expressions,
+    format_english,
+    format_japanese,
+    format_time,
+)
 
 
 def test_convert_time_expressions() -> None:
@@ -86,3 +91,43 @@ def test_format_time() -> None:
 
     # Fractional days
     assert format_time(timedelta(days=0.5, hours=6, seconds=30)) == "18:00:30"
+
+
+def test_format_japanese() -> None:
+    """Test formatting of timedelta to Japanese display string"""
+    # Zero components are omitted
+    assert format_japanese(timedelta(hours=1, minutes=30)) == "1時間30分"
+    assert format_japanese(timedelta(days=2)) == "2日"
+    assert format_japanese(timedelta(days=1, minutes=30, seconds=15)) == "1日30分15秒"
+    assert format_japanese(timedelta(days=1, hours=2, minutes=30, seconds=15)) == "1日2時間30分15秒"
+
+    # All-zero
+    assert format_japanese(timedelta(0)) == "0秒"
+
+    # Fractional seconds as decimal
+    assert format_japanese(timedelta(seconds=1, microseconds=500000)) == "1.5秒"
+    assert format_japanese(timedelta(microseconds=500000)) == "0.5秒"
+
+    # Negative: sign first, absolute decomposition
+    assert format_japanese(timedelta(minutes=-30)) == "-30分"
+    assert format_japanese(-timedelta(days=1, hours=2)) == "-1日2時間"
+
+
+def test_format_english() -> None:
+    """Test formatting of timedelta to English display string"""
+    # Zero components are omitted
+    assert format_english(timedelta(hours=1, minutes=30)) == "1h 30m"
+    assert format_english(timedelta(days=2)) == "2d"
+    assert format_english(timedelta(days=1, minutes=30, seconds=15)) == "1d 30m 15s"
+    assert format_english(timedelta(days=1, hours=2, minutes=30, seconds=15)) == "1d 2h 30m 15s"
+
+    # All-zero
+    assert format_english(timedelta(0)) == "0s"
+
+    # Fractional seconds as decimal
+    assert format_english(timedelta(seconds=1, microseconds=500000)) == "1.5s"
+    assert format_english(timedelta(microseconds=500000)) == "0.5s"
+
+    # Negative: sign first, absolute decomposition
+    assert format_english(timedelta(minutes=-30)) == "-30m"
+    assert format_english(-timedelta(days=1, hours=2)) == "-1d 2h"

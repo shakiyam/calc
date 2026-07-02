@@ -85,6 +85,40 @@ def convert_time_expressions(expression: str) -> str:
     return expression
 
 
+def _format_units(
+    td: timedelta, day: str, hour: str, minute: str, second: str, separator: str
+) -> str:
+    """Format timedelta as unit-suffixed components, omitting zero components"""
+    sign = "-" if td < timedelta(0) else ""
+    td = abs(td)
+    minutes, seconds = divmod(td.seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+
+    parts = []
+    if td.days:
+        parts.append(f"{td.days}{day}")
+    if hours:
+        parts.append(f"{hours}{hour}")
+    if minutes:
+        parts.append(f"{minutes}{minute}")
+    if td.microseconds:
+        fraction = f".{td.microseconds:06d}".rstrip("0")
+        parts.append(f"{seconds}{fraction}{second}")
+    elif seconds or not parts:
+        parts.append(f"{seconds}{second}")
+    return sign + separator.join(parts)
+
+
+def format_japanese(td: timedelta) -> str:
+    """Format timedelta to Japanese display string (e.g. 1時間30分)"""
+    return _format_units(td, "日", "時間", "分", "秒", "")
+
+
+def format_english(td: timedelta) -> str:
+    """Format timedelta to English display string (e.g. 1h 30m)"""
+    return _format_units(td, "d", "h", "m", "s", " ")
+
+
 def format_time(td: timedelta) -> str:
     """Format timedelta to display string representation"""
     mm, ss = divmod(td.seconds, 60)
