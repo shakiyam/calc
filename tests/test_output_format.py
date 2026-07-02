@@ -1,4 +1,6 @@
-from calc.__main__ import _extract_output_directive, calculate
+import pytest
+
+from calc.__main__ import _extract_output_directive, _process_command, calculate
 
 LAST_RESULT = "0"
 
@@ -144,6 +146,55 @@ def test_unknown_format_error() -> None:
     # Format names are lowercase only
     success, value, error = calculate("1h30m as JAPANESE", LAST_RESULT)
     assert not success and value == LAST_RESULT and "Unknown format: 'JAPANESE'" in error
+
+
+def test_format_command_sets_default() -> None:
+    """Test that the format command switches the session default format"""
+    # Style format
+    should_continue, last_result, fmt = _process_command("format japanese", LAST_RESULT, "default")
+    assert should_continue and last_result == LAST_RESULT and fmt == "japanese"
+    success, value, error = calculate("1h + 30min", LAST_RESULT, fmt)
+    assert success and value == "1時間30分"
+    # Unit format
+    should_continue, last_result, fmt = _process_command("format min", LAST_RESULT, "default")
+    assert should_continue and fmt == "min"
+    success, value, error = calculate("1h30m", LAST_RESULT, fmt)
+    assert success and value == "90 min"
+    # Restore default
+    should_continue, last_result, fmt = _process_command("format default", LAST_RESULT, "japanese")
+    assert should_continue and fmt == "default"
+    success, value, error = calculate("1h30m", LAST_RESULT, fmt)
+    assert success and value == "01:30:00"
+
+
+def test_format_command_no_arg(capsys: pytest.CaptureFixture[str]) -> None:
+    """Test that format without an argument shows the current default"""
+    should_continue, last_result, fmt = _process_command("format", LAST_RESULT, "japanese")
+    assert should_continue and fmt == "japanese"
+    assert capsys.readouterr().out == "japanese\n"
+
+
+def test_format_command_invalid_name(capsys: pytest.CaptureFixture[str]) -> None:
+    """Test that an invalid format name is an error and keeps the current default"""
+    should_continue, last_result, fmt = _process_command("format banana", LAST_RESULT, "japanese")
+    assert should_continue and fmt == "japanese"
+    assert "Unknown format: 'banana'" in capsys.readouterr().out
+
+
+def test_expression_directive_overrides_session_default() -> None:
+    """Test that an explicit as directive takes precedence over the session default"""
+    success, value, error = calculate("1h30m as english", LAST_RESULT, "japanese")
+    assert success and value == "1h 30m"
+    success, value, error = calculate("1h30m as sec", LAST_RESULT, "min")
+    assert success and value == "5,400 sec"
+
+
+def test_session_default_ignores_plain_numbers() -> None:
+    """Test that the session default does not affect plain number results"""
+    success, value, error = calculate("2 + 3", LAST_RESULT, "japanese")
+    assert success and value == "5"
+    success, value, error = calculate("2 + 3", LAST_RESULT, "min")
+    assert success and value == "5"
 
 
 def test_directive_on_non_time_result() -> None:

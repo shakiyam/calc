@@ -120,7 +120,9 @@ def _format_decimal(value: Decimal) -> str:
     return f"{normalized:,f}"
 
 
-def _format_result(result: Decimal | timedelta, directive: str | None = None) -> str:
+def _format_result(
+    result: Decimal | timedelta, directive: str | None = None, default_format: str = "default"
+) -> str:
     """Format calculation result for display"""
     if directive is not None and directive not in TIME_FORMATTERS and directive not in TIME_UNITS:
         raise ValueError(f"Unknown format: '{directive}'")
@@ -131,14 +133,17 @@ def _format_result(result: Decimal | timedelta, directive: str | None = None) ->
             )
         return _format_decimal(result)
     elif isinstance(result, timedelta):
+        directive = directive if directive is not None else default_format
         if directive in TIME_UNITS:
             unit = TIME_UNITS[directive]
             return f"{_format_decimal(to_scalar(result, unit))} {unit}"
-        return TIME_FORMATTERS[directive or "default"](result)
+        return TIME_FORMATTERS[directive](result)
     return str(result)
 
 
-def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
+def calculate(
+    expression: str, last_result: str, default_format: str = "default"
+) -> tuple[bool, str, str]:
     """
     Calculate mathematical expression with preprocessing
 
@@ -157,7 +162,7 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
         expression = _remove_non_time_units(expression)
 
         result = ast_safe_eval(expression)
-        formatted_result = _format_result(result, directive)
+        formatted_result = _format_result(result, directive, default_format)
 
         return (True, formatted_result, "")
 
@@ -173,12 +178,12 @@ def calculate(expression: str, last_result: str) -> tuple[bool, str, str]:
         return (False, last_result, f"{type(e).__name__} - {e}")
 
 
-def display_result(expression: str, last_result: str) -> str:
+def display_result(expression: str, last_result: str, default_format: str = "default") -> str:
     """Calculate and display result"""
     if not _remove_comments(expression):
         return last_result
 
-    success, value, error = calculate(expression, last_result)
+    success, value, error = calculate(expression, last_result, default_format)
 
     if success:
         print(f"= {value}")
@@ -188,27 +193,39 @@ def display_result(expression: str, last_result: str) -> str:
     return value
 
 
-def _process_command(expression: str, last_result: str) -> tuple[bool, str]:
+def _process_command(
+    expression: str, last_result: str, current_format: str
+) -> tuple[bool, str, str]:
     """
     Process a single command expression
 
     Returns:
-        (should_continue: bool, last_result: str)
+        (should_continue: bool, last_result: str, current_format: str)
     """
     if not expression:
-        return (True, last_result)
+        return (True, last_result, current_format)
     elif expression == "exit":
-        return (False, last_result)
+        return (False, last_result, current_format)
     elif expression == "help":
         print(get_help())
-        return (True, last_result)
+        return (True, last_result, current_format)
+    elif expression == "format":
+        print(current_format)
+        return (True, last_result, current_format)
+    elif expression.startswith("format "):
+        name = expression.removeprefix("format ").strip()
+        if name in TIME_FORMATTERS or name in TIME_UNITS:
+            return (True, last_result, name)
+        print(f"Error: Unknown format: '{name}'")
+        return (True, last_result, current_format)
     else:
-        new_result = display_result(expression, last_result)
-        return (True, new_result)
+        new_result = display_result(expression, last_result, current_format)
+        return (True, new_result, current_format)
 
 
 def main() -> None:
     last_result = "0"
+    current_format = "default"
 
     if len(sys.argv) > 1:
         expression = " ".join(sys.argv[1:])
@@ -219,13 +236,17 @@ def main() -> None:
         session: PromptSession[str] = PromptSession()
         while True:
             expression = session.prompt().strip()
-            should_continue, last_result = _process_command(expression, last_result)
+            should_continue, last_result, current_format = _process_command(
+                expression, last_result, current_format
+            )
             if not should_continue:
                 break
     else:
         for line in sys.stdin:
             expression = line.strip()
-            should_continue, last_result = _process_command(expression, last_result)
+            should_continue, last_result, current_format = _process_command(
+                expression, last_result, current_format
+            )
             if not should_continue:
                 break
 
