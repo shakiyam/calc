@@ -13,6 +13,7 @@ SEPARATOR = r"\s*"
 DAYS_HOURS_MINUTES_SECONDS = DAYS + SEPARATOR + HOURS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
 DAYS_AND_HOURS_MINUTES = DAYS + AND_SEPARATOR + HOURS + SEPARATOR + MINUTES
 DAYS_HOURS_SECONDS = DAYS + SEPARATOR + HOURS + SEPARATOR + SECONDS
+DAYS_MINUTES_SECONDS = DAYS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
 HOURS_MINUTES_SECONDS = HOURS + SEPARATOR + MINUTES + SEPARATOR + SECONDS
 DAYS_AND_HOURS = DAYS + AND_SEPARATOR + HOURS
 DAYS_AND_MINUTES = DAYS + AND_SEPARATOR + MINUTES
@@ -47,6 +48,8 @@ _TIME_CONVERSION_PATTERNS = [
      lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, minutes={m.group(3)})"),
     (DAYS_HOURS_SECONDS,
      lambda m: f"timedelta(days={m.group(1)}, hours={m.group(2)}, seconds={m.group(3)})"),
+    (DAYS_MINUTES_SECONDS,
+     lambda m: f"timedelta(days={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})"),
     (HOURS_MINUTES_SECONDS,
      lambda m: f"timedelta(hours={m.group(1)}, minutes={m.group(2)}, seconds={m.group(3)})"),
     (DAYS_AND_HOURS,
