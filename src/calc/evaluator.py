@@ -38,6 +38,15 @@ def _ensure_decimal(value: Decimal | timedelta) -> Decimal:
         raise TypeError(f"Math functions only accept Decimal values, got {type(value).__name__}")
 
 
+def _to_float_args(
+    args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
+) -> tuple[list[float], dict[str, float]]:
+    """Convert args and kwargs to floats, rejecting timedelta"""
+    float_args = [float(_ensure_decimal(arg)) for arg in args]
+    float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
+    return float_args, float_kwargs
+
+
 def _apply_to_timedelta_seconds(td: timedelta, func: Callable[..., Any], *args: Any) -> timedelta:
     """Apply function to timedelta by converting to seconds and back"""
     seconds = Decimal(str(td.total_seconds()))
@@ -174,8 +183,7 @@ def _eval_math_func(
     func_name: str, args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> Decimal:
     """Evaluate math functions"""
-    float_args = [float(_ensure_decimal(arg)) for arg in args]
-    float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
+    float_args, float_kwargs = _to_float_args(args, kwargs)
     result = _MATH_FUNCTIONS[func_name](*float_args, **float_kwargs)
     return Decimal(str(result))
 
@@ -202,8 +210,7 @@ def _eval_timedelta(
     args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> timedelta:
     """Evaluate timedelta function"""
-    float_args = [float(_ensure_decimal(arg)) for arg in args]
-    float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
+    float_args, float_kwargs = _to_float_args(args, kwargs)
     return timedelta(*float_args, **float_kwargs)
 
 
