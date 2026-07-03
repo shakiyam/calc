@@ -135,7 +135,7 @@ _ALLOWED_CONSTANTS: Final[dict[str, Decimal]] = {
     "pi": Decimal(str(math.pi)),
 }
 
-ALLOWED_NAMES: Final[frozenset[str]] = frozenset(
+RESERVED_WORDS: Final[frozenset[str]] = frozenset(
     _ALLOWED_FUNCTIONS.keys() | _ALLOWED_CONSTANTS.keys()
 )
 

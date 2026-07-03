@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from prompt_toolkit import PromptSession
 
-from .evaluator import ALLOWED_NAMES
+from .evaluator import RESERVED_WORDS
 from .evaluator import safe_eval as ast_safe_eval
 from .help_text import get_help
 from .time_utils import (
@@ -17,7 +17,6 @@ from .time_utils import (
     to_scalar,
 )
 
-PRESERVED_WORDS = ALLOWED_NAMES
 # The suffix group excludes every character with a meaning in the expression grammar
 # (digits, whitespace, operators + - * / % ^, parentheses, comma, decimal point), so a
 # unit match stops at expression syntax and only the unit word itself is captured:
@@ -93,7 +92,7 @@ def _remove_non_time_units(expression: str) -> str:
     def replace_unit(match: re.Match[str]) -> str:
         number = match.group(1)
         word = match.group(2)
-        if word in PRESERVED_WORDS:
+        if word in RESERVED_WORDS:
             return match.group(0)
         return number
 
