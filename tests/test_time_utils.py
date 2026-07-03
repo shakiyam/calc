@@ -3,9 +3,9 @@ from decimal import Decimal
 
 from calc.time_utils import (
     convert_time_expressions,
+    format_colon,
     format_english,
     format_japanese,
-    format_time,
     to_scalar,
 )
 
@@ -71,28 +71,28 @@ def test_convert_time_expressions() -> None:
     )
 
 
-def test_format_time() -> None:
-    """Test formatting of timedelta to display string"""
+def test_format_colon() -> None:
+    """Test formatting of timedelta to colon-separated display string"""
     # Basic time
-    assert format_time(timedelta(hours=1, minutes=30, seconds=45)) == "01:30:45"
-    assert format_time(timedelta(seconds=60)) == "00:01:00"
-    assert format_time(timedelta(hours=5)) == "05:00:00"
+    assert format_colon(timedelta(hours=1, minutes=30, seconds=45)) == "01:30:45"
+    assert format_colon(timedelta(seconds=60)) == "00:01:00"
+    assert format_colon(timedelta(hours=5)) == "05:00:00"
 
     # With microseconds
-    assert format_time(timedelta(minutes=1, seconds=30, microseconds=500000)) == "00:01:30.500000"
+    assert format_colon(timedelta(minutes=1, seconds=30, microseconds=500000)) == "00:01:30.500000"
 
     # Days only
-    assert format_time(timedelta(days=1)) == "1 day"
-    assert format_time(timedelta(days=2)) == "2 days"
-    assert format_time(timedelta(days=-1)) == "-1 day"
+    assert format_colon(timedelta(days=1)) == "1 day"
+    assert format_colon(timedelta(days=2)) == "2 days"
+    assert format_colon(timedelta(days=-1)) == "-1 day"
 
     # Days and time
-    assert format_time(timedelta(days=1, hours=10)) == "1 day and 10:00:00"
-    assert format_time(timedelta(days=2, hours=3, minutes=30)) == "2 days and 03:30:00"
-    assert format_time(timedelta(days=1, hours=1, minutes=2)) == "1 day and 01:02:00"
+    assert format_colon(timedelta(days=1, hours=10)) == "1 day and 10:00:00"
+    assert format_colon(timedelta(days=2, hours=3, minutes=30)) == "2 days and 03:30:00"
+    assert format_colon(timedelta(days=1, hours=1, minutes=2)) == "1 day and 01:02:00"
 
     # Fractional days
-    assert format_time(timedelta(days=0.5, hours=6, seconds=30)) == "18:00:30"
+    assert format_colon(timedelta(days=0.5, hours=6, seconds=30)) == "18:00:30"
 
 
 def test_format_japanese() -> None:

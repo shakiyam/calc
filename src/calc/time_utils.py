@@ -118,8 +118,8 @@ def format_english(td: timedelta) -> str:
     return _format_units(td, "d", "h", "m", "s", " ")
 
 
-def format_time(td: timedelta) -> str:
-    """Format timedelta to display string representation"""
+def format_colon(td: timedelta) -> str:
+    """Format timedelta to colon-separated display string (e.g. 01:30:45)"""
     mm, ss = divmod(td.seconds, 60)
     hh, mm = divmod(mm, 60)
     time_part = f"{hh:02d}:{mm:02d}:{ss:02d}"

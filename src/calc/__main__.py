@@ -11,9 +11,9 @@ from .evaluator import safe_eval as ast_safe_eval
 from .help_text import get_help
 from .time_utils import (
     convert_time_expressions,
+    format_colon,
     format_english,
     format_japanese,
-    format_time,
     to_scalar,
 )
 
@@ -22,8 +22,8 @@ NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%
 OUTPUT_DIRECTIVE_PATTERN = r"\s+as\s+(\w+)\s*$"
 PRECISION_DIGITS = 12
 TIME_FORMATTERS = {
-    "default": format_time,
-    "colon": format_time,
+    "default": format_colon,
+    "colon": format_colon,
     "japanese": format_japanese,
     "jp": format_japanese,
     "ja": format_japanese,
@@ -184,8 +184,10 @@ def calculate(
         return (False, last_result, f"{type(e).__name__} - {e}")
 
 
-def display_result(expression: str, last_result: str, default_format: str = "default") -> str:
-    """Calculate and display result"""
+def _evaluate_and_print(
+    expression: str, last_result: str, default_format: str = "default"
+) -> str:
+    """Evaluate expression, print the result or error, and return the new history value"""
     if not _remove_comments(expression):
         return last_result
 
@@ -225,7 +227,7 @@ def _process_command(
         print(f"Error: Unknown format: '{name}'")
         return (True, last_result, current_format)
     else:
-        new_result = display_result(expression, last_result, current_format)
+        new_result = _evaluate_and_print(expression, last_result, current_format)
         return (True, new_result, current_format)
 
 
@@ -245,7 +247,7 @@ def main() -> None:
 
     if len(sys.argv) > 1:
         expression = " ".join(sys.argv[1:])
-        display_result(expression, last_result)
+        _evaluate_and_print(expression, last_result)
         sys.exit()
 
     for line in _input_lines():
