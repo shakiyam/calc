@@ -67,20 +67,24 @@ def _avg_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
         return total / Decimal(len(args))
 
 
-def _max_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
-    """Return maximum of Decimal or timedelta values"""
+def _extremum(
+    func: Callable[..., Any], name: str, args: tuple[Decimal | timedelta, ...]
+) -> Decimal | timedelta:
+    """Shared implementation for max/min"""
     if len(args) == 1:
         return args[0]
-    _validate_uniform_types(args, "max")
-    return max(*args)
+    _validate_uniform_types(args, name)
+    return cast(Decimal | timedelta, func(*args))
+
+
+def _max_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
+    """Return maximum of Decimal or timedelta values"""
+    return _extremum(max, "max", args)
 
 
 def _min_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
     """Return minimum of Decimal or timedelta values"""
-    if len(args) == 1:
-        return args[0]
-    _validate_uniform_types(args, "min")
-    return min(*args)
+    return _extremum(min, "min", args)
 
 
 def _sum_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
