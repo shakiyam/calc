@@ -261,8 +261,9 @@ def _eval_node(node: ast.AST, expression: str) -> Decimal | timedelta:
         args = [_eval_node(arg, expression) for arg in node.args]
         kwargs = {}
         for keyword in node.keywords:
-            if keyword.arg is not None:
-                kwargs[keyword.arg] = _eval_node(keyword.value, expression)
+            if keyword.arg is None:
+                raise TypeError("Unsupported syntax: '**' argument unpacking")
+            kwargs[keyword.arg] = _eval_node(keyword.value, expression)
         return _eval_func(func_name, args, kwargs)
     elif isinstance(node, ast.Name):
         if node.id in _ALLOWED_CONSTANTS:

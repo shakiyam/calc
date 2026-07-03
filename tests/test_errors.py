@@ -55,6 +55,12 @@ def test_function_argument_errors() -> None:
     )
 
 
+def test_keyword_unpacking_errors() -> None:
+    """Test that ** argument unpacking is rejected instead of silently ignored"""
+    success, value, error = calculate("sum(1, **2)", LAST_RESULT)
+    assert not success and value == LAST_RESULT and "Unsupported" in error and "**" in error
+
+
 def test_time_related_errors() -> None:
     """Test time-related error handling"""
     success, value, error = calculate("25:99:99", LAST_RESULT)
