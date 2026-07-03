@@ -46,6 +46,11 @@ TIME_UNITS = {
 }
 
 
+def _is_valid_format(name: str) -> bool:
+    """Check if name is a known time format or unit"""
+    return name in TIME_FORMATTERS or name in TIME_UNITS
+
+
 def _remove_comments(expression: str) -> str:
     """Remove comments from expression"""
     return expression.split("#", 1)[0].strip()
@@ -125,7 +130,7 @@ def _format_result(
     result: Decimal | timedelta, directive: str | None = None, default_format: str = "default"
 ) -> str:
     """Format calculation result for display"""
-    if directive is not None and directive not in TIME_FORMATTERS and directive not in TIME_UNITS:
+    if directive is not None and not _is_valid_format(directive):
         raise ValueError(f"Unknown format: '{directive}'")
     if isinstance(result, Decimal):
         if directive is not None:
@@ -215,7 +220,7 @@ def _process_command(
         return (True, last_result, current_format)
     elif expression.startswith("format "):
         name = expression.removeprefix("format ").strip()
-        if name in TIME_FORMATTERS or name in TIME_UNITS:
+        if _is_valid_format(name):
             return (True, last_result, name)
         print(f"Error: Unknown format: '{name}'")
         return (True, last_result, current_format)
