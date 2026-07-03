@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Key Features
 
 - Comment support (`#`)
-- Operator aliases (`＋`, `－`, `×`, `÷`, `^`)
+- Operator aliases (`＋`, `－`, `×`, `x`, `X`, `÷`, `^`)
 - Time calculations with English/Japanese natural language support
 - Time output formats (`as <format>` directive, `format` session command)
 - Interactive shell with history (`?` for previous result)
@@ -18,6 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```text
 calc/
 ├── src/calc/              # Main source code
+│   ├── __init__.py        # Package marker (empty)
 │   ├── __main__.py        # Entry point, expression parsing, shell
 │   ├── evaluator.py       # Safe AST-based expression evaluation
 │   ├── time_utils.py      # Time expression utilities
@@ -35,6 +36,8 @@ calc/
 ├── Dockerfile             # Production image
 ├── Dockerfile.dev         # Development image
 ├── Makefile               # Build automation
+├── calc                   # Launcher script (runs the production image)
+├── calc_dev               # Dev launcher (runs pytest/mypy in the dev image)
 └── pyproject.toml         # Project configuration
 ```
 
@@ -52,9 +55,10 @@ Python-based command-line calculator with secure expression evaluation using AST
 
 **Security Model**: The evaluator uses a whitelist approach:
 
-- `allowed_operators`: Only basic math operators (+, -, *, /, %, **)
-- `allowed_functions`: Math, rounding, and aggregate functions, timedelta
-- `allowed_constants`: Just pi and e
+- `_ALLOWED_BINARY_OPERATORS`: Only basic math operators (+, -, *, /, %, **);
+  unary +/- are handled separately in `_eval_node`
+- `_ALLOWED_FUNCTIONS`: Math, rounding, and aggregate functions, timedelta
+- `_ALLOWED_CONSTANTS`: Just pi and e
 
 Never add functions that could execute arbitrary code or access the filesystem.
 
@@ -73,7 +77,7 @@ When adding or changing output formats, emit only text the input grammar in
 ## Common Development Commands
 
 ```bash
-make all      # Full check: lint, mypy, test, build
+make all      # Check for updates, lint, update requirements, mypy, test, and build
 make test     # Run tests
 make lint     # Run all linters
 make mypy     # Type check

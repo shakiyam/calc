@@ -6,7 +6,7 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 .PHONY: $(ALL_TARGETS)
 .DEFAULT_GOAL := help
 
-all: check_for_updates lint update_requirements_dev mypy test update_requirements build ## Check for updates, lint, update requirements.txt, test, and build
+all: check_for_updates lint update_requirements_dev mypy test update_requirements build ## Check for updates, lint, update requirements, mypy, test, and build
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
