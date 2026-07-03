@@ -149,13 +149,12 @@ def _format_result(
                 f"'{directive}' format only applies to time values, got a plain number"
             )
         return _format_decimal(result)
-    elif isinstance(result, timedelta):
+    else:
         directive = directive if directive is not None else default_format
         if directive in TIME_UNITS:
             unit = TIME_UNITS[directive]
             return f"{_format_decimal(to_scalar(result, unit))} {unit}"
         return TIME_FORMATTERS[directive](result)
-    return str(result)
 
 
 def calculate(

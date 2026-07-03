@@ -159,7 +159,7 @@ def _eval_binop(
         raise TypeError(f"Unsupported operator: {operator_type.__name__}")
 
     if not _can_mix_types(left, right, operator_type):
-        op_name = operator_type.__name__.replace("ast.", "")
+        op_name = operator_type.__name__
         left_type = type(left).__name__
         right_type = type(right).__name__
         raise TypeError(f"Unsupported operation '{op_name}' between {left_type} and {right_type}")
