@@ -87,21 +87,33 @@ def _sum_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
         return sum(args, Decimal("0"))
 
 
-_ALLOWED_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
-    "abs": abs,
-    "avg": _avg_wrapper,
-    "ceil": math.ceil,
+_MATH_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
     "cos": math.cos,
     "exp": math.exp,
-    "floor": math.floor,
     "log": math.log,
-    "max": _max_wrapper,
-    "min": _min_wrapper,
-    "round": round,
     "sin": math.sin,
     "sqrt": math.sqrt,
-    "sum": _sum_wrapper,
     "tan": math.tan,
+}
+
+_ROUNDING_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
+    "ceil": math.ceil,
+    "floor": math.floor,
+    "round": round,
+}
+
+_AGGREGATE_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
+    "abs": abs,
+    "avg": _avg_wrapper,
+    "max": _max_wrapper,
+    "min": _min_wrapper,
+    "sum": _sum_wrapper,
+}
+
+_ALLOWED_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
+    **_MATH_FUNCTIONS,
+    **_ROUNDING_FUNCTIONS,
+    **_AGGREGATE_FUNCTIONS,
     "timedelta": timedelta,
 }
 
@@ -161,28 +173,28 @@ def _eval_binop(
 def _eval_math_func(
     func_name: str, args: list[Decimal | timedelta], kwargs: dict[str, Decimal | timedelta]
 ) -> Decimal:
-    """Evaluate math functions (cos, exp, log, sin, sqrt, tan)"""
+    """Evaluate math functions"""
     float_args = [float(_ensure_decimal(arg)) for arg in args]
     float_kwargs = {k: float(_ensure_decimal(v)) for k, v in kwargs.items()}
-    result = _ALLOWED_FUNCTIONS[func_name](*float_args, **float_kwargs)
+    result = _MATH_FUNCTIONS[func_name](*float_args, **float_kwargs)
     return Decimal(str(result))
 
 
 def _eval_rounding_func(func_name: str, args: list[Decimal | timedelta]) -> Decimal | timedelta:
-    """Evaluate rounding functions (ceil, floor, round)"""
+    """Evaluate rounding functions"""
     if isinstance(args[0], timedelta):
         if func_name == "round" and len(args) > 1:
             precision = int(_ensure_decimal(args[1]))
             return _apply_to_timedelta_seconds(args[0], round, precision)
         else:
-            return _apply_to_timedelta_seconds(args[0], _ALLOWED_FUNCTIONS[func_name])
+            return _apply_to_timedelta_seconds(args[0], _ROUNDING_FUNCTIONS[func_name])
     else:
         decimal_arg = _ensure_decimal(args[0])
         if func_name == "round" and len(args) > 1:
             precision = int(_ensure_decimal(args[1]))
             return round(decimal_arg, precision)
         else:
-            result = _ALLOWED_FUNCTIONS[func_name](decimal_arg)
+            result = _ROUNDING_FUNCTIONS[func_name](decimal_arg)
             return Decimal(str(result))
 
 
@@ -202,9 +214,9 @@ def _eval_func(
     if func_name not in _ALLOWED_FUNCTIONS:
         raise TypeError(f"Unsupported function: {func_name}")
 
-    if func_name in ["cos", "exp", "log", "sin", "sqrt", "tan"]:
+    if func_name in _MATH_FUNCTIONS:
         return _eval_math_func(func_name, args, kwargs)
-    elif func_name in ["ceil", "floor", "round"]:
+    elif func_name in _ROUNDING_FUNCTIONS:
         return _eval_rounding_func(func_name, args)
     elif func_name == "timedelta":
         return _eval_timedelta(args, kwargs)
