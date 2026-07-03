@@ -268,6 +268,12 @@ def _eval_node(node: ast.AST, expression: str) -> Decimal | timedelta:
         if node.id in _ALLOWED_CONSTANTS:
             return _ALLOWED_CONSTANTS[node.id]
         raise TypeError(f"Unsupported name: {node.id}")
+    elif isinstance(node, ast.Tuple):
+        # A stray comma parses as a tuple, e.g. "1,20"
+        raise ValueError(
+            "Invalid comma: use ',' as a thousands separator like '1,000' "
+            "or between function arguments like 'max(1, 2)'"
+        )
     else:
         raise TypeError(f"Unsupported AST node type: {type(node).__name__}")
 

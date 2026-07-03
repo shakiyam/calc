@@ -66,10 +66,11 @@ Comments start with `#` and extend to the end of the line.
 | `sum(a, b, ...)`| Sum of all arguments                            |
 | `tan(n)`        | Tangent of `n` (in radians)                     |
 
-**Important:** When using functions with multiple arguments, include a space after each comma:
+**Important:** A comma between a digit and exactly three digits is treated as a thousands
+separator, so include a space after each argument comma to disambiguate:
 
-- ✅ Correct: `max(1, 2, 3)` or `avg(10, 20, 30)`
-- ❌ Incorrect: `max(1,2,3)` or `avg(10,20,30)`
+- ✅ `max(1, 200)` → arguments 1 and 200
+- ⚠️ `max(1,200)` → the single argument 1200
 
 ### Constants
 

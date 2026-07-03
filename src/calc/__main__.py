@@ -101,7 +101,7 @@ def _remove_non_time_units(expression: str) -> str:
 
 def _remove_thousands_separators(expression: str) -> str:
     """Remove comma separators from numbers"""
-    return re.sub(r"(\d),(\d)", r"\1\2", expression)
+    return re.sub(r"(\d),(?=\d{3}(?!\d))", r"\1", expression)
 
 
 def _has_precision_artifact(value: Decimal) -> bool:

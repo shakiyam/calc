@@ -15,6 +15,12 @@ def test_syntax_errors() -> None:
     assert not success and value == LAST_RESULT and error == "Invalid syntax"
 
 
+def test_ambiguous_comma_errors() -> None:
+    """Test that commas not matching thousands grouping are rejected with a clear message"""
+    success, value, error = calculate("1,20", LAST_RESULT)
+    assert not success and value == LAST_RESULT and "Invalid comma" in error
+
+
 def test_security_errors() -> None:
     """Test security-related error handling"""
     success, value, error = calculate('open("test.txt")', LAST_RESULT)

@@ -63,6 +63,20 @@ def test_thousands_separator() -> None:
     assert success and value == "1,000,000"
 
 
+def test_comma_as_argument_separator() -> None:
+    """Test that argument commas are not stripped as thousands separators"""
+    success, value, error = calculate("max(1,2)", LAST_RESULT)
+    assert success and value == "2"
+    success, value, error = calculate("max(1,2000)", LAST_RESULT)
+    assert success and value == "2,000"
+    success, value, error = calculate("max(1,2.5)", LAST_RESULT)
+    assert success and value == "2.5"
+    success, value, error = calculate("max(1,200)", LAST_RESULT)
+    assert success and value == "1,200"
+    success, value, error = calculate("1,234.5 + 0", LAST_RESULT)
+    assert success and value == "1,234.5"
+
+
 def test_no_exponential_notation() -> None:
     """Test that large numbers are not formatted in exponential notation"""
     success, value, error = calculate("26 * 1024 / 1.04", LAST_RESULT)
