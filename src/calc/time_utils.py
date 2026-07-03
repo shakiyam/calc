@@ -120,6 +120,8 @@ def format_english(td: timedelta) -> str:
 
 def format_colon(td: timedelta) -> str:
     """Format timedelta to colon-separated display string (e.g. 01:30:45)"""
+    sign = "-" if td < timedelta(0) else ""
+    td = abs(td)
     mm, ss = divmod(td.seconds, 60)
     hh, mm = divmod(mm, 60)
     time_part = f"{hh:02d}:{mm:02d}:{ss:02d}"
@@ -127,10 +129,10 @@ def format_colon(td: timedelta) -> str:
         time_part += f".{td.microseconds:06d}"
 
     if td.days == 0:
-        return time_part
+        return sign + time_part
 
-    day_text = "day" if abs(td.days) == 1 else "days"
+    day_text = "day" if td.days == 1 else "days"
     if td.seconds == 0 and td.microseconds == 0:
-        return f"{td.days:d} {day_text}"
+        return f"{sign}{td.days} {day_text}"
     else:
-        return f"{td.days:d} {day_text} and {time_part}"
+        return f"{sign}{td.days} {day_text} and {time_part}"

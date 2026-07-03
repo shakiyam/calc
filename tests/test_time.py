@@ -106,6 +106,11 @@ def test_time_operations() -> None:
     assert success and value == "01:30:00"
     success, value, error = calculate("2時間 - 15分", LAST_RESULT)
     assert success and value == "01:45:00"
+    # Negative results round-trip through history reuse
+    success, value, error = calculate("0:00:00 - 0:00:01", LAST_RESULT)
+    assert success and value == "-00:00:01"
+    success, value, error = calculate("? + 0:00:02", "-00:00:01")
+    assert success and value == "00:00:01"
 
 
 def test_time_with_thousands_separator() -> None:

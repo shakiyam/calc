@@ -94,6 +94,11 @@ def test_format_colon() -> None:
     # Fractional days
     assert format_colon(timedelta(days=0.5, hours=6, seconds=30)) == "18:00:30"
 
+    # Negative: sign first, absolute decomposition
+    assert format_colon(timedelta(seconds=-1)) == "-00:00:01"
+    assert format_colon(timedelta(microseconds=-500000)) == "-00:00:00.500000"
+    assert format_colon(-timedelta(days=1, hours=1)) == "-1 day and 01:00:00"
+
 
 def test_format_japanese() -> None:
     """Test formatting of timedelta to Japanese display string"""
