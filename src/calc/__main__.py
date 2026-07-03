@@ -184,9 +184,7 @@ def calculate(
         return (False, last_result, f"{type(e).__name__} - {e}")
 
 
-def _evaluate_and_print(
-    expression: str, last_result: str, default_format: str = "default"
-) -> str:
+def _evaluate_and_print(expression: str, last_result: str, default_format: str = "default") -> str:
     """Evaluate expression, print the result or error, and return the new history value"""
     if not _remove_comments(expression):
         return last_result
