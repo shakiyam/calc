@@ -180,8 +180,12 @@ Non-time units after numbers are ignored, allowing natural expressions:
 
 - `10個 + 20個` → `30`
 - `100 円 - 50 円` → `50`
-- `10.5kg * 2` → `21.0`
+- `10.5kg * 2` → `21`
 - `1,024 GB / 4` → `256`
+
+### Help
+
+Type `help` in the interactive shell to show a quick reference of all features.
 
 ### Exiting
 
