@@ -36,5 +36,5 @@ pytest==9.1.1
     # via calc (pyproject.toml)
 typing-extensions==4.15.0
     # via mypy
-wcwidth==0.8.1
+wcwidth==0.8.2
     # via prompt-toolkit
