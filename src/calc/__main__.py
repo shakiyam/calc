@@ -1,5 +1,6 @@
 import re
 import sys
+from collections.abc import Iterator
 from datetime import timedelta
 from decimal import Decimal
 
@@ -223,6 +224,16 @@ def _process_command(
         return (True, new_result, current_format)
 
 
+def _input_lines() -> Iterator[str]:
+    """Yield input lines from the prompt session (tty) or stdin (pipe)"""
+    if sys.stdin.isatty():
+        session: PromptSession[str] = PromptSession()
+        while True:
+            yield session.prompt()
+    else:
+        yield from sys.stdin
+
+
 def main() -> None:
     last_result = "0"
     current_format = "default"
@@ -232,23 +243,13 @@ def main() -> None:
         display_result(expression, last_result)
         sys.exit()
 
-    if sys.stdin.isatty():
-        session: PromptSession[str] = PromptSession()
-        while True:
-            expression = session.prompt().strip()
-            should_continue, last_result, current_format = _process_command(
-                expression, last_result, current_format
-            )
-            if not should_continue:
-                break
-    else:
-        for line in sys.stdin:
-            expression = line.strip()
-            should_continue, last_result, current_format = _process_command(
-                expression, last_result, current_format
-            )
-            if not should_continue:
-                break
+    for line in _input_lines():
+        expression = line.strip()
+        should_continue, last_result, current_format = _process_command(
+            expression, last_result, current_format
+        )
+        if not should_continue:
+            break
 
 
 if __name__ == "__main__":
