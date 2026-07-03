@@ -18,8 +18,15 @@ from .time_utils import (
 )
 
 PRESERVED_WORDS = ALLOWED_NAMES
+# The suffix group excludes every character with a meaning in the expression grammar
+# (digits, whitespace, operators + - * / % ^, parentheses, comma, decimal point), so a
+# unit match stops at expression syntax and only the unit word itself is captured:
+# in "100円+200" the unit is 円, and "+200" stays part of the expression.
 NUMBER_WITH_SUFFIX_PATTERN = r"\b(\d+(?:,\d{3})*(?:\.\d+)?)\s*([^\d\s\-+*/(),.^%]+)\b"
 OUTPUT_DIRECTIVE_PATTERN = r"\s+as\s+(\w+)\s*$"
+# Threshold for _has_precision_artifact: long enough that values a user deliberately
+# enters rarely hit it, short enough to catch real artifacts, whose runs are 13+ digits
+# (see _has_precision_artifact for where those runs come from).
 PRECISION_DIGITS = 12
 TIME_FORMATTERS = {
     "default": format_colon,
@@ -100,6 +107,10 @@ def _remove_thousands_separators(expression: str) -> str:
 
 def _has_precision_artifact(value: Decimal) -> bool:
     """Check if value has precision artifacts like repeated 9s or 0s"""
+    # Two noise sources both leave a long run of identical digits: Decimal division
+    # expanding to the 28-digit context (1/3*3 -> 0.9999999999999999999999999999) and
+    # math functions/constants round-tripping through binary float
+    # (sqrt(2)^2 -> 2.000000000000000144...). Genuine results rarely look like this.
     str_val = str(value)
     pattern_9s = "9" * PRECISION_DIGITS
     pattern_0s = "0" * PRECISION_DIGITS
