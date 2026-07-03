@@ -70,6 +70,20 @@ def convert_time_expressions(expression: str) -> str:
     return expression
 
 
+_UNIT_MICROSECONDS = {
+    "sec": 1_000_000,
+    "min": 60 * 1_000_000,
+    "hour": 3600 * 1_000_000,
+    "day": 86400 * 1_000_000,
+}
+
+
+def to_scalar(td: timedelta, unit: str) -> Decimal:
+    """Convert timedelta to a Decimal value in the given unit"""
+    total_microseconds = (td.days * 86400 + td.seconds) * 1_000_000 + td.microseconds
+    return Decimal(total_microseconds) / Decimal(_UNIT_MICROSECONDS[unit])
+
+
 def _format_units(
     td: timedelta, day: str, hour: str, minute: str, second: str, separator: str
 ) -> str:
@@ -92,20 +106,6 @@ def _format_units(
     elif seconds or not parts:
         parts.append(f"{seconds}{second}")
     return sign + separator.join(parts)
-
-
-_UNIT_MICROSECONDS = {
-    "sec": 1_000_000,
-    "min": 60 * 1_000_000,
-    "hour": 3600 * 1_000_000,
-    "day": 86400 * 1_000_000,
-}
-
-
-def to_scalar(td: timedelta, unit: str) -> Decimal:
-    """Convert timedelta to a Decimal value in the given unit"""
-    total_microseconds = (td.days * 86400 + td.seconds) * 1_000_000 + td.microseconds
-    return Decimal(total_microseconds) / Decimal(_UNIT_MICROSECONDS[unit])
 
 
 def format_japanese(td: timedelta) -> str:
