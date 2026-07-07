@@ -1,4 +1,9 @@
-from calc.__main__ import calculate
+import io
+import sys
+
+import pytest
+
+from calc.__main__ import calculate, main
 
 LAST_RESULT = "999"
 
@@ -71,3 +76,59 @@ def test_time_related_errors() -> None:
     assert (
         not success and value == LAST_RESULT and "Cannot mix timedelta and Decimal in sum" in error
     )
+
+
+def test_main_arg_mode_error_exits_1(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that an error in argument mode exits with code 1"""
+    monkeypatch.setattr(sys, "argv", ["calc", "1/0"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 1
+
+
+def test_main_arg_mode_success_exits_0(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that a successful calculation in argument mode exits with code 0"""
+    monkeypatch.setattr(sys, "argv", ["calc", "1+1"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 0
+
+
+def test_main_piped_error_exits_1(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Test that piped input keeps processing all lines and exits with code 1 on any error"""
+    monkeypatch.setattr(sys, "argv", ["calc"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO("1+1\n1/0\n2+2\n"))
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 1
+    out = capsys.readouterr().out
+    assert "= 2" in out and "Error: Division by zero" in out and "= 4" in out
+
+
+def test_main_piped_all_success_exits_0(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Test that piped input without errors exits with code 0"""
+    monkeypatch.setattr(sys, "argv", ["calc"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO("1+1\n2+2\n"))
+    main()
+    assert capsys.readouterr().out == "= 2\n= 4\n"
+
+
+def test_main_piped_unknown_format_exits_1(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that an unknown format command in piped input exits with code 1"""
+    monkeypatch.setattr(sys, "argv", ["calc"])
+    monkeypatch.setattr(sys, "stdin", io.StringIO("format banana\n"))
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 1
+
+
+def test_main_interactive_error_exits_0(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that the interactive shell exits with code 0 even after errors"""
+    monkeypatch.setattr(sys, "argv", ["calc"])
+    monkeypatch.setattr(sys.stdin, "isatty", lambda: True)
+    monkeypatch.setattr("calc.__main__._input_lines", lambda: iter(["1/0", "exit"]))
+    main()

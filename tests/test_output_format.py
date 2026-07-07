@@ -151,17 +151,21 @@ def test_unknown_format_error() -> None:
 def test_format_command_sets_default() -> None:
     """Test that the format command switches the session default format"""
     # Style format
-    should_continue, last_result, fmt = _process_command("format japanese", LAST_RESULT, "default")
+    should_continue, last_result, fmt, ok = _process_command(
+        "format japanese", LAST_RESULT, "default"
+    )
     assert should_continue and last_result == LAST_RESULT and fmt == "japanese"
     success, value, error = calculate("1h + 30min", LAST_RESULT, fmt)
     assert success and value == "1時間30分"
     # Unit format
-    should_continue, last_result, fmt = _process_command("format min", LAST_RESULT, "default")
+    should_continue, last_result, fmt, ok = _process_command("format min", LAST_RESULT, "default")
     assert should_continue and fmt == "min"
     success, value, error = calculate("1h30m", LAST_RESULT, fmt)
     assert success and value == "90 min"
     # Restore default
-    should_continue, last_result, fmt = _process_command("format default", LAST_RESULT, "japanese")
+    should_continue, last_result, fmt, ok = _process_command(
+        "format default", LAST_RESULT, "japanese"
+    )
     assert should_continue and fmt == "default"
     success, value, error = calculate("1h30m", LAST_RESULT, fmt)
     assert success and value == "01:30:00"
@@ -169,15 +173,17 @@ def test_format_command_sets_default() -> None:
 
 def test_format_command_no_arg(capsys: pytest.CaptureFixture[str]) -> None:
     """Test that format without an argument shows the current default"""
-    should_continue, last_result, fmt = _process_command("format", LAST_RESULT, "japanese")
+    should_continue, last_result, fmt, ok = _process_command("format", LAST_RESULT, "japanese")
     assert should_continue and fmt == "japanese"
     assert capsys.readouterr().out == "japanese\n"
 
 
 def test_format_command_invalid_name(capsys: pytest.CaptureFixture[str]) -> None:
     """Test that an invalid format name is an error and keeps the current default"""
-    should_continue, last_result, fmt = _process_command("format banana", LAST_RESULT, "japanese")
-    assert should_continue and fmt == "japanese"
+    should_continue, last_result, fmt, ok = _process_command(
+        "format banana", LAST_RESULT, "japanese"
+    )
+    assert should_continue and not ok and fmt == "japanese"
     assert "Unknown format: 'banana'" in capsys.readouterr().out
 
 

@@ -193,10 +193,12 @@ def calculate(
         return (False, last_result, f"{type(e).__name__} - {e}")
 
 
-def _evaluate_and_print(expression: str, last_result: str, default_format: str = "default") -> str:
-    """Evaluate expression, print the result or error, and return the new history value"""
+def _evaluate_and_print(
+    expression: str, last_result: str, default_format: str = "default"
+) -> tuple[bool, str]:
+    """Evaluate expression, print the result or error, and return success and history value"""
     if not _remove_comments(expression):
-        return last_result
+        return (True, last_result)
 
     success, value, error = calculate(expression, last_result, default_format)
 
@@ -205,37 +207,37 @@ def _evaluate_and_print(expression: str, last_result: str, default_format: str =
     else:
         print(f"Error: {error}")
 
-    return value
+    return (success, value)
 
 
 def _process_command(
     expression: str, last_result: str, current_format: str
-) -> tuple[bool, str, str]:
+) -> tuple[bool, str, str, bool]:
     """
     Process a single command expression
 
     Returns:
-        (should_continue: bool, last_result: str, current_format: str)
+        (should_continue: bool, last_result: str, current_format: str, success: bool)
     """
     if not expression:
-        return (True, last_result, current_format)
+        return (True, last_result, current_format, True)
     elif expression == "exit":
-        return (False, last_result, current_format)
+        return (False, last_result, current_format, True)
     elif expression == "help":
         print(get_help())
-        return (True, last_result, current_format)
+        return (True, last_result, current_format, True)
     elif expression == "format":
         print(current_format)
-        return (True, last_result, current_format)
+        return (True, last_result, current_format, True)
     elif expression.startswith("format "):
         name = expression.removeprefix("format ").strip()
         if _is_valid_format(name):
-            return (True, last_result, name)
+            return (True, last_result, name, True)
         print(f"Error: Unknown format: '{name}'")
-        return (True, last_result, current_format)
+        return (True, last_result, current_format, False)
     else:
-        new_result = _evaluate_and_print(expression, last_result, current_format)
-        return (True, new_result, current_format)
+        success, new_result = _evaluate_and_print(expression, last_result, current_format)
+        return (True, new_result, current_format, success)
 
 
 def _input_lines() -> Iterator[str]:
@@ -254,16 +256,21 @@ def main() -> None:
 
     if len(sys.argv) > 1:
         expression = " ".join(sys.argv[1:])
-        _evaluate_and_print(expression, last_result)
-        sys.exit()
+        success, _ = _evaluate_and_print(expression, last_result)
+        sys.exit(0 if success else 1)
 
+    interactive = sys.stdin.isatty()
+    had_error = False
     for line in _input_lines():
         expression = line.strip()
-        should_continue, last_result, current_format = _process_command(
+        should_continue, last_result, current_format, success = _process_command(
             expression, last_result, current_format
         )
+        had_error = had_error or not success
         if not should_continue:
             break
+    if had_error and not interactive:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

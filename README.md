@@ -240,6 +240,12 @@ This method is for users who prefer not to use containers.
   calc '1 + 2 * 3'
   ```
 
+### Exit Codes
+
+`calc` exits with status 1 when an expression fails to evaluate, in both direct
+command execution and piped input. Piped input still processes all lines before
+exiting. The interactive shell always exits with status 0.
+
 ## Author
 
 [Shinichi Akiyama](https://github.com/shakiyam)
