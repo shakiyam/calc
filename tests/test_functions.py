@@ -31,6 +31,34 @@ def test_numeric_functions() -> None:
     assert success and value == "10"
 
 
+def test_round_half_up() -> None:
+    """Test that round uses half-up (ties away from zero)"""
+    success, value, error = calculate("round(2.5)", LAST_RESULT)
+    assert success and value == "3"
+    success, value, error = calculate("round(-2.5)", LAST_RESULT)
+    assert success and value == "-3"
+    success, value, error = calculate("round(0.5)", LAST_RESULT)
+    assert success and value == "1"
+    success, value, error = calculate("round(2.25, 1)", LAST_RESULT)
+    assert success and value == "2.3"
+    success, value, error = calculate("round(-2.25, 1)", LAST_RESULT)
+    assert success and value == "-2.3"
+
+
+def test_roundeven() -> None:
+    """Test that roundeven uses banker's rounding (ties to even)"""
+    success, value, error = calculate("roundeven(2.5)", LAST_RESULT)
+    assert success and value == "2"
+    success, value, error = calculate("roundeven(3.5)", LAST_RESULT)
+    assert success and value == "4"
+    success, value, error = calculate("roundeven(-2.5)", LAST_RESULT)
+    assert success and value == "-2"
+    success, value, error = calculate("roundeven(2.25, 1)", LAST_RESULT)
+    assert success and value == "2.2"
+    success, value, error = calculate("roundeven(2.35, 1)", LAST_RESULT)
+    assert success and value == "2.4"
+
+
 def test_mathematical_constants() -> None:
     """Test mathematical constants pi and e"""
     success, value, error = calculate("pi", LAST_RESULT)

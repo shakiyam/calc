@@ -49,22 +49,23 @@ Comments start with `#` and extend to the end of the line.
 
 ### Functions
 
-| Function        | Description                                     |
-| :-------------- | :---------------------------------------------- |
-| `abs(n)`        | Absolute value of `n`                           |
-| `avg(a, b, ...)`| Average of all arguments                        |
-| `ceil(n)`       | Ceiling: smallest integer >= n                  |
-| `cos(n)`        | Cosine of `n` (in radians)                      |
-| `exp(n)`        | Exponential of `n` (e**n)                       |
-| `floor(n)`      | Floor: largest integer <= n                     |
-| `log(n)`        | Natural logarithm of `n`                        |
-| `max(a, b, ...)`| Maximum of all arguments                        |
-| `min(a, b, ...)`| Minimum of all arguments                        |
-| `round(n[, d])` | Rounds `n` to `d` decimal places (default is 0) |
-| `sin(n)`        | Sine of `n` (in radians)                        |
-| `sqrt(n)`       | Square root of `n`                              |
-| `sum(a, b, ...)`| Sum of all arguments                            |
-| `tan(n)`        | Tangent of `n` (in radians)                     |
+| Function            | Description                                                           |
+| :------------------ | :-------------------------------------------------------------------- |
+| `abs(n)`            | Absolute value of `n`                                                 |
+| `avg(a, b, ...)`    | Average of all arguments                                              |
+| `ceil(n)`           | Ceiling: smallest integer >= n                                        |
+| `cos(n)`            | Cosine of `n` (in radians)                                            |
+| `exp(n)`            | Exponential of `n` (e**n)                                             |
+| `floor(n)`          | Floor: largest integer <= n                                           |
+| `log(n)`            | Natural logarithm of `n`                                              |
+| `max(a, b, ...)`    | Maximum of all arguments                                              |
+| `min(a, b, ...)`    | Minimum of all arguments                                              |
+| `round(n[, d])`     | Rounds `n` to `d` decimal places (default is 0); ties away from zero  |
+| `roundeven(n[, d])` | Like `round`, but rounds ties to the nearest even (banker's rounding) |
+| `sin(n)`            | Sine of `n` (in radians)                                              |
+| `sqrt(n)`           | Square root of `n`                                                    |
+| `sum(a, b, ...)`    | Sum of all arguments                                                  |
+| `tan(n)`            | Tangent of `n` (in radians)                                           |
 
 **Important:** A comma between a digit and exactly three digits is treated as a thousands
 separator, so include a space after each argument comma to disambiguate:

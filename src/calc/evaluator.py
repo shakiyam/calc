@@ -3,7 +3,7 @@ import math
 import operator as op
 from collections.abc import Callable
 from datetime import timedelta
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, ROUND_HALF_UP, Decimal
 from typing import Any, Final, cast
 
 _ALLOWED_BINARY_OPERATORS: Final[dict[type, Callable[[Any, Any], Any]]] = {
@@ -100,6 +100,23 @@ def _sum_wrapper(*args: Decimal | timedelta) -> Decimal | timedelta:
         return sum(args, Decimal("0"))
 
 
+def _round_decimal(value: Decimal, precision: int, rounding: str) -> Decimal:
+    """Round value to the given decimal places with the given rounding mode"""
+    if precision:
+        return value.quantize(Decimal(1).scaleb(-precision), rounding=rounding)
+    return value.to_integral_value(rounding=rounding)
+
+
+def _round_half_up(value: Decimal, precision: int = 0) -> Decimal:
+    """Round with ties away from zero"""
+    return _round_decimal(value, precision, ROUND_HALF_UP)
+
+
+def _round_half_even(value: Decimal, precision: int = 0) -> Decimal:
+    """Round with ties to even (banker's rounding)"""
+    return _round_decimal(value, precision, ROUND_HALF_EVEN)
+
+
 _MATH_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
     "cos": math.cos,
     "exp": math.exp,
@@ -112,7 +129,8 @@ _MATH_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
 _ROUNDING_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
     "ceil": math.ceil,
     "floor": math.floor,
-    "round": round,
+    "round": _round_half_up,
+    "roundeven": _round_half_even,
 }
 
 _AGGREGATE_FUNCTIONS: Final[dict[str, Callable[..., Any]]] = {
@@ -195,16 +213,16 @@ def _eval_math_func(
 def _eval_rounding_func(func_name: str, args: list[Decimal | timedelta]) -> Decimal | timedelta:
     """Evaluate rounding functions"""
     if isinstance(args[0], timedelta):
-        if func_name == "round" and len(args) > 1:
+        if func_name in ("round", "roundeven") and len(args) > 1:
             precision = int(_ensure_decimal(args[1]))
-            return _apply_to_timedelta_seconds(args[0], round, precision)
+            return _apply_to_timedelta_seconds(args[0], _ROUNDING_FUNCTIONS[func_name], precision)
         else:
             return _apply_to_timedelta_seconds(args[0], _ROUNDING_FUNCTIONS[func_name])
     else:
         decimal_arg = _ensure_decimal(args[0])
-        if func_name == "round" and len(args) > 1:
+        if func_name in ("round", "roundeven") and len(args) > 1:
             precision = int(_ensure_decimal(args[1]))
-            return round(decimal_arg, precision)
+            return cast(Decimal, _ROUNDING_FUNCTIONS[func_name](decimal_arg, precision))
         else:
             result = _ROUNDING_FUNCTIONS[func_name](decimal_arg)
             return Decimal(str(result))

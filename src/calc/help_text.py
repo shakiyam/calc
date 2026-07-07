@@ -10,7 +10,7 @@ Operators:
   +  -  *  /  %  **  (aliases: ＋  － x X ×  ÷  ^)
 
 Functions:
-  abs avg ceil cos exp floor log max min round sin sqrt sum tan
+  abs avg ceil cos exp floor log max min round roundeven sin sqrt sum tan
 
 Constants: pi e
 

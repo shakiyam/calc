@@ -127,6 +127,10 @@ def test_time_functions() -> None:
     assert success and value == "00:00:00"
     success, value, error = calculate("round(0.7s)", LAST_RESULT)
     assert success and value == "00:00:01"
+    success, value, error = calculate("round(2.5s)", LAST_RESULT)
+    assert success and value == "00:00:03"
+    success, value, error = calculate("roundeven(2.5s)", LAST_RESULT)
+    assert success and value == "00:00:02"
     success, value, error = calculate("max(1 day, 02:00:00)", LAST_RESULT)
     assert success and value == "1 day"
     success, value, error = calculate("min(01:00:00, 90s)", LAST_RESULT)
