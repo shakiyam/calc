@@ -77,8 +77,9 @@ When adding or changing output formats, emit only text the input grammar in
 ## Common Development Commands
 
 ```bash
-make all      # Check for updates, lint, update requirements, mypy, test, and build
+make all      # Check for updates, format, lint, update requirements, mypy, test, and build
 make test     # Run tests
+make format   # Format Python code and shell scripts
 make lint     # Run all linters
 make mypy     # Type check
 make help     # Show all available targets

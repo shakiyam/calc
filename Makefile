@@ -6,7 +6,7 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 .PHONY: $(ALL_TARGETS)
 .DEFAULT_GOAL := help
 
-all: check_for_updates lint update_requirements_dev mypy test update_requirements build ## Check for updates, lint, update requirements, mypy, test, and build
+all: check_for_updates format lint update_requirements_dev mypy test update_requirements build ## Check for updates, format, lint, update requirements, mypy, test, and build
 
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -32,6 +32,8 @@ check_for_image_updates: ## Check for image updates
 
 check_for_updates: check_for_action_updates check_for_image_updates ## Check for updates to all dependencies
 
+format: ruff_format shfmt_format ## Format Python code and shell scripts
+
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/hadolint.sh Dockerfile Dockerfile.dev
@@ -53,9 +55,14 @@ mypy: build_dev ## Check Python types
 	@[[ -d .mypy_cache ]] || mkdir .mypy_cache
 	@./calc_dev mypy src/calc tests
 
-ruff: ## Lint Python code
+ruff: ## Lint Python code and formatting
 	@echo -e "\033[36m$@\033[0m"
+	@./tools/ruff.sh format --diff
 	@./tools/ruff.sh check
+
+ruff_format: ## Format Python code
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/ruff.sh format
 
 shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
@@ -64,6 +71,10 @@ shellcheck: ## Lint shell scripts
 shfmt: ## Lint shell script formatting
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shfmt.sh -l -d -i 2 -ci -bn calc calc_dev tools/*.sh
+
+shfmt_format: ## Format shell scripts
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/shfmt.sh -l -w -i 2 -ci -bn calc calc_dev tools/*.sh
 
 test: build_dev ## Test Python code with pytest
 	@echo -e "\033[36m$@\033[0m"
