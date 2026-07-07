@@ -1,11 +1,28 @@
-name: Publish Docker image
+name: CI
 on:
   push:
     branches:
       - main
+  pull_request:
+concurrency:
+  group: ci-${{ github.ref }}
 jobs:
+  test:
+    name: lint, mypy, and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Run make lint
+        run: make lint
+      - name: Run make mypy
+        run: make mypy
+      - name: Run make test
+        run: make test
   build:
     name: build and publish
+    needs: test
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,6 +40,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v7
         with:
+          build-args: SOURCE_COMMIT=${{ github.sha }}
           platforms: linux/amd64, linux/arm64
           push: true
           tags: ghcr.io/shakiyam/calc:latest
