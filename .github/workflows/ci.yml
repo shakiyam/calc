@@ -4,8 +4,11 @@ on:
     branches:
       - main
   pull_request:
+permissions:
+  contents: read
 concurrency:
   group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     name: lint, mypy, and test
@@ -21,6 +24,9 @@ jobs:
         run: make test
   build:
     name: build and publish
+    permissions:
+      contents: read
+      packages: write
     needs: test
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
