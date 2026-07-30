@@ -36,7 +36,7 @@ check_for_image_updates: ## Check for image updates
 
 check_for_updates: check_for_action_updates check_for_image_updates ## Check for updates to all dependencies
 
-format: ruff_format shfmt ## Run all formatting
+format: ruff_format shfmt yamlfmt ## Run all formatting
 
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -86,6 +86,10 @@ update_requirements: ## Update requirements.txt
 update_requirements_dev: ## Update requirements_dev.txt
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/uv.sh pip compile --upgrade --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
+
+yamlfmt: ## Format YAML files
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/yamlfmt.sh .github/zizmor.yml .github/workflows/*.yml
 
 zizmor: ## Lint GitHub Actions workflows for security issues
 	@echo -e "\033[36m$@\033[0m"
