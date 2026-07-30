@@ -32,6 +32,8 @@ jobs:
           persist-credentials: false
       - name: Run make lint
         run: make lint
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Run make mypy
         run: make mypy
       - name: Run make test

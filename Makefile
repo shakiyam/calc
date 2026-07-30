@@ -8,6 +8,10 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 
 all: check_for_updates format lint update_requirements_dev mypy test update_requirements build ## Check for updates, format, lint, update requirements, mypy, test, and build
 
+actionlint: ## Lint GitHub Actions workflow files
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/actionlint.sh
+
 build: ## Build image 'shakiyam/calc' from Dockerfile
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/build.sh ghcr.io/shakiyam/calc Dockerfile
@@ -44,7 +48,7 @@ help: ## Print this help
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-lint: hadolint markdownlint ruff shellcheck ## Run all linting
+lint: actionlint hadolint markdownlint ruff shellcheck zizmor ## Run all linting
 
 markdownlint: ## Lint Markdown files
 	@echo -e "\033[36m$@\033[0m"
@@ -82,3 +86,7 @@ update_requirements: ## Update requirements.txt
 update_requirements_dev: ## Update requirements_dev.txt
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/uv.sh pip compile --upgrade --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
+
+zizmor: ## Lint GitHub Actions workflows for security issues
+	@echo -e "\033[36m$@\033[0m"
+	@./tools/zizmor.sh .
