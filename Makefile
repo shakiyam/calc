@@ -32,7 +32,7 @@ check_for_image_updates: ## Check for image updates
 
 check_for_updates: check_for_action_updates check_for_image_updates ## Check for updates to all dependencies
 
-format: ruff_format shfmt_format ## Format Python code and shell scripts
+format: ruff_format shfmt ## Run all formatting
 
 hadolint: ## Lint Dockerfile
 	@echo -e "\033[36m$@\033[0m"
@@ -44,7 +44,7 @@ help: ## Print this help
 	@echo 'Targets:'
 	@awk 'BEGIN {FS = ":.*?## "} /^[0-9A-Za-z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-lint: ruff hadolint markdownlint shellcheck shfmt ## Run all linters (ruff, hadolint, markdownlint, shellcheck, shfmt)
+lint: hadolint markdownlint ruff shellcheck ## Run all linting
 
 markdownlint: ## Lint Markdown files
 	@echo -e "\033[36m$@\033[0m"
@@ -55,9 +55,8 @@ mypy: build_dev ## Check Python types
 	@[[ -d .mypy_cache ]] || mkdir .mypy_cache
 	@./calc_dev mypy src/calc tests
 
-ruff: ## Lint Python code and formatting
+ruff: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/ruff.sh format --diff
 	@./tools/ruff.sh check
 
 ruff_format: ## Format Python code
@@ -68,11 +67,7 @@ shellcheck: ## Lint shell scripts
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shellcheck.sh calc calc_dev tools/*.sh
 
-shfmt: ## Lint shell script formatting
-	@echo -e "\033[36m$@\033[0m"
-	@./tools/shfmt.sh -l -d -i 2 -ci -bn calc calc_dev tools/*.sh
-
-shfmt_format: ## Format shell scripts
+shfmt: ## Format shell scripts
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/shfmt.sh -l -w -i 2 -ci -bn calc calc_dev tools/*.sh
 

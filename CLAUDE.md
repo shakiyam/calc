@@ -79,8 +79,8 @@ When adding or changing output formats, emit only text the input grammar in
 ```bash
 make all      # Check for updates, format, lint, update requirements, mypy, test, and build
 make test     # Run tests
-make format   # Format Python code and shell scripts
-make lint     # Run all linters
+make format   # Run all formatting
+make lint     # Run all linting
 make mypy     # Type check
 make help     # Show all available targets
 ./calc        # Run calculator (interactive)
