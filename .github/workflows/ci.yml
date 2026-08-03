@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   format:
-    name: format
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,8 +22,8 @@ jobs:
         run: make format
       - name: Run check_for_file_updates.sh
         run: ./tools/check_for_file_updates.sh
-  test:
-    name: lint, mypy, and test
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,16 +34,32 @@ jobs:
         run: make lint
         env:
           GH_TOKEN: ${{ github.token }}
+  mypy:
+    name: mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Run make mypy
         run: make mypy
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Run make test
         run: make test
   build:
-    name: build and publish
+    name: Build and Push
     permissions:
       contents: read
       packages: write
-    needs: [format, test]
+    needs: [format, lint, mypy, test]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
