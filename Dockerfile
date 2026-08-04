@@ -8,5 +8,5 @@ COPY pyproject.toml .
 COPY src ./src
 RUN uv pip install --system --no-cache --no-deps .
 ARG SOURCE_COMMIT
-ENV SOURCE_COMMIT=$SOURCE_COMMIT
+LABEL org.opencontainers.image.revision=$SOURCE_COMMIT
 ENTRYPOINT ["calc"]
