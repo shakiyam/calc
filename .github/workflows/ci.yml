@@ -30,8 +30,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Run make lint
-        run: make lint
+      - name: Run make --keep-going lint
+        run: make --keep-going lint
         env:
           GH_TOKEN: ${{ github.token }}
   mypy:
