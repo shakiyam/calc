@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -92,4 +92,4 @@ The project maintains feature documentation in multiple places with specific rol
 
 - **Help command** (`src/calc/help_text.py`): Quick reference for users during calculator use - minimal content only
 - **README.md**: Detailed user documentation with examples for all features
-- **CLAUDE.md**: Architecture, development commands, and implementation details for AI/developers
+- **AGENTS.md**: Architecture, development commands, and implementation details for AI/developers
