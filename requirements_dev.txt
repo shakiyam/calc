@@ -8,9 +8,9 @@ iniconfig==2.3.0
     # via pytest
 jedi==0.20.0
     # via ptpython
-librt==0.15.0
+librt==0.16.0
     # via mypy
-mypy==2.3.1
+mypy==2.4.0
     # via calc (pyproject.toml)
 mypy-extensions==1.1.0
     # via mypy
