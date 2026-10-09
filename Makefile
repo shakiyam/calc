@@ -6,7 +6,7 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 .PHONY: $(ALL_TARGETS)
 .DEFAULT_GOAL := help
 
-all: check_for_updates format lint update_requirements_dev mypy test update_requirements build dive trivy ## Check for updates, format, lint, update requirements, mypy, test, build, and scan image
+all: check_for_updates format lint update_requirements_dev mypy pip_licenses test update_requirements build dive trivy ## Check for updates, format, lint, update requirements, mypy, check licenses, test, build, and scan image
 
 actionlint: ## Lint GitHub Actions workflow files
 	@echo -e "\033[36m$@\033[0m"
@@ -66,6 +66,10 @@ mypy: build_dev ## Check Python types
 	@echo -e "\033[36m$@\033[0m"
 	@[[ -d .mypy_cache ]] || mkdir .mypy_cache
 	@./calc_dev mypy src/calc tests
+
+pip_licenses: build_dev ## Check licenses of Python dependencies
+	@echo -e "\033[36m$@\033[0m"
+	@./calc_dev pip-licenses --with-system --allow-only="Apache-2.0 OR BSD-2-Clause;BSD License;BSD-2-Clause;BSD-3-Clause;MIT;MIT License;Mozilla Public License 2.0 (MPL 2.0);PSF-2.0"
 
 ruff: ## Lint Python code
 	@echo -e "\033[36m$@\033[0m"
