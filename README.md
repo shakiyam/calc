@@ -254,3 +254,6 @@ exiting. The interactive shell always exits with status 0.
 ## License
 
 [MIT License](https://opensource.org/licenses/MIT)
+
+The MIT License applies only to the files in this repository. The image also
+contains other software under its own licenses.
