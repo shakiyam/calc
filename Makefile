@@ -67,6 +67,8 @@ mypy: build_dev ## Check Python types
 	@[[ -d .mypy_cache ]] || mkdir .mypy_cache
 	@./calc_dev mypy src/calc tests
 
+# Weak copyleft (e.g. MPL 2.0, LGPL) is allowed for unmodified dependencies;
+# --with-system keeps pip-licenses' own dependencies, which the application may share, in the check
 pip_licenses: build_dev ## Check licenses of Python dependencies
 	@echo -e "\033[36m$@\033[0m"
 	@./calc_dev pip-licenses --with-system --allow-only="Apache-2.0 OR BSD-2-Clause;BSD License;BSD-2-Clause;BSD-3-Clause;MIT;MIT License;Mozilla Public License 2.0 (MPL 2.0);PSF-2.0"
