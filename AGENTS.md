@@ -93,3 +93,7 @@ The project maintains feature documentation in multiple places with specific rol
 - **Help command** (`src/calc/help_text.py`): Quick reference for users during calculator use - minimal content only
 - **README.md**: Detailed user documentation with examples for all features
 - **AGENTS.md**: Architecture, development commands, and implementation details for AI/developers
+
+## Decisions
+
+- **Relaxed dive thresholds**: `.dive-ci` is copied from bbs because dive's default 10% limit on wasted user-layer bytes failed intermittently: the wasted bytes stay at about 5.6MB, but the reported percentage varied (5.6%, 10.7%, 20.5%), leaving little headroom under the 25% limit
