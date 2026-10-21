@@ -34,10 +34,10 @@ calc/
 ├── tools/                 # Build and lint scripts
 ├── .github/               # GitHub Actions workflows
 ├── Dockerfile             # Production image
-├── Dockerfile.dev         # Development image
 ├── Makefile               # Build automation
 ├── calc                   # Launcher script (runs the production image)
 ├── calc_dev               # Dev launcher (runs pytest/mypy in the dev image)
+├── dev.Dockerfile         # Development image
 └── pyproject.toml         # Project configuration
 ```
 
