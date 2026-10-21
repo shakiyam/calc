@@ -13,34 +13,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Unit handling (non-time units like `個`, `円`, `kg` are ignored)
 - Help command (`help`)
 
-## Project Structure
-
-```text
-calc/
-├── src/calc/              # Main source code
-│   ├── __init__.py        # Package marker (empty)
-│   ├── __main__.py        # Entry point, expression parsing, shell
-│   ├── evaluator.py       # Safe AST-based expression evaluation
-│   ├── time_utils.py      # Time expression utilities
-│   ├── help_text.py       # Help command text
-│   └── py.typed           # PEP 561 marker
-├── tests/                 # Test files
-│   ├── test_basic.py      # Arithmetic, comments, formatting, history
-│   ├── test_functions.py  # Math functions and constants
-│   ├── test_output_format.py # Time output formats (as directive, format command)
-│   ├── test_time.py       # Time calculations
-│   ├── test_time_utils.py # Time utilities
-│   └── test_errors.py     # Error handling
-├── tools/                 # Build and lint scripts
-├── .github/               # GitHub Actions workflows
-├── Dockerfile             # Production image
-├── Makefile               # Build automation
-├── calc                   # Launcher script (runs the production image)
-├── calc_dev               # Dev launcher (runs pytest/mypy in the dev image)
-├── dev.Dockerfile         # Development image
-└── pyproject.toml         # Project configuration
-```
-
 ## Architecture
 
 Python-based command-line calculator with secure expression evaluation using AST (Abstract Syntax Tree) parsing.
@@ -77,13 +49,14 @@ When adding or changing output formats, emit only text the input grammar in
 ## Common Development Commands
 
 ```bash
-make all      # Run all checks (see `make help` for what it includes)
-make test     # Run tests
-make format   # Run all formatting
-make lint     # Run all linting
-make mypy     # Type check
-make help     # Show all available targets
-./calc        # Run calculator (interactive)
+make all         # Run all checks (see `make help` for what it includes)
+make test        # Run tests
+make format      # Run all formatting
+make lint        # Run all linting
+make mypy        # Type check
+make help        # Show all available targets
+./calc           # Run calculator (interactive)
+./calc_dev <cmd> # Run a command (e.g. pytest, mypy) in the dev image against the working tree
 ```
 
 ## Documentation Maintenance
