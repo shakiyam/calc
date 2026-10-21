@@ -1,3 +1,5 @@
+"""Tests for arithmetic, aliases, comments, thousands separators, history, and unit removal"""
+
 from calc.__main__ import calculate
 
 LAST_RESULT = "0"

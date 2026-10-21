@@ -1,3 +1,5 @@
+"""Tests for math and rounding functions and constants"""
+
 from calc.__main__ import calculate
 
 LAST_RESULT = "0"

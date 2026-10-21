@@ -1,3 +1,5 @@
+"""Tests for error messages and exit codes in each input mode"""
+
 import io
 import sys
 

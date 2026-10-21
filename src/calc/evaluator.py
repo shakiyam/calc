@@ -1,3 +1,5 @@
+"""Safe AST-based expression evaluation with whitelisted operators and functions"""
+
 import ast
 import math
 import operator as op

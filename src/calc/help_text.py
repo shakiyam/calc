@@ -1,3 +1,5 @@
+"""Help command text"""
+
 HELP_TEXT = """calc: A simple command-line calculator
 
 Features:

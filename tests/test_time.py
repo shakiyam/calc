@@ -1,3 +1,5 @@
+"""Tests for time calculations through calculate()"""
+
 from calc.__main__ import calculate
 
 LAST_RESULT = "0"

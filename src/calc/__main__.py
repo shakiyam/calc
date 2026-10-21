@@ -1,3 +1,5 @@
+"""Entry point and interactive shell: preprocess input, evaluate, and format results"""
+
 import re
 import sys
 from collections.abc import Iterator

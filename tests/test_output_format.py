@@ -1,3 +1,5 @@
+"""Tests for time output formats (as directive, format command)"""
+
 import pytest
 
 from calc.__main__ import _extract_output_directive, _process_command, calculate

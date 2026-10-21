@@ -1,3 +1,5 @@
+"""Time expression parsing into timedelta and time output formatting"""
+
 import re
 from collections.abc import Callable
 from datetime import timedelta
