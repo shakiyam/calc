@@ -69,4 +69,4 @@ The project maintains feature documentation in multiple places with specific rol
 
 ## Decisions
 
-- **Relaxed dive thresholds**: `.dive-ci` raises the limits because dive's default 10% limit on wasted user-layer bytes failed intermittently: the wasted bytes stay at about 5.6MB, but the reported percentage varied (5.6%, 10.7%, 20.5%), leaving little headroom under the 25% limit
+- **Relaxed dive thresholds**: `.dive-ci` raises the limit on wasted user-layer bytes because the base image alone exceeds dive's default 10%
