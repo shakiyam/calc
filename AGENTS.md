@@ -42,7 +42,7 @@ When adding or changing output formats, emit only text the input grammar in
 
 ## Code Style
 
-- **Python**: 3.10+ with type hints required (mypy strict mode)
+- **Python**: 3.11+ with type hints required (mypy strict mode)
 - **Line Length**: 100 characters
 - **Linting (ruff)**: A, B, C4, E, W, ERA, F, I, N, PT, Q, S, SIM, UP
 
