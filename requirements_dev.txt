@@ -12,7 +12,7 @@ librt==0.16.0
     # via mypy
 mypy==2.4.1
     # via calc (pyproject.toml)
-mypy-extensions==1.1.0
+mypy-extensions==1.2.0
     # via mypy
 packaging==26.3
     # via pytest
