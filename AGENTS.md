@@ -59,6 +59,8 @@ make help        # Show all available targets
 ./calc_dev <cmd> # Run a command (e.g. pytest, mypy) in the dev image against the working tree
 ```
 
+When `make trivy` reports vulnerabilities whose fixed versions the distribution already ships, run `NO_CACHE=1 make trivy` to rebuild the cached layers that still hold the old packages.
+
 ## Documentation Maintenance
 
 The project maintains feature documentation in multiple places with specific roles:
