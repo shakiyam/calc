@@ -17,4 +17,6 @@ RUN --mount=from=ghcr.io/astral-sh/uv:0.13,source=/uv,target=/bin/uv \
   uv pip install --system --no-cache --no-deps .
 ARG SOURCE_COMMIT
 LABEL org.opencontainers.image.revision=$SOURCE_COMMIT
+# nobody:nogroup
+USER 65534:65534
 ENTRYPOINT ["calc"]
