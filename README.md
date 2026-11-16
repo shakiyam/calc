@@ -216,19 +216,21 @@ The `./calc` script runs the calculator inside a container.
 This method is for users who prefer not to use containers.
 
 - **Setup:** From the project root directory (where this README.md is located), install the package and its dependencies using [`uv`](https://docs.astral.sh/uv/).
+  If `uv` fails to read `uv.lock`, update it with `uv self update`.
 
   Option 1: Using virtual environment (recommended)
 
   ```bash
-  uv venv
+  uv sync --locked
   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-  uv pip install -e .
   ```
 
   Option 2: System-wide installation (may require administrator privileges)
 
   ```bash
-  uv pip install --system -e .
+  uv export --locked --no-emit-project -o requirements.txt
+  uv pip install --system -r requirements.txt
+  uv pip install --system --no-deps -e .
   ```
 
 - **Usage:** After installation, run the calculator from anywhere:

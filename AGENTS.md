@@ -71,4 +71,7 @@ The project maintains feature documentation in multiple places with specific rol
 
 ## Decisions
 
+- **Dependencies pinned in `uv.lock`**: Both the container images and local installs without containers (see README) install from `uv.lock`, so every environment runs the tested versions. Runtime and development dependencies are resolved together, so a development tool may constrain a runtime version; this is accepted as keeping the tested and shipped versions identical
+- **Development dependencies as an extra**: `dev` stays in `[project.optional-dependencies]` rather than `[dependency-groups]`, because `uv sync` installs the `dev` group by default but not extras, so a plain `uv sync` installs only what the application needs
+- **System Python in images**: The Dockerfiles run `uv sync` with `UV_PROJECT_ENVIRONMENT=/usr/local` instead of creating a venv, so the installed commands stay on the default `PATH`
 - **Relaxed dive thresholds**: `.dive-ci` raises the limit on wasted user-layer bytes because the base image alone exceeds dive's default 10%

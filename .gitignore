@@ -4,3 +4,5 @@ __pycache__
 *.egg-info/
 dockerfmt
 regctl
+# Exported from uv.lock by the system-wide installation steps in README.md
+/requirements.txt

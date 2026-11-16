@@ -6,7 +6,7 @@ ALL_TARGETS := $(shell grep -E -o ^[0-9A-Za-z_-]+: $(MAKEFILE_LIST) | sed 's/://
 .PHONY: $(ALL_TARGETS)
 .DEFAULT_GOAL := help
 
-all: check_for_updates format lint update_requirements_dev mypy pip_licenses test update_requirements build dive trivy ## Check for updates, format, lint, update requirements, mypy, check licenses, test, build, and scan image
+all: check_for_updates format lint update_uv_lock mypy pip_licenses test build dive trivy ## Check for updates, format, lint, update uv.lock, mypy, check licenses, test, build, and scan image
 
 actionlint: ## Lint GitHub Actions workflow files
 	@echo -e "\033[36m$@\033[0m"
@@ -98,13 +98,9 @@ trivy: build ## Scan Docker image for vulnerabilities
 	@echo -e "\033[36m$@\033[0m"
 	@./tools/trivy.sh image --quiet --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 ghcr.io/shakiyam/calc | sed -n '/^Total:/,$$p'
 
-update_requirements: ## Update requirements.txt
+update_uv_lock: ## Update uv.lock
 	@echo -e "\033[36m$@\033[0m"
-	@./tools/uv.sh pip compile --upgrade --strip-extras --output-file requirements.txt pyproject.toml
-
-update_requirements_dev: ## Update requirements_dev.txt
-	@echo -e "\033[36m$@\033[0m"
-	@./tools/uv.sh pip compile --upgrade --strip-extras --extra=dev --output-file requirements_dev.txt pyproject.toml
+	@./tools/uv.sh lock --upgrade
 
 yamlfmt: ## Format YAML files
 	@echo -e "\033[36m$@\033[0m"
