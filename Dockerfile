@@ -9,10 +9,11 @@ WORKDIR /opt/calc
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
 COPY pyproject.toml uv.lock ./
 # pip comes from the base image and is unused at runtime; removing it clears trivy findings in its bundled libraries
-# (uv sync leaves it in place even though uv.lock does not list it)
+# (uv sync leaves it in place even though uv.lock does not list it, and uninstalling it leaves the base image's pip -> pip3 symlink dangling)
 RUN --mount=from=ghcr.io/astral-sh/uv:0.13,source=/uv,target=/bin/uv \
   uv sync --locked --no-cache --no-install-project \
-  && uv pip uninstall --system pip
+  && uv pip uninstall --system pip \
+  && rm -f /usr/local/bin/pip
 COPY src ./src
 RUN --mount=from=ghcr.io/astral-sh/uv:0.13,source=/uv,target=/bin/uv \
   uv sync --locked --no-cache --no-editable
