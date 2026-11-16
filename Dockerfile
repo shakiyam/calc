@@ -4,7 +4,6 @@ FROM python:3.15-slim-trixie
 RUN apt-get update \
   && apt-get -y --no-install-recommends --only-upgrade install zlib1g \
   && rm -rf /var/lib/apt/lists/*
-RUN mkdir -p /opt/calc
 WORKDIR /opt/calc
 # Sync into the system Python so the image keeps calc on the default PATH without a venv
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
