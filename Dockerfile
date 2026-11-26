@@ -1,4 +1,9 @@
 FROM python:3.15-slim-trixie
+# TODO: Remove package upgrades once base image includes libzstd1 >= 1.5.7+dfsg-1+deb13u1 (CVE-2026-124851)
+# hadolint ignore=DL3008
+RUN apt-get update \
+  && apt-get -y --no-install-recommends --only-upgrade install libzstd1 \
+  && rm -rf /var/lib/apt/lists/*
 WORKDIR /opt/calc
 # Sync into the system Python so the image keeps calc on the default PATH without a venv
 ENV UV_PROJECT_ENVIRONMENT=/usr/local
